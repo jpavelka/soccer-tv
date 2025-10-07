@@ -13,7 +13,7 @@ const config = {
 		  fallback: 'index.html'
 	  }),
 	  paths: {
-		  base: process.env.NODE_ENV === 'production' ? "/football-empire" : "",
+		  base: process.env.NODE_ENV === 'production' ? "/soccer-tv" : "",
 	  },
   }
 };
