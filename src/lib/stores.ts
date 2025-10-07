@@ -9,7 +9,7 @@ goodBcsts.subscribe((value) => {
 });
 export const allBcsts = writable([]);
 export const filterBcsts = writable(false);
-export const goodStatuses = writable(['in', 'pre', 'post']);
+export const goodStatuses = writable(['in', 'pre']);
 export const windowInfo = writable({
     screenWidth: 0,
     gameContentWidth: 0
