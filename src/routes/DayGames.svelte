@@ -18,7 +18,7 @@
                 }
             }
             event.bcstStr = event.bcstsToShow.join('/');
-            if (event.bcstsToShow.length > 0) {
+            if (!filterBroadcasts || event.bcstsToShow.length > 0) {
                 if (goodStatuses.includes(event.status)) {
                     numToShow += 1;
                     league.numToShow += 1;
