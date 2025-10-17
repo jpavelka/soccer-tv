@@ -24,6 +24,7 @@
     const filterBroadcastsFunc = (currentValue) => {
         filterBcsts.set(currentValue);
     }
+    let loaded = false;
     onMount(() => {
         windowInfo.set({
             screenWidth: window.visualViewport.width
@@ -33,50 +34,55 @@
                 wi.screenWidth = window.visualViewport.width;
                 return wi
             })
-        });      
+        });
+        loaded = true;
     })
     let showBcstModal = false;
 </script>
 
-<div class=titleText>Soccer Games</div>
-<div>
-    <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
-        <span style=margin-right:5px;>Show completed</span>
-        <ToggleButton onClickFunc={showCompletedFunc} initValue={false}/>
-    </span>
-    <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
-        <span style=margin-right:5px;>Filter broadcasts</span>
-        <ToggleButton onClickFunc={filterBroadcastsFunc} initValue={false} />
-    </span>
-    <button onclick={() => {
-        showBcstModal = true
-    }}>Select Broadcasts</button>
-</div>
-
-<Modal bind:showModal={showBcstModal}>
-    <div slot="header">
-        <h2>Filter Broadcasts</h2>
-    </div>
-    <BcstSelect allBcsts={$allBcsts} />
-    <div slot="footer">
+{#if !loaded}
+    Loading data...
+{:else}
+    <div class=titleText>Soccer Games</div>
+    <div>
+        <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
+            <span style=margin-right:5px;>Show completed</span>
+            <ToggleButton onClickFunc={showCompletedFunc} initValue={false}/>
+        </span>
+        <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
+            <span style=margin-right:5px;>Filter broadcasts</span>
+            <ToggleButton onClickFunc={filterBroadcastsFunc} initValue={false} />
+        </span>
         <button onclick={() => {
-            showBcstModal = false
-        }}>Continue</button>
+            showBcstModal = true
+        }}>Select Broadcasts</button>
     </div>
-</Modal>
 
-<div style=display:inline-block; bind:clientWidth={$windowInfo.gameContentWidth}>
-    {#each Object.keys(data) as dt}
-        {#key [$goodStatuses, $filterBcsts]}
-            <DayGames
-                leagueData={data[dt].sports[0].leagues}
-                dt={dt}
-                goodStatuses={$goodStatuses}
-                filterBroadcasts={$filterBcsts}
-            />
-        {/key}
-    {/each}
-</div>
+    <Modal bind:showModal={showBcstModal}>
+        <div slot="header">
+            <h2>Filter Broadcasts</h2>
+        </div>
+        <BcstSelect allBcsts={$allBcsts} />
+        <div slot="footer">
+            <button onclick={() => {
+                showBcstModal = false
+            }}>Continue</button>
+        </div>
+    </Modal>
+
+    <div style=display:inline-block; bind:clientWidth={$windowInfo.gameContentWidth}>
+        {#each Object.keys(data) as dt}
+            {#key [$goodStatuses, $filterBcsts]}
+                <DayGames
+                    leagueData={data[dt].sports[0].leagues}
+                    dt={dt}
+                    goodStatuses={$goodStatuses}
+                    filterBroadcasts={$filterBcsts}
+                />
+            {/key}
+        {/each}
+    </div>
+{/if}
 
 <style>
     .titleText {
@@ -84,5 +90,4 @@
         font-weight: bold;
         margin-bottom: 12pt;
     }
-
 </style>

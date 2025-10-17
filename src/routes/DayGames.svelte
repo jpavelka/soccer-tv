@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goodBcsts, allBcsts, windowInfo } from "$lib/stores";
+    import { goodBcsts, allBcsts, windowInfo, accordionShow } from "$lib/stores";
     import Accordion from "./Accordion.svelte";
 
     let { leagueData, dt, goodStatuses, filterBroadcasts } = $props();
@@ -32,16 +32,32 @@
     $effect(() => {
         narrowScreen = $windowInfo.screenWidth < narrowWidth;
     })
-    const dtStr = new Date(dt).toLocaleDateString('en-US', {timeZone: 'UTC', weekday: 'long', month: 'long', day: 'numeric'})
+    const dtStr = new Date(dt).toLocaleDateString('en-US', {timeZone: 'UTC', weekday: 'long', month: 'long', day: 'numeric'});
+    if (!Object.keys($accordionShow).includes(dt)) {
+        $accordionShow[dt] = true;
+    }
+    for (const ld of leagueData) {
+        if (!Object.keys($accordionShow).includes(dt + '-' + ld.name)) {
+            $accordionShow[dt + '-' + ld.name] = true;
+        }
+    }
 </script>
 
 <hr>
-<Accordion headerText={dtStr} headerStyle='font-weight:bold;font-size:1.9rem;margin-bottom:12pt;cursor:pointer;'>
+<Accordion
+    headerText={dtStr}
+    headerStyle='font-weight:bold;font-size:1.9rem;margin-bottom:12pt;cursor:pointer;'
+    bind:showContent={$accordionShow[dt]}
+>
     <div class=spacing></div>
     {#if numToShow > 0}
         {#each leagueData as league}
             {#if league.numToShow > 0}
-                <Accordion headerText={league.name} headerStyle='font-weight:bold;font-size:1.6rem;cursor:pointer;'>
+                <Accordion
+                    headerText={league.name}
+                    headerStyle='font-weight:bold;font-size:1.6rem;cursor:pointer;'
+                    bind:showContent={$accordionShow[dt + '-' + league.name]}
+                >
                     {#each league.events as event}
                         {#if event.show}
                             <div class=gameLine>

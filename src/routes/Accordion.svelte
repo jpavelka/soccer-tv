@@ -4,7 +4,7 @@
     export let headerText;
     export let tagType = 'span';
     export let headerStyle = '';
-    let showContent = true;
+    export let showContent = true;
 </script>
 
 <div>
