@@ -49,7 +49,11 @@
     headerStyle='font-weight:bold;font-size:1.9rem;margin-bottom:12pt;cursor:pointer;'
     bind:showContent={$accordionShow[dt]}
 >
-    <div class=spacing></div>
+    <a
+        class=moreLink
+        href={`https://www.livesoccertv.com/schedules/${dt}`}
+        target=_blank
+    >more</a>
     {#if numToShow > 0}
         {#each leagueData as league}
             {#if league.numToShow > 0}
@@ -139,6 +143,9 @@
     }
     .noShow {
         font-style: italic;
+    }
+    .moreLink {
+        font-size: 0.9rem;
     }
 </style>
 
