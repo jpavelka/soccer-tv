@@ -1,8 +1,8 @@
 import type { PageLoad } from './$types';
 
 const getDateGames = (dt) => {
-	const url = `https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=soccer&dates=${dt.replaceAll('-', '')}&limit=999`;
-	return fetch(url, { cache: "no-cache" }).then(res => res.json());
+	const url = `https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=soccer&dates=${dt.replaceAll('-', '')}&limit=999&d=${(new Date()).toISOString()}`;
+	return fetch(url).then(res => res.json());
 }
 
 const dateNDaysFromNow = (n) => {

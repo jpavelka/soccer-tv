@@ -59,6 +59,7 @@
             {#if league.numToShow > 0}
                 <Accordion
                     headerText={league.name}
+                    searchAfterText={league.name}
                     headerStyle='font-weight:bold;font-size:1.6rem;cursor:pointer;'
                     bind:showContent={$accordionShow[dt + '-' + league.name]}
                 >
@@ -69,11 +70,15 @@
                                     {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
                                 </span>
                                 <img class=teamLogo src={event.competitors[0].logo}/>
-                                <span class=betweenTeams>{
-                                    event.status === 'pre' ? (
-                                        'vs'
-                                    ) : `${event.competitors[0].score}-${event.competitors[1].score}`
-                                }</span>
+                                <a
+                                    target=_blank
+                                    href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name}`}
+                                    class=betweenTeams>{
+                                        event.status === 'pre' ? (
+                                            'vs'
+                                        ) : `${event.competitors[0].score}-${event.competitors[1].score}`
+                                    }
+                                </a>
                                 <img class=teamLogo src={event.competitors[1].logo}/>
                                 <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
                                     {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
