@@ -85,6 +85,16 @@
 {/if}
 
 <style>
+    :root {
+        color-scheme: light dark;
+    }
+    :global(body) {
+        background-color: light-dark(#fafafa, #212121);
+        color: light-dark(#333b3c, #efefec)
+    }
+    :global(button) {
+        color: black;
+    }
     .titleText {
         font-size: 2.1rem;
         font-weight: bold;

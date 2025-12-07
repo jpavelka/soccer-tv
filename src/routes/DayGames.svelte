@@ -41,6 +41,9 @@
             $accordionShow[dt + '-' + ld.name] = true;
         }
     }
+    let mode = !!window ? (
+        Math.max(...window.getComputedStyle( document.body ,null).getPropertyValue('background-color').match(/\d+/g).map(Number)) > 150 ? 'light' : 'dark'
+    ) : 'light'
 </script>
 
 <hr>
@@ -69,7 +72,7 @@
                                 <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
                                     {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
                                 </span>
-                                <img class=teamLogo src={event.competitors[0].logo}/>
+                                <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
                                 <a
                                     target=_blank
                                     href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name}`}
