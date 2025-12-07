@@ -14,19 +14,10 @@
             {headerText}
         </slot>
     </svelte:element>
-    {#if searchAfterText !== ''}
-        <a class=searchAfter target=_blank href={`https://www.google.com/search?q=${searchAfterText}`}>🔎</a>
-    {/if}
+    <slot name=inlineAfter></slot>
     {#if showContent}
         <div transition:slide={{ duration: 200 }}>
             <slot></slot>
         </div>
     {/if}
 </div>
-
-<style>
-    .searchAfter {
-        font-size: 0.9rem;
-        text-decoration: none;
-    }
-</style>

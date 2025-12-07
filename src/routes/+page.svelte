@@ -41,7 +41,7 @@
 </script>
 
 {#if !loaded}
-    Loading data...
+    Loading...
 {:else}
     <div class=titleText>Soccer Games</div>
     <div>
@@ -74,7 +74,7 @@
         {#each Object.keys(data) as dt}
             {#key [$goodStatuses, $filterBcsts]}
                 <DayGames
-                    leagueData={data[dt].sports[0].leagues}
+                    dayData={data[dt]}
                     dt={dt}
                     goodStatuses={$goodStatuses}
                     filterBroadcasts={$filterBcsts}

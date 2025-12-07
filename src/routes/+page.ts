@@ -14,7 +14,7 @@ export const load: PageLoad = async () => {
 	let data = {};
 	for (let i = 0; i <= 6; i++) {
 		const dt = dateNDaysFromNow(i);
-		data[dt] = await getDateGames(dt);
+		data[dt] = getDateGames(dt);
 	}
 	return data
 };
