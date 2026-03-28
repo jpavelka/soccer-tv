@@ -90,7 +90,7 @@
                                     <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
                                     <a
                                         target=_blank
-                                        href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name}`}
+                                        href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name} ${league.name}`}
                                         class=betweenTeams>{
                                             event.status === 'pre' ? (
                                                 'vs'
