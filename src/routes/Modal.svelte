@@ -20,9 +20,11 @@
     <div class="modal-overlay" on:click|self={() => (showModal = false)}>
         <div class="modal-content" style={`padding:${padding}px;width:${width}px;left:${left}px`}>
             <slot name="header"/>
-            <slot>
-                <p>This is the modal content.</p>
-            </slot>
+            <div class="body">
+                <slot>
+                    <p>This is the modal content.</p>
+                </slot>
+            </div>
             <div class=footer>
                 <slot name="footer"/>
             </div>
@@ -49,13 +51,21 @@
         background-color: light-dark(white, #444444);
         border-radius: 8px;
         max-width: 700px;
+        max-height: calc(100vh - 200px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .body {
+        overflow-y: auto;
+        flex: 1;
     }
 
     .footer {
         border-top: 1pt solid lightgray;
         margin-top: 5pt;
         padding-top: 5pt;
-
+        flex-shrink: 0;
     }
 </style>
