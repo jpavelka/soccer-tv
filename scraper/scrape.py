@@ -16,6 +16,7 @@ BASE_URL = "https://www.livesoccertv.com/schedules/{}/"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.5",
+    "Cookie": "u_continent=North%20America; u_country=United%20States; u_country_code=US; u_lang=en; u_locale=en_US; u_scores=on; u_state=New%20York; u_timezone=America%2FChicago",
 }
 UTC = datetime.timezone.utc
 
@@ -74,7 +75,7 @@ def main():
     seen = set()
     all_games = []
 
-    for i in range(7):
+    for i in range(8):
         date_str = (today + datetime.timedelta(days=i)).isoformat()
         print(f"  {date_str}...", file=sys.stderr)
         try:
