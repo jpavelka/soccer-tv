@@ -17,7 +17,7 @@ export const load: PageLoad = async ({ fetch }) => {
 		const dt = dateNDaysFromNow(i);
 		days[dt] = getDateGames(dt);
 	}
-	const broadcasts = fetch(`${base}/broadcasts.json`)
+	const broadcasts = fetch(`${base}/broadcasts.json?d=${new Date().toISOString()}`)
 		.then(res => res.json())
 		.catch(() => ({ games: [] }));
 	return { days, broadcasts };
