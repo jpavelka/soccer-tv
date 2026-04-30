@@ -12,6 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Fetch latest broadcast data
+        run: curl -sf https://jeffp171.github.io/soccer-tv/broadcasts.json -o static/broadcasts.json || true
+
       - name: Install and Build
         run: |
           npm install

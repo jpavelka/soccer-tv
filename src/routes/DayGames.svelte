@@ -2,18 +2,43 @@
     import { goodBcsts, allBcsts, windowInfo, accordionShow } from "$lib/stores";
     import Accordion from "./Accordion.svelte";
 
-    let { dayData, dt, goodStatuses, filterBroadcasts } = $props();
-    
-    let leagueData = $state([]);
+    let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts } = $props();
+
+    const nameMatch = (a: string, b: string) => {
+        const al = a.toLowerCase(), bl = b.toLowerCase();
+        return al.includes(bl) || bl.includes(al);
+    };
+
+    // Match by timestamp (within 10 min) + at least one team name overlap,
+    // falling back to date + both teams when no timestamp is available.
+    const findLstvGame = (event: any, wstGames: any[]) => {
+        const espnMs = new Date(event.date).getTime();
+        const espnTeams = event.competitors.map((c: any) => c.name);
+        return wstGames.find((wg: any) => {
+            const oneTeamMatches = espnTeams.some((en: string) => wg.teams.some((t: string) => nameMatch(en, t)));
+            if (!oneTeamMatches) return false;
+            if (wg.timestamp_ms != null) {
+                return Math.abs(espnMs - wg.timestamp_ms) < 10 * 60 * 1000;
+            }
+            return wg.date === event.date.slice(0, 10) &&
+                espnTeams.every((en: string) => wg.teams.some((t: string) => nameMatch(en, t)));
+        });
+    };
+
+    let leagueData = $state<any[]>([]);
     let numToShow = $state(0);
     $effect(() => {
-        dayData.then(d => {
+        Promise.all([dayData, broadcasts]).then(([d, bcstData]) => {
+            const wstGames = bcstData?.games ?? [];
             leagueData = d.sports[0].leagues;
+            numToShow = 0;
             for (const league of leagueData) {
                 league.numToShow = 0;
                 for (const event of league.events) {
                     event.bcstsToShow = [];
                     event.show = false;
+
+                    // ESPN broadcasts
                     for (const bcst of event.broadcasts || []) {
                         if (!$allBcsts.includes(bcst.name)) {
                             allBcsts.update((a) => [...a, bcst.name])
@@ -22,6 +47,22 @@
                             event.bcstsToShow.push(bcst.name)
                         }
                     }
+
+                    // Additional broadcasts from livesoccertv.com
+                    const wstGame = findLstvGame(event, wstGames);
+                    if (wstGame) {
+                        for (const bcst of wstGame.broadcasts) {
+                            if (!$allBcsts.includes(bcst)) {
+                                allBcsts.update((a) => [...a, bcst])
+                            }
+                            if (!event.bcstsToShow.includes(bcst)) {
+                                if (!filterBroadcasts || $goodBcsts.includes(bcst)) {
+                                    event.bcstsToShow.push(bcst);
+                                }
+                            }
+                        }
+                    }
+
                     event.bcstStr = event.bcstsToShow.join('/');
                     if (!filterBroadcasts || event.bcstsToShow.length > 0) {
                         if (goodStatuses.includes(event.status)) {

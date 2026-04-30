@@ -71,13 +71,14 @@
     </Modal>
 
     <div style=display:inline-block; bind:clientWidth={$windowInfo.gameContentWidth}>
-        {#each Object.keys(data) as dt}
+        {#each Object.keys(data.days) as dt}
             {#key [$goodStatuses, $filterBcsts]}
                 <DayGames
-                    dayData={data[dt]}
+                    dayData={data.days[dt]}
                     dt={dt}
                     goodStatuses={$goodStatuses}
                     filterBroadcasts={$filterBcsts}
+                    broadcasts={data.broadcasts}
                 />
             {/key}
         {/each}

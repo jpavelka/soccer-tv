@@ -1,4 +1,5 @@
 import type { PageLoad } from './$types';
+import { base } from '$app/paths';
 
 const getDateGames = (dt) => {
 	const url = `https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=soccer&dates=${dt.replaceAll('-', '')}&limit=999&d=${(new Date()).toISOString()}`;
@@ -10,11 +11,14 @@ const dateNDaysFromNow = (n) => {
 	return new Date(new Date(Date.now() - tzoffset).setDate(new Date().getDate() + n)).toISOString().slice(0, 10);
 }
 
-export const load: PageLoad = async () => {
-	let data = {};
+export const load: PageLoad = async ({ fetch }) => {
+	let days: Record<string, Promise<any>> = {};
 	for (let i = 0; i <= 6; i++) {
 		const dt = dateNDaysFromNow(i);
-		data[dt] = getDateGames(dt);
+		days[dt] = getDateGames(dt);
 	}
-	return data
+	const broadcasts = fetch(`${base}/broadcasts.json`)
+		.then(res => res.json())
+		.catch(() => ({ games: [] }));
+	return { days, broadcasts };
 };
