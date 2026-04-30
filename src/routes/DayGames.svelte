@@ -50,6 +50,7 @@
 
                     // Additional broadcasts from livesoccertv.com
                     const wstGame = findLstvGame(event, wstGames);
+                    event.lstv_matched = !!wstGame;
                     if (wstGame) {
                         for (const bcst of wstGame.broadcasts) {
                             if (!$allBcsts.includes(bcst)) {
@@ -151,6 +152,14 @@
                                     <span class="broadcast">
                                         {event.bcstStr}
                                     </span>
+                                    {#if event.lstv_matched}
+                                        <a
+                                            class="lstv-dot"
+                                            href={`https://www.livesoccertv.com/schedules/${dt}/`}
+                                            target="_blank"
+                                            title="Matched with livesoccertv.com"
+                                        >●</a>
+                                    {/if}
                                 </div>
                             {/if}
                         {/each}
@@ -205,6 +214,17 @@
     }
     .broadcast {
         white-space: nowrap;
+    }
+    .lstv-dot {
+        font-size: 0.55rem;
+        opacity: 0.4;
+        margin-left: 5px;
+        text-decoration: none;
+        vertical-align: middle;
+        flex-shrink: 0;
+    }
+    .lstv-dot:hover {
+        opacity: 0.9;
     }
     .noShow {
         font-style: italic;
