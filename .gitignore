@@ -33,3 +33,5 @@ todo.txt
 .idx
 firebase-debug.log
 poc
+
+__pycache__

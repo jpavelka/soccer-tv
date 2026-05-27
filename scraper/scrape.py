@@ -47,7 +47,7 @@ def scrape_day(date_str: str) -> list:
             continue
         timestamp_ms = int(ts_span["dv"])
 
-        channels_td = row.find("td", id="channels")
+        channels_td = row.find(id="channels")
         if not channels_td:
             continue
         seen = set()
