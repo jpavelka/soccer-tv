@@ -2,7 +2,7 @@
     import { goodBcsts, allBcsts, windowInfo, accordionShow } from "$lib/stores";
     import Accordion from "./Accordion.svelte";
 
-    let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts } = $props();
+    let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, groupByTime } = $props();
 
     const nameMatch = (a: string, b: string) => {
         const al = a.toLowerCase(), bl = b.toLowerCase();
@@ -27,6 +27,14 @@
 
     let leagueData = $state<any[]>([]);
     let numToShow = $state(0);
+    let flatEvents = $derived(
+        leagueData
+            .flatMap((league: any) => league.events
+                .filter((e: any) => e.show)
+                .map((e: any) => ({ event: e, league }))
+            )
+            .sort((a: any, b: any) => new Date(a.event.date).getTime() - new Date(b.event.date).getTime())
+    );
     $effect(() => {
         Promise.all([dayData, broadcasts]).then(([d, bcstData]) => {
             const wstGames = bcstData?.games ?? [];
@@ -113,59 +121,103 @@
         Loading games...
     {:then}
         {#if numToShow > 0}
-            {#each leagueData as league}
-                {#if league.numToShow > 0}
-                    <Accordion
-                        headerText={league.name}
-                        headerStyle='font-weight:bold;font-size:1.6rem;cursor:pointer;'
-                        bind:showContent={$accordionShow[dt + '-' + league.name]}
-                    >
-                        <span slot=inlineAfter>
-                            <a class=linkAfter target=_blank href={`https://www.google.com/search?q=${league.name}`}>🔎</a>
-                        </span>
-                        {#each league.events as event}
-                            {#if event.show}
-                                <div class=gameLine>
-                                    <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
-                                        {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
-                                    </span>
-                                    <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
-                                    <a
-                                        target=_blank
-                                        href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name} ${league.name}`}
-                                        class=betweenTeams>{
-                                            event.status === 'pre' ? (
-                                                'vs'
-                                            ) : `${event.competitors[0].score}-${event.competitors[1].score}`
-                                        }
-                                    </a>
-                                    <img class=teamLogo src={event.competitors[1].logo}/>
-                                    <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
-                                        {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
-                                    </span>
-                                    <span class=when>{
-                                        event.status === 'pre' ? (
-                                            new Date(event.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true})
-                                                .replace(' AM', 'am').replace(' PM', 'pm')
-                                        ) : event.summary
-                                    }</span>
-                                    <span class="broadcast">
-                                        {event.bcstStr}
-                                    </span>
-                                    {#if event.lstv_matched}
-                                        <a
-                                            class="lstv-dot"
-                                            href={`https://www.livesoccertv.com/schedules/${dt}/`}
-                                            target="_blank"
-                                            title="Matched with livesoccertv.com"
-                                        >●</a>
-                                    {/if}
-                                </div>
+            {#if groupByTime}
+                {#each flatEvents as { event, league }}
+                    <div class="timeGameGroup">
+                        <div class="leagueName" class:narrowLeague={narrowScreen}><span>{league.name}</span></div>
+                        <div class=gameLine>
+                            <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
+                                {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
+                            </span>
+                            <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
+                            <a
+                                target=_blank
+                                href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name} ${league.name}`}
+                                class=betweenTeams>{
+                                    event.status === 'pre' ? (
+                                        'vs'
+                                    ) : `${event.competitors[0].score}-${event.competitors[1].score}`
+                                }
+                            </a>
+                            <img class=teamLogo src={event.competitors[1].logo}/>
+                            <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
+                                {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
+                            </span>
+                            <span class=when>{
+                                event.status === 'pre' ? (
+                                    new Date(event.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true})
+                                        .replace(' AM', 'am').replace(' PM', 'pm')
+                                ) : event.summary
+                            }</span>
+                            <span class="broadcast">
+                                {event.bcstStr}
+                            </span>
+                            {#if event.lstv_matched}
+                                <a
+                                    class="lstv-dot"
+                                    href={`https://www.livesoccertv.com/schedules/${dt}/`}
+                                    target="_blank"
+                                    title="Matched with livesoccertv.com"
+                                >●</a>
                             {/if}
-                        {/each}
-                    </Accordion>
-                {/if}
-            {/each}
+                        </div>
+                    </div>
+                {/each}
+            {:else}
+                {#each leagueData as league}
+                    {#if league.numToShow > 0}
+                        <Accordion
+                            headerText={league.name}
+                            headerStyle='font-weight:bold;font-size:1.6rem;cursor:pointer;'
+                            bind:showContent={$accordionShow[dt + '-' + league.name]}
+                        >
+                            <span slot=inlineAfter>
+                                <a class=linkAfter target=_blank href={`https://www.google.com/search?q=${league.name}`}>🔎</a>
+                            </span>
+                            {#each league.events as event}
+                                {#if event.show}
+                                    <div class=gameLine>
+                                        <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
+                                            {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
+                                        </span>
+                                        <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
+                                        <a
+                                            target=_blank
+                                            href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name} ${league.name}`}
+                                            class=betweenTeams>{
+                                                event.status === 'pre' ? (
+                                                    'vs'
+                                                ) : `${event.competitors[0].score}-${event.competitors[1].score}`
+                                            }
+                                        </a>
+                                        <img class=teamLogo src={event.competitors[1].logo}/>
+                                        <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
+                                            {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
+                                        </span>
+                                        <span class=when>{
+                                            event.status === 'pre' ? (
+                                                new Date(event.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true})
+                                                    .replace(' AM', 'am').replace(' PM', 'pm')
+                                            ) : event.summary
+                                        }</span>
+                                        <span class="broadcast">
+                                            {event.bcstStr}
+                                        </span>
+                                        {#if event.lstv_matched}
+                                            <a
+                                                class="lstv-dot"
+                                                href={`https://www.livesoccertv.com/schedules/${dt}/`}
+                                                target="_blank"
+                                                title="Matched with livesoccertv.com"
+                                            >●</a>
+                                        {/if}
+                                    </div>
+                                {/if}
+                            {/each}
+                        </Accordion>
+                    {/if}
+                {/each}
+            {/if}
         {:else}
             <div class=noShow>No games for this date</div>
         {/if}
@@ -214,6 +266,29 @@
     }
     .broadcast {
         white-space: nowrap;
+    }
+    .timeGameGroup {
+        margin-top: 3px;
+    }
+    .timeGameGroup:first-child {
+        margin-top: 0;
+    }
+    .leagueName {
+        display: flex;
+    }
+    .leagueName::before {
+        content: '';
+        width: 165px;
+        flex-shrink: 0;
+    }
+    .narrowLeague::before {
+        width: 120px;
+    }
+    .leagueName span {
+        font-size: 0.75rem;
+        opacity: 0.6;
+        white-space: nowrap;
+        transform: translateX(-50%);
     }
     .lstv-dot {
         font-size: 0.55rem;

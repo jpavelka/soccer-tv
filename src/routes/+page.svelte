@@ -38,6 +38,7 @@
         loaded = true;
     })
     let showBcstModal = false;
+    let groupByTime = false;
 </script>
 
 {#if !loaded}
@@ -45,6 +46,13 @@
 {:else}
     <div class=titleText>Soccer Games</div>
     <div>
+        <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
+            <span style=margin-right:5px;>Sort by</span>
+            <select class="sort-select" bind:value={groupByTime}>
+                <option value={false}>League</option>
+                <option value={true}>Time</option>
+            </select>
+        </span>
         <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
             <span style=margin-right:5px;>Show completed</span>
             <ToggleButton onClickFunc={showCompletedFunc} initValue={false}/>
@@ -79,6 +87,7 @@
                     goodStatuses={$goodStatuses}
                     filterBroadcasts={$filterBcsts}
                     broadcasts={data.broadcasts}
+                    {groupByTime}
                 />
             {/key}
         {/each}
@@ -95,6 +104,23 @@
     }
     :global(button) {
         color: black;
+    }
+    .sort-select {
+        appearance: none;
+        padding: 6px 28px 6px 12px;
+        border-radius: 8px;
+        border: 1px solid light-dark(#bbb, #555);
+        background-color: light-dark(#fff, #333);
+        color: light-dark(#333b3c, #efefec);
+        font-size: 0.9rem;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+    }
+    .sort-select:focus {
+        outline: none;
+        border-color: light-dark(#888, #888);
     }
     .titleText {
         font-size: 2.1rem;
