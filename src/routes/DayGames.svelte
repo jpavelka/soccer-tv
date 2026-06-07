@@ -122,9 +122,11 @@
     {:then}
         {#if numToShow > 0}
             {#if groupByTime}
-                {#each flatEvents as { event, league }}
+                {#each flatEvents as { event, league }, i}
                     <div class="timeGameGroup">
-                        <div class="leagueName" class:narrowLeague={narrowScreen}><span>{league.name}</span></div>
+                        {#if i === 0 || flatEvents[i - 1].league.name !== league.name}
+                            <div class="leagueName" class:narrowLeague={narrowScreen}><span>{league.name}</span></div>
+                        {/if}
                         <div class=gameLine>
                             <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
                                 {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
