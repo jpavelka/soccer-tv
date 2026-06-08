@@ -1,6 +1,7 @@
 <script lang="ts">
     import { goodBcsts, allBcsts, windowInfo, accordionShow } from "$lib/stores";
     import Accordion from "./Accordion.svelte";
+    import Modal from "./Modal.svelte";
 
     let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, groupByTime } = $props();
 
@@ -101,7 +102,72 @@
     let mode = !!window ? (
         Math.max(...window.getComputedStyle( document.body ,null).getPropertyValue('background-color').match(/\d+/g).map(Number)) > 150 ? 'light' : 'dark'
     ) : 'light'
+
+    let selectedEvent = $state<any>(null);
+    let selectedLeague = $state<any>(null);
+    let showInfoModal = $state(false);
+    let venueAddress = $state<string | null>(null);
+    let venueFetching = $state(false);
+
+    async function showInfo(event: any, league: any) {
+        selectedEvent = event;
+        selectedLeague = league;
+        venueAddress = null;
+        showInfoModal = true;
+        if (event.location) {
+            venueFetching = true;
+            try {
+                const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league.slug}/summary?event=${event.id}`);
+                const d = await res.json();
+                const addr = d.gameInfo?.venue?.address;
+                if (addr) {
+                    venueAddress = [addr.city, addr.country].filter(Boolean).join(', ');
+                }
+            } catch { /* venue stays null */ }
+            finally { venueFetching = false; }
+        }
+    }
+    function fmtOdds(n: number | undefined): string {
+        if (n == null) return '–';
+        return n > 0 ? `+${n}` : `${n}`;
+    }
 </script>
+
+{#snippet gameEntry(event: any, league: any)}
+    <div class=gameLine>
+        <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
+            {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
+        </span>
+        <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
+        <span class=betweenTeams>{
+            event.status === 'pre' ? (
+                'vs'
+            ) : `${event.competitors[0].score}-${event.competitors[1].score}`
+        }</span>
+        <img class=teamLogo src={event.competitors[1].logo}/>
+        <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
+            {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
+        </span>
+        <button class="info-btn" onclick={() => showInfo(event, league)} title="More info">ⓘ</button>
+        <span class=when>{
+            event.status === 'pre' ? (
+                new Date(event.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true})
+                    .replace(' AM', 'am').replace(' PM', 'pm')
+            ) : event.summary
+        }</span>
+        <span class="broadcast">
+            {event.bcstStr}
+        </span>
+        {#if event.lstv_matched}
+            <a
+                class="lstv-dot"
+                href={`https://www.livesoccertv.com/schedules/${dt}/`}
+                target="_blank"
+                title="Matched with livesoccertv.com"
+            >●</a>
+        {/if}
+    </div>
+{/snippet}
 
 <hr>
 <Accordion
@@ -127,42 +193,7 @@
                         {#if i === 0 || flatEvents[i - 1].league.name !== league.name}
                             <div class="leagueName" class:narrowLeague={narrowScreen}><span>{league.name}</span></div>
                         {/if}
-                        <div class=gameLine>
-                            <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
-                                {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
-                            </span>
-                            <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
-                            <a
-                                target=_blank
-                                href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name} ${league.name}`}
-                                class=betweenTeams>{
-                                    event.status === 'pre' ? (
-                                        'vs'
-                                    ) : `${event.competitors[0].score}-${event.competitors[1].score}`
-                                }
-                            </a>
-                            <img class=teamLogo src={event.competitors[1].logo}/>
-                            <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
-                                {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
-                            </span>
-                            <span class=when>{
-                                event.status === 'pre' ? (
-                                    new Date(event.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true})
-                                        .replace(' AM', 'am').replace(' PM', 'pm')
-                                ) : event.summary
-                            }</span>
-                            <span class="broadcast">
-                                {event.bcstStr}
-                            </span>
-                            {#if event.lstv_matched}
-                                <a
-                                    class="lstv-dot"
-                                    href={`https://www.livesoccertv.com/schedules/${dt}/`}
-                                    target="_blank"
-                                    title="Matched with livesoccertv.com"
-                                >●</a>
-                            {/if}
-                        </div>
+                        {@render gameEntry(event, league)}
                     </div>
                 {/each}
             {:else}
@@ -178,42 +209,7 @@
                             </span>
                             {#each league.events as event}
                                 {#if event.show}
-                                    <div class=gameLine>
-                                        <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
-                                            {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
-                                        </span>
-                                        <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
-                                        <a
-                                            target=_blank
-                                            href={`https://www.google.com/search?q=${event.competitors[0].name} vs ${event.competitors[1].name} ${league.name}`}
-                                            class=betweenTeams>{
-                                                event.status === 'pre' ? (
-                                                    'vs'
-                                                ) : `${event.competitors[0].score}-${event.competitors[1].score}`
-                                            }
-                                        </a>
-                                        <img class=teamLogo src={event.competitors[1].logo}/>
-                                        <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
-                                            {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
-                                        </span>
-                                        <span class=when>{
-                                            event.status === 'pre' ? (
-                                                new Date(event.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true})
-                                                    .replace(' AM', 'am').replace(' PM', 'pm')
-                                            ) : event.summary
-                                        }</span>
-                                        <span class="broadcast">
-                                            {event.bcstStr}
-                                        </span>
-                                        {#if event.lstv_matched}
-                                            <a
-                                                class="lstv-dot"
-                                                href={`https://www.livesoccertv.com/schedules/${dt}/`}
-                                                target="_blank"
-                                                title="Matched with livesoccertv.com"
-                                            >●</a>
-                                        {/if}
-                                    </div>
+                                    {@render gameEntry(event, league)}
                                 {/if}
                             {/each}
                         </Accordion>
@@ -226,6 +222,92 @@
     {/await}
     <div class=spacing></div>
 </Accordion>
+
+{#if showInfoModal && selectedEvent}
+<Modal bind:showModal={showInfoModal}>
+    <div slot="header">
+        <div class="modal-meta">{selectedLeague.name} <a class="modal-league-link" href={`https://www.espn.com/soccer/league/_/name/${selectedLeague.slug}`} target="_blank">↗</a></div>
+        {#if selectedEvent.status === 'in'}
+            <div class="modal-live">● {selectedEvent.summary}</div>
+        {/if}
+        <div class="modal-teams">
+            <div class="modal-team">
+                <img class="modal-logo" src={selectedEvent.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]} alt=""/>
+                <strong>{selectedEvent.competitors[0].name}</strong>
+                {#if selectedEvent.status !== 'pre'}
+                    <span class="modal-score">{selectedEvent.competitors[0].score}</span>
+                {/if}
+            </div>
+            <div class="modal-team">
+                <img class="modal-logo" src={selectedEvent.competitors[1].logo} alt=""/>
+                <strong>{selectedEvent.competitors[1].name}</strong>
+                {#if selectedEvent.status !== 'pre'}
+                    <span class="modal-score">{selectedEvent.competitors[1].score}</span>
+                {/if}
+            </div>
+        </div>
+        <div class="modal-meta modal-datetime">{
+            new Date(selectedEvent.date).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric'})
+        } · {
+            new Date(selectedEvent.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true}).replace(' AM', 'am').replace(' PM', 'pm')
+        }{selectedEvent.status === 'post' ? ' · ' + selectedEvent.summary : ''}</div>
+    </div>
+    <div class="modal-body">
+        {#if selectedEvent.location}
+            <div class="modal-row">
+                <span class="modal-label">Venue</span>
+                <span>
+                    {selectedEvent.location}{selectedEvent.neutralSite ? ' · neutral' : ''}
+                    {#if venueFetching}<span class="venue-loading">…</span>
+                    {:else if venueAddress}<span class="venue-address"> · {venueAddress}</span>
+                    {/if}
+                </span>
+            </div>
+        {/if}
+        {#if selectedEvent.bcstStr}
+            <div class="modal-row">
+                <span class="modal-label">TV</span>
+                <span>{selectedEvent.bcstStr}</span>
+            </div>
+        {/if}
+        {#if selectedEvent.odds?.homeTeamOdds}
+            <div class="modal-row">
+                <span class="modal-label">Odds</span>
+                <span>
+                    {selectedEvent.odds.homeTeamOdds.team?.abbreviation} {fmtOdds(selectedEvent.odds.homeTeamOdds.moneyLine)}
+                    · Draw {fmtOdds(selectedEvent.odds.drawOdds?.moneyLine)}
+                    · {selectedEvent.odds.awayTeamOdds?.team?.abbreviation} {fmtOdds(selectedEvent.odds.awayTeamOdds?.moneyLine)}
+                    {#if selectedEvent.odds.overUnder != null} · O/U {selectedEvent.odds.overUnder}{/if}
+                </span>
+            </div>
+        {/if}
+        {#if selectedEvent.competitors[0].form || selectedEvent.competitors[1].form}
+            <div class="modal-row">
+                <span class="modal-label">Form</span>
+                <span class="modal-form">
+                    <span class="form-team">
+                        {selectedEvent.competitors[0].abbreviation}
+                        {#each (selectedEvent.competitors[0].form ?? '').split('') as ch}<span class="fc-{ch}">{ch}</span>{/each}
+                    </span>
+                    <span class="form-team">
+                        {selectedEvent.competitors[1].abbreviation}
+                        {#each (selectedEvent.competitors[1].form ?? '').split('') as ch}<span class="fc-{ch}">{ch}</span>{/each}
+                    </span>
+                </span>
+            </div>
+        {/if}
+    </div>
+    <div slot="footer" class="modal-footer">
+        <div class="modal-footer-links">
+            {#if selectedEvent.link}
+                <a href={selectedEvent.link} target="_blank">ESPN ↗</a>
+            {/if}
+            <a href={`https://www.google.com/search?q=${selectedEvent.competitors[0].name} vs ${selectedEvent.competitors[1].name} ${selectedLeague.name}`} target="_blank">Google ↗</a>
+        </div>
+        <button onclick={() => showInfoModal = false}>Close</button>
+    </div>
+</Modal>
+{/if}
 
 <style>
     .titleText {
@@ -303,6 +385,132 @@
     .lstv-dot:hover {
         opacity: 0.9;
     }
+    .info-btn {
+        background: none;
+        border: 1.5px solid currentColor;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        opacity: 0.45;
+        padding: 1px 0;
+        width: 28px;
+        text-align: center;
+        flex-shrink: 0;
+        color: inherit;
+        line-height: 1.4;
+        margin: 0 5px;
+    }
+    .info-btn:hover {
+        opacity: 0.85;
+        background-color: rgba(128, 128, 128, 0.12);
+    }
+    .modal-meta {
+        font-size: 1rem;
+        opacity: 0.6;
+    }
+    .modal-league-link {
+        color: light-dark(#0066cc, #4da6ff);
+        text-decoration: none;
+        margin-left: 3px;
+    }
+    .modal-league-link:hover {
+        text-decoration: underline;
+    }
+    .modal-datetime {
+        margin-top: 8px;
+    }
+    .modal-live {
+        margin-top: 4px;
+        margin-bottom: 4px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #c33;
+    }
+    .modal-teams {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        font-size: 1.2rem;
+        margin-top: 6px;
+    }
+    .modal-team {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .modal-logo {
+        height: 48px;
+        width: 48px;
+        flex-shrink: 0;
+    }
+    .modal-team strong {
+        width: 8em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .modal-score {
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+    .venue-loading {
+        opacity: 0.4;
+    }
+    .venue-address {
+        opacity: 0.7;
+    }
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px 0 8px;
+        font-size: 1.05rem;
+    }
+    .modal-row {
+        display: flex;
+        gap: 14px;
+        align-items: baseline;
+    }
+    .modal-label {
+        width: 58px;
+        flex-shrink: 0;
+        font-size: 0.82rem;
+        opacity: 0.55;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .modal-form {
+        display: flex;
+        gap: 16px;
+    }
+    .form-team {
+        display: flex;
+        gap: 3px;
+        align-items: baseline;
+    }
+    .form-team > :first-child {
+        margin-right: 3px;
+        opacity: 0.7;
+        font-size: 0.85em;
+    }
+    .modal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .modal-footer-links {
+        display: flex;
+        gap: 12px;
+    }
+    .modal-footer a {
+        text-decoration: none;
+    }
+    .modal-footer a:hover {
+        text-decoration: underline;
+    }
+    .fc-W { color: #4a4; }
+    .fc-L { color: #c44; }
+    .fc-D { opacity: 0.55; }
     .noShow {
         font-style: italic;
     }

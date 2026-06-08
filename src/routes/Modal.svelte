@@ -1,24 +1,42 @@
 <script>
-    import { windowInfo } from "$lib/stores";
     export let showModal = false;
-
-    const maxWidth = 700;
     const padding = 20;
-    let width;
-    let left;
-    $: {
-        if ($windowInfo.screenWidth > $windowInfo.gameContentWidth) {
-            width = Math.min(maxWidth, 0.9 * ($windowInfo.screenWidth - padding));
-        } else {
-            width = 0.9 * ($windowInfo.screenWidth - padding);
-        }
-        left = ($windowInfo.screenWidth - width) / 2 - padding;
+
+    // Move the overlay to <body> so `position: fixed` is always resolved
+    // against the viewport, even if an ancestor establishes a containing
+    // block (a transform/filter/etc.). Without this, on mobile the modal
+    // gets positioned relative to the page content instead of the screen.
+    //
+    // Also locks background scrolling while the modal is open. iOS Safari
+    // ignores `overflow: hidden` on <body>, so we pin the body with
+    // `position: fixed` and restore the scroll position when the modal closes.
+    /** @param {HTMLElement} node */
+    function portal(node) {
+        document.body.appendChild(node);
+
+        const scrollY = window.scrollY;
+        const { overflow, position, top, width } = document.body.style;
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
+
+        return {
+            destroy() {
+                document.body.style.overflow = overflow;
+                document.body.style.position = position;
+                document.body.style.top = top;
+                document.body.style.width = width;
+                window.scrollTo(0, scrollY);
+                if (node.parentNode) node.parentNode.removeChild(node);
+            }
+        };
     }
 </script>
 
 {#if showModal}
-    <div class="modal-overlay" on:click|self={() => (showModal = false)}>
-        <div class="modal-content" style={`padding:${padding}px;width:${width}px;left:${left}px`}>
+    <div class="modal-overlay" use:portal on:click|self={() => (showModal = false)}>
+        <div class="modal-content" style={`padding:${padding}px`}>
             <slot name="header"/>
             <div class="body">
                 <slot>
@@ -37,22 +55,23 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: 100vh;
         z-index: 1000;
         background-color: rgba(0, 0, 0, 0.5);
-        /* display: flex;
+        display: flex;
+        align-items: flex-start;
         justify-content: center;
-        align-items: center; */
+        padding-top: 8vh;
     }
 
     .modal-content {
-        position: absolute;
-        top: 150px;
+        box-sizing: border-box;
+        width: min(700px, 90vw);
+        max-width: 90vw;
+        max-height: 90vh;
         background-color: light-dark(white, #444444);
         border-radius: 8px;
-        max-width: 700px;
-        max-height: calc(100vh - 200px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
         display: flex;
         flex-direction: column;
