@@ -131,6 +131,28 @@
         if (n == null) return '–';
         return n > 0 ? `+${n}` : `${n}`;
     }
+    // Show the spread from the favored team's perspective (the favorite always
+    // carries the negative line). ESPN's `spread` is relative to the home team.
+    function favoriteSpread(odds: any): { abbr: string | undefined; line: string } | null {
+        if (odds?.spread == null) return null;
+        const homeFav = odds.spread <= 0;
+        const team = homeFav ? odds.homeTeamOdds?.team : odds.awayTeamOdds?.team;
+        return { abbr: team?.abbreviation, line: fmtOdds(-Math.abs(odds.spread)) };
+    }
+    function eventStage(event: any, league: any): string | null {
+        const name = event.group?.name;
+        if (!name) return null;
+        // Many leagues just echo the competition name into group.name; only
+        // show it when it's something more specific (e.g. "Group A", "Round of 16").
+        const echoes = [event.name, event.shortName, league?.name].filter(Boolean);
+        return echoes.includes(name) ? null : name;
+    }
+    function eventNote(event: any): string | null {
+        const notes = event.notes ?? [];
+        const note = notes.find((n: any) => n.type === 'event-long')
+            ?? notes.find((n: any) => n.type === 'event');
+        return note?.text ?? note?.headline ?? null;
+    }
 </script>
 
 {#snippet gameEntry(event: any, league: any)}
@@ -227,6 +249,9 @@
 <Modal bind:showModal={showInfoModal}>
     <div slot="header">
         <div class="modal-meta">{selectedLeague.name} <a class="modal-league-link" href={`https://www.espn.com/soccer/league/_/name/${selectedLeague.slug}`} target="_blank">↗</a></div>
+        {#if eventStage(selectedEvent, selectedLeague) || eventNote(selectedEvent)}
+            <div class="modal-stage">{[eventStage(selectedEvent, selectedLeague), eventNote(selectedEvent)].filter(Boolean).join(' · ')}</div>
+        {/if}
         {#if selectedEvent.status === 'in'}
             <div class="modal-live">● {selectedEvent.summary}</div>
         {/if}
@@ -270,14 +295,16 @@
                 <span>{selectedEvent.bcstStr}</span>
             </div>
         {/if}
-        {#if selectedEvent.odds?.homeTeamOdds}
+        {#if selectedEvent.odds?.spread != null || selectedEvent.odds?.overUnder != null}
             <div class="modal-row">
                 <span class="modal-label">Odds</span>
                 <span>
-                    {selectedEvent.odds.homeTeamOdds.team?.abbreviation} {fmtOdds(selectedEvent.odds.homeTeamOdds.moneyLine)}
-                    · Draw {fmtOdds(selectedEvent.odds.drawOdds?.moneyLine)}
-                    · {selectedEvent.odds.awayTeamOdds?.team?.abbreviation} {fmtOdds(selectedEvent.odds.awayTeamOdds?.moneyLine)}
-                    {#if selectedEvent.odds.overUnder != null} · O/U {selectedEvent.odds.overUnder}{/if}
+                    {#if selectedEvent.odds.spread != null}
+                        {@const fav = favoriteSpread(selectedEvent.odds)}
+                        {fav?.abbr} {fav?.line}
+                    {/if}
+                    {#if selectedEvent.odds.spread != null && selectedEvent.odds.overUnder != null} · {/if}
+                    {#if selectedEvent.odds.overUnder != null}O/U {selectedEvent.odds.overUnder}{/if}
                 </span>
             </div>
         {/if}
@@ -286,12 +313,12 @@
                 <span class="modal-label">Form</span>
                 <span class="modal-form">
                     <span class="form-team">
-                        {selectedEvent.competitors[0].abbreviation}
-                        {#each (selectedEvent.competitors[0].form ?? '').split('') as ch}<span class="fc-{ch}">{ch}</span>{/each}
+                        <span>{selectedEvent.competitors[0].abbreviation}</span>
+                        {#each (selectedEvent.competitors[0].form ?? '').split('') as ch, i}<span class="fc-{ch}" style="font-size: {Math.max(0.62, 1 - i * 0.1)}em">{ch}</span>{/each}
                     </span>
                     <span class="form-team">
-                        {selectedEvent.competitors[1].abbreviation}
-                        {#each (selectedEvent.competitors[1].form ?? '').split('') as ch}<span class="fc-{ch}">{ch}</span>{/each}
+                        <span>{selectedEvent.competitors[1].abbreviation}</span>
+                        {#each (selectedEvent.competitors[1].form ?? '').split('') as ch, i}<span class="fc-{ch}" style="font-size: {Math.max(0.62, 1 - i * 0.1)}em">{ch}</span>{/each}
                     </span>
                 </span>
             </div>
@@ -407,6 +434,11 @@
     .modal-meta {
         font-size: 1rem;
         opacity: 0.6;
+    }
+    .modal-stage {
+        font-size: 0.9rem;
+        opacity: 0.75;
+        margin-top: 2px;
     }
     .modal-league-link {
         color: light-dark(#0066cc, #4da6ff);
