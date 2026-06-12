@@ -20,5 +20,14 @@ export const load: PageLoad = async ({ fetch }) => {
 	const broadcasts = fetch(`${base}/broadcasts.json?d=${new Date().toISOString()}`)
 		.then(res => res.json())
 		.catch(() => ({ games: [] }));
-	return { days, broadcasts };
+	// ESPN's master league prominence order (slug -> rank), baked by the scraper.
+	const leagueOrder = fetch(`${base}/league_order.json?d=${new Date().toISOString()}`)
+		.then(res => res.json())
+		.then((d) => {
+			const rank: Record<string, number> = {};
+			(d.leagues ?? []).forEach((slug: string, i: number) => { rank[slug] = i; });
+			return rank;
+		})
+		.catch(() => ({}));
+	return { days, broadcasts, leagueOrder };
 };

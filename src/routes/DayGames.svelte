@@ -3,7 +3,7 @@
     import Accordion from "./Accordion.svelte";
     import Modal from "./Modal.svelte";
 
-    let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, groupByTime } = $props();
+    let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, sortMode } = $props();
 
     const nameMatch = (a: string, b: string) => {
         const al = a.toLowerCase(), bl = b.toLowerCase();
@@ -36,12 +36,20 @@
             )
             .sort((a: any, b: any) => new Date(a.event.date).getTime() - new Date(b.event.date).getTime())
     );
+    let flatEventsByInterest = $derived(
+        leagueData
+            .flatMap((league: any) => league.events
+                .filter((e: any) => e.show)
+                .map((e: any) => ({ event: e, league }))
+            )
+            .sort((a: any, b: any) => (b.event.interest ?? 0) - (a.event.interest ?? 0))
+    );
     $effect(() => {
-        Promise.all([dayData, broadcasts]).then(([d, bcstData]) => {
+        Promise.all([dayData, broadcasts, leagueOrder]).then(([d, bcstData, leagueRank]) => {
             const wstGames = bcstData?.games ?? [];
             leagueData = d.sports[0].leagues;
             numToShow = 0;
-            for (const league of leagueData) {
+            for (const [leagueIndex, league] of leagueData.entries()) {
                 league.numToShow = 0;
                 for (const event of league.events) {
                     event.bcstsToShow = [];
@@ -60,6 +68,8 @@
                     // Additional broadcasts from livesoccertv.com
                     const wstGame = findLstvGame(event, wstGames);
                     event.lstv_matched = !!wstGame;
+                    event.topmatch = wstGame?.topmatch ?? false;
+                    event.interest = interestScore(event, league, leagueIndex, leagueRank);
                     if (wstGame) {
                         for (const bcst of wstGame.broadcasts) {
                             if (!$allBcsts.includes(bcst)) {
@@ -247,6 +257,69 @@
             ?? notes.find((n: any) => n.type === 'event');
         return note?.text ?? note?.headline ?? null;
     }
+
+    // How balanced the three-way market is: ~1 for an even toss-up, ~0 for a
+    // heavy favorite. Returns 0 when no odds are available.
+    function competitiveness(odds: any): number {
+        const wp = winProbabilities(odds);
+        if (!wp) return 0;
+        const pcts = [wp.home.pct, wp.draw.pct, wp.away.pct];
+        return Math.max(0, 1 - (Math.max(...pcts) - Math.min(...pcts)) / 100);
+    }
+    // Extra interest from the competition stage (knockout rounds matter more).
+    // Order matters: "semifinal"/"quarterfinal" contain "final", and "round of
+    // 16/32" contains "round", so check the specific cases first.
+    function stageBonus(event: any, league: any): number {
+        const stage = (eventStage(event, league) ?? '').toLowerCase();
+        if (!stage) return 0;
+        if (stage.includes('semi')) return 12;
+        if (stage.includes('quarter')) return 8;
+        if (stage.includes('round of')) return 8;
+        if (stage.includes('final')) return 15;
+        if (stage.includes('playoff') || stage.includes('knockout')) return 5;
+        return 0;
+    }
+    // Bonus for a clash of two highly-ranked teams, using ESPN's per-team table
+    // position (recordStats.rank — table rank for league play, seed for groups).
+    // Keys off the *worse* of the two ranks so both sides must be near the top:
+    // full bonus when both lead the table, decaying to 0 by TOPTABLE_SPAN.
+    const TOPTABLE_MAX = 10;
+    const TOPTABLE_SPAN = 6;
+    function topTableBonus(event: any): number {
+        const ranks = (event.competitors ?? []).map((c: any) => c?.recordStats?.rank?.value);
+        if (ranks.length < 2 || ranks.some((r: any) => !r || r <= 0)) return 0;
+        const worst = Math.max(ranks[0], ranks[1]);
+        return TOPTABLE_MAX * Math.max(0, 1 - (worst - 1) / TOPTABLE_SPAN);
+    }
+    // League base comes from a league's rank in ESPN's master prominence list
+    // (slug -> rank, baked by the scraper into league_order.json). A fixed step
+    // keeps a league worth the same day to day. The master list has ~244 leagues,
+    // so with step 1.0 only roughly the top 50 get a positive base; everything
+    // below floors to 0 and is differentiated by topmatch/competitiveness/etc.
+    const LEAGUE_TOP = 50;
+    const LEAGUE_STEP = 1.0;
+    // Rank for leagues not found in the master list (e.g. map unavailable for one
+    // slug): treat as long-tail so they floor to 0 rather than inheriting a small
+    // per-day index.
+    const LEAGUE_MISSING_RANK = 100;
+    // Per-game interest score (higher = more compelling). Combines a league base
+    // (from ESPN's master prominence list), the livesoccertv topmatch flag, market
+    // competitiveness, stage stakes, and ESPN coverage prominence. Weights are
+    // deliberately easy to tune.
+    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>): number {
+        const hasMap = leagueRank && Object.keys(leagueRank).length > 0;
+        // Fall back to the per-day index only if the whole map failed to load.
+        const rank = hasMap ? (leagueRank[league.slug] ?? LEAGUE_MISSING_RANK) : leagueIndex;
+        const leagueBase = Math.max(0, LEAGUE_TOP - rank * LEAGUE_STEP);
+        const topmatch = event.topmatch ? 25 : 0;
+        const competitive = competitiveness(event.odds) * 15;
+        const stage = stageBonus(event, league);
+        const topTable = topTableBonus(event);
+        let prominence = 0;
+        if (event.onWatch) prominence += 5;
+        if ((event.broadcasts ?? []).some((b: any) => b.isNational)) prominence += 3;
+        return leagueBase + topmatch + competitive + stage + topTable + prominence;
+    }
 </script>
 
 {#snippet gameEntry(event: any, league: any)}
@@ -274,6 +347,8 @@
         <span class="broadcast">
             {event.bcstStr}
         </span>
+        <span class="interest-score" title="interest score">{Math.round(event.interest ?? 0)}</span>
+        {#if event.topmatch}<span class="topmatch-flag" title="livesoccertv topmatch">⭐</span>{/if}
         {#if event.lstv_matched}
             <a
                 class="lstv-dot"
@@ -323,10 +398,11 @@
         Loading games...
     {:then}
         {#if numToShow > 0}
-            {#if groupByTime}
-                {#each flatEvents as { event, league }, i}
+            {#if sortMode === 'time' || sortMode === 'interest'}
+                {@const list = sortMode === 'interest' ? flatEventsByInterest : flatEvents}
+                {#each list as { event, league }, i}
                     <div class="timeGameGroup">
-                        {#if i === 0 || flatEvents[i - 1].league.name !== league.name}
+                        {#if i === 0 || list[i - 1].league.name !== league.name}
                             <div class="leagueName" class:narrowLeague={narrowScreen}><span>{league.name}</span></div>
                         {/if}
                         {@render gameEntry(event, league)}
@@ -489,6 +565,21 @@
     }
     .broadcast {
         white-space: nowrap;
+    }
+    .interest-score {
+        margin-left: 10px;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: rgba(128, 128, 128, 0.2);
+        opacity: 0.8;
+        flex-shrink: 0;
+    }
+    .topmatch-flag {
+        margin-left: 6px;
+        font-size: 0.8rem;
+        flex-shrink: 0;
     }
     .timeGameGroup {
         margin-top: 3px;

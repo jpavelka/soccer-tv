@@ -1,5 +1,5 @@
 <script>
-    import { goodStatuses, filterBcsts, allBcsts, windowInfo } from "$lib/stores";
+    import { goodStatuses, filterBcsts, allBcsts, windowInfo, sortMode } from "$lib/stores";
     import { onMount } from "svelte";
     import BcstSelect from "./BcstSelect.svelte";
     import DayGames from "./DayGames.svelte";
@@ -38,7 +38,6 @@
         loaded = true;
     })
     let showBcstModal = false;
-    let groupByTime = false;
 </script>
 
 {#if !loaded}
@@ -48,18 +47,19 @@
     <div>
         <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
             <span style=margin-right:5px;>Sort by</span>
-            <select class="sort-select" bind:value={groupByTime}>
-                <option value={false}>League</option>
-                <option value={true}>Time</option>
+            <select class="sort-select" bind:value={$sortMode}>
+                <option value="league">League</option>
+                <option value="interest">Interest</option>
+                <option value="time">Time</option>
             </select>
         </span>
         <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
             <span style=margin-right:5px;>Show completed</span>
-            <ToggleButton onClickFunc={showCompletedFunc} initValue={false}/>
+            <ToggleButton onClickFunc={showCompletedFunc} initValue={$goodStatuses.includes('post')}/>
         </span>
         <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
             <span style=margin-right:5px;>Filter broadcasts</span>
-            <ToggleButton onClickFunc={filterBroadcastsFunc} initValue={false} />
+            <ToggleButton onClickFunc={filterBroadcastsFunc} initValue={$filterBcsts} />
         </span>
         <button onclick={() => {
             showBcstModal = true
@@ -87,7 +87,8 @@
                     goodStatuses={$goodStatuses}
                     filterBroadcasts={$filterBcsts}
                     broadcasts={data.broadcasts}
-                    {groupByTime}
+                    leagueOrder={data.leagueOrder}
+                    sortMode={$sortMode}
                 />
             {/key}
         {/each}

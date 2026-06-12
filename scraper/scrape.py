@@ -13,6 +13,9 @@ import requests
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.livesoccertv.com/schedules/{}/"
+# ESPN's master league list. The order is ESPN's own prominence ranking
+# (World Cup, Champions League, Premier League, ...), used to weight game interest.
+LEAGUES_URL = "https://sports.core.api.espn.com/v2/sports/soccer/leagues?limit=1000"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.5",
@@ -65,9 +68,43 @@ def scrape_day(date_str: str) -> list:
             "timestamp_ms": timestamp_ms,
             "date": datetime.datetime.fromtimestamp(timestamp_ms / 1000, tz=UTC).date().isoformat(),
             "broadcasts": broadcasts,
+            # livesoccertv tags high-profile games with class="topmatch" on the match link.
+            "topmatch": "topmatch" in (title.get("class") or []),
         })
 
     return games
+
+
+def scrape_leagues() -> list:
+    """Return ESPN's master league slugs in prominence order."""
+    resp = requests.get(LEAGUES_URL, headers=HEADERS, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    slugs = []
+    for item in data.get("items", []):
+        ref = item.get("$ref", "")
+        slug = ref.split("/leagues/")[-1].split("?")[0]
+        if slug:
+            slugs.append(slug)
+    return slugs
+
+
+def write_league_order():
+    try:
+        slugs = scrape_leagues()
+    except Exception as e:
+        print(f"  league order error: {e}", file=sys.stderr)
+        return
+    if not slugs:
+        print("  league order: empty, leaving existing file", file=sys.stderr)
+        return
+    path = "static/league_order.json"
+    with open(path, "w") as f:
+        json.dump({
+            "generated_at": datetime.datetime.now(UTC).isoformat(),
+            "leagues": slugs,
+        }, f)
+    print(f"Wrote {len(slugs)} leagues to {path}", file=sys.stderr)
 
 
 def main():
@@ -99,6 +136,8 @@ def main():
     with open(path, "w") as f:
         json.dump(output, f)
     print(f"Wrote {len(all_games)} games to {path}", file=sys.stderr)
+
+    write_league_order()
 
 
 if __name__ == "__main__":

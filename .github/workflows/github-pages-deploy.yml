@@ -16,6 +16,7 @@ jobs:
         run: |
           git fetch origin gh-pages
           git checkout origin/gh-pages -- broadcasts.json && mv broadcasts.json static/ || true
+          git checkout origin/gh-pages -- league_order.json && mv league_order.json static/ || true
 
       - name: Install and Build
         run: |
