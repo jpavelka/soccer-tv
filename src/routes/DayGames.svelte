@@ -99,15 +99,28 @@
     if (!Object.keys($accordionShow).includes(dt)) {
         $accordionShow[dt] = true;
     }
-    let mode = !!window ? (
-        Math.max(...window.getComputedStyle( document.body ,null).getPropertyValue('background-color').match(/\d+/g).map(Number)) > 150 ? 'light' : 'dark'
-    ) : 'light'
+    const bodyBgNums = window
+        ? window.getComputedStyle(document.body, null).getPropertyValue('background-color').match(/\d+/g)?.map(Number) ?? null
+        : null;
+    let mode = bodyBgNums && Math.max(...bodyBgNums) > 150 ? 'light' : 'dark';
+    // Page background as hex, used to detect bars that would blend into it.
+    const bgHex = bodyBgNums
+        ? bodyBgNums.slice(0, 3).map((n) => n.toString(16).padStart(2, '0')).join('')
+        : mode === 'light' ? 'ffffff' : '000000';
+    // Border color for bars that are too close to the background.
+    const barBorder = mode === 'light' ? 'rgba(0,0,0,0.35)' : 'rgba(255,255,255,0.45)';
 
     let selectedEvent = $state<any>(null);
     let selectedLeague = $state<any>(null);
     let showInfoModal = $state(false);
     let venueAddress = $state<string | null>(null);
     let venueFetching = $state(false);
+    // Measured width of the win-probability bar column; drives whether each
+    // percentage label fits inside its bar. Updated on resize via bind:clientWidth.
+    let winbarsWidth = $state(0);
+    // Label column (.prow-label width) + row gap, subtracted from the measured
+    // container width to get the bar track width.
+    const PROW_LABEL_OFFSET = 66;
 
     async function showInfo(event: any, league: any) {
         selectedEvent = event;
@@ -127,17 +140,98 @@
             finally { venueFetching = false; }
         }
     }
-    function fmtOdds(n: number | undefined): string {
-        if (n == null) return '–';
-        return n > 0 ? `+${n}` : `${n}`;
+    // Convert an American moneyline to a raw implied probability.
+    function mlToProb(ml: number): number {
+        return ml < 0 ? -ml / (-ml + 100) : 100 / (ml + 100);
     }
-    // Show the spread from the favored team's perspective (the favorite always
-    // carries the negative line). ESPN's `spread` is relative to the home team.
-    function favoriteSpread(odds: any): { abbr: string | undefined; line: string } | null {
-        if (odds?.spread == null) return null;
-        const homeFav = odds.spread <= 0;
-        const team = homeFav ? odds.homeTeamOdds?.team : odds.awayTeamOdds?.team;
-        return { abbr: team?.abbreviation, line: fmtOdds(-Math.abs(odds.spread)) };
+    // Derive fair home/draw/away win probabilities from the three-way moneyline
+    // market, normalizing to remove the bookmaker's margin (vig). Returns null
+    // unless all three moneylines are present.
+    function winProbabilities(odds: any): { home: { abbr?: string; pct: number }; draw: { pct: number }; away: { abbr?: string; pct: number } } | null {
+        const h = odds?.home?.moneyLine ?? odds?.homeTeamOdds?.moneyLine;
+        const a = odds?.away?.moneyLine ?? odds?.awayTeamOdds?.moneyLine;
+        const d = odds?.draw?.moneyLine ?? odds?.drawOdds?.moneyLine;
+        if (h == null || a == null || d == null) return null;
+        const raw = { home: mlToProb(h), draw: mlToProb(d), away: mlToProb(a) };
+        const sum = raw.home + raw.draw + raw.away;
+        return {
+            home: { abbr: odds.homeTeamOdds?.team?.abbreviation, pct: Math.round((100 * raw.home) / sum) },
+            draw: { pct: Math.round((100 * raw.draw) / sum) },
+            away: { abbr: odds.awayTeamOdds?.team?.abbreviation, pct: Math.round((100 * raw.away) / sum) },
+        };
+    }
+
+    // Neutral gray for the draw segment, and fallback team colors when ESPN's
+    // are missing or clash.
+    const DRAW_HEX = '8a8f96';
+    const FALLBACK_HOME = '3b78c2';
+    const FALLBACK_AWAY = 'c2693b';
+
+    function normHex(c: string | undefined | null): string | null {
+        if (!c) return null;
+        const h = c.replace('#', '').trim().toLowerCase();
+        return /^[0-9a-f]{6}$/.test(h) ? h : null;
+    }
+    function rgb(hex: string): [number, number, number] {
+        return [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16)) as [number, number, number];
+    }
+    // Euclidean RGB distance; under the threshold the colors read as the same.
+    function tooClose(a: string, b: string, threshold = 60): boolean {
+        const [r1, g1, b1] = rgb(a);
+        const [r2, g2, b2] = rgb(b);
+        return Math.hypot(r1 - r2, g1 - g2, b1 - b2) < threshold;
+    }
+    // Pick a team color distinct from every color in `avoid`: try primary, then
+    // ESPN's alternate, then the supplied fallback.
+    function teamColor(comp: any, avoid: string[], fallback: string): string {
+        const candidates = [normHex(comp?.color), normHex(comp?.alternateColor), fallback];
+        for (const c of candidates) {
+            if (c && !avoid.some((x) => tooClose(c, x))) return c;
+        }
+        return fallback;
+    }
+    // Bar segment colors: draw is fixed gray; home must differ from draw; away
+    // must differ from both the draw color and the chosen home color.
+    function barColors(event: any): { home: string; draw: string; away: string } {
+        const home = event.competitors.find((c: any) => c.homeAway === 'home') ?? event.competitors[0];
+        const away = event.competitors.find((c: any) => c.homeAway === 'away') ?? event.competitors[1];
+        const h = teamColor(home, [DRAW_HEX], FALLBACK_HOME);
+        const a = teamColor(away, [DRAW_HEX, h], FALLBACK_AWAY);
+        return { home: `#${h}`, draw: `#${DRAW_HEX}`, away: `#${a}` };
+    }
+    // A bar that's nearly the page background color would blend in, so flag it
+    // for a border. Slightly looser threshold than the team/draw clash check
+    // since a large solid block reads as "the same" from farther apart.
+    function needsBorder(color: string): boolean {
+        const h = normHex(color);
+        return h ? tooClose(h, bgHex, 70) : false;
+    }
+    // Choose legible text color + shadow for a given segment background.
+    function legibleText(hex: string): string {
+        const [r, g, b] = rgb(normHex(hex) ?? '000000');
+        const light = 0.299 * r + 0.587 * g + 0.114 * b > 150;
+        return light
+            ? 'color:#111;text-shadow:0 1px 1px rgba(255,255,255,0.45)'
+            : 'color:#fff;text-shadow:0 1px 1px rgba(0,0,0,0.4)';
+    }
+    // Build the three bar rows in the same top-to-bottom order the teams appear
+    // elsewhere (competitors[0] on top, draw in the middle, competitors[1] on
+    // the bottom), mapping each team to its home/away probability and color.
+    function winProbRows(event: any, odds: any): { label: string; logo: string | null; pct: number; color: string }[] | null {
+        const wp = winProbabilities(odds);
+        if (!wp) return null;
+        const bc = barColors(event);
+        const teamRow = (comp: any) => {
+            const side = comp.homeAway === 'away' ? 'away' : 'home';
+            return {
+                label: comp.abbreviation ?? (side === 'home' ? 'Home' : 'Away'),
+                logo: comp[`logo${mode === 'dark' ? 'Dark' : ''}`] ?? null,
+                pct: wp[side].pct,
+                color: bc[side],
+            };
+        };
+        const [c0, c1] = event.competitors;
+        return [teamRow(c0), { label: 'Draw', logo: null, pct: wp.draw.pct, color: bc.draw }, teamRow(c1)];
     }
     function eventStage(event: any, league: any): string | null {
         const name = event.group?.name;
@@ -188,6 +282,26 @@
                 title="Matched with livesoccertv.com"
             >●</a>
         {/if}
+    </div>
+{/snippet}
+
+{#snippet probRow(row: { label: string; logo: string | null; pct: number; color: string })}
+    {@const trackWidth = Math.max(0, winbarsWidth - PROW_LABEL_OFFSET)}
+    {@const fillWidth = (row.pct / 100) * trackWidth}
+    <!-- Fit the "NN%" text inside the bar only when the fill is wide enough for
+         it (roughly 7.5px/char plus padding); otherwise show it to the right. -->
+    {@const inside = fillWidth >= `${row.pct}%`.length * 7.5 + 12}
+    <div class="prow">
+        <span class="prow-label">
+            {#if row.logo}<img class="prow-logo" src={row.logo} alt=""/>{:else}<span class="prow-logo"></span>{/if}
+            <span class="prow-name">{row.label}</span>
+        </span>
+        <div class="prow-track">
+            <div class="prow-fill" style="width: {row.pct}%; background: {row.color}; {legibleText(row.color)}{needsBorder(row.color) ? `; border:1px solid ${barBorder}` : ''}">
+                {#if inside}<span class="prow-pct">{row.pct}%</span>{/if}
+            </div>
+            {#if !inside}<span class="prow-pct-out">{row.pct}%</span>{/if}
+        </div>
     </div>
 {/snippet}
 
@@ -289,23 +403,15 @@
                 </span>
             </div>
         {/if}
-        {#if selectedEvent.bcstStr}
-            <div class="modal-row">
-                <span class="modal-label">TV</span>
-                <span>{selectedEvent.bcstStr}</span>
-            </div>
-        {/if}
-        {#if selectedEvent.odds?.spread != null || selectedEvent.odds?.overUnder != null}
-            <div class="modal-row">
-                <span class="modal-label">Odds</span>
-                <span>
-                    {#if selectedEvent.odds.spread != null}
-                        {@const fav = favoriteSpread(selectedEvent.odds)}
-                        {fav?.abbr} {fav?.line}
-                    {/if}
-                    {#if selectedEvent.odds.spread != null && selectedEvent.odds.overUnder != null} · {/if}
-                    {#if selectedEvent.odds.overUnder != null}O/U {selectedEvent.odds.overUnder}{/if}
-                </span>
+        {#if winProbRows(selectedEvent, selectedEvent.odds)}
+            {@const rows = winProbRows(selectedEvent, selectedEvent.odds)}
+            <div class="modal-row modal-winprob-row">
+                <span class="modal-label">Win %</span>
+                <div class="winbars" bind:clientWidth={winbarsWidth}>
+                    {#each rows ?? [] as row}
+                        {@render probRow(row)}
+                    {/each}
+                </div>
             </div>
         {/if}
         {#if selectedEvent.competitors[0].form || selectedEvent.competitors[1].form}
@@ -321,6 +427,12 @@
                         {#each (selectedEvent.competitors[1].form ?? '').split('') as ch, i}<span class="fc-{ch}" style="font-size: {Math.max(0.62, 1 - i * 0.1)}em">{ch}</span>{/each}
                     </span>
                 </span>
+            </div>
+        {/if}
+        {#if selectedEvent.bcstStr}
+            <div class="modal-row">
+                <span class="modal-label">TV</span>
+                <span>{selectedEvent.bcstStr}</span>
             </div>
         {/if}
     </div>
@@ -510,6 +622,69 @@
         opacity: 0.55;
         text-transform: uppercase;
         letter-spacing: 0.04em;
+    }
+    .modal-winprob-row {
+        align-items: flex-start;
+    }
+    .winbars {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 0;
+    }
+    .prow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .prow-label {
+        width: 58px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .prow-logo {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        object-fit: contain;
+    }
+    .prow-name {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .prow-track {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+    .prow-fill {
+        height: 18px;
+        flex-shrink: 0;
+        min-width: 2px;
+        box-sizing: border-box;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+    .prow-pct {
+        padding: 0 5px;
+    }
+    .prow-pct-out {
+        padding-left: 5px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        opacity: 0.85;
+        white-space: nowrap;
     }
     .modal-form {
         display: flex;
