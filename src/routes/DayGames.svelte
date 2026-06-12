@@ -125,6 +125,10 @@
     let showInfoModal = $state(false);
     let venueAddress = $state<string | null>(null);
     let venueFetching = $state(false);
+    // For in-progress / finished games: goals-cards-subs timeline and team stats,
+    // both parsed from the same summary fetch that supplies the venue address.
+    let matchEvents = $state<{ clock: string; icon: string; player: string; col: number; score: string }[] | null>(null);
+    let matchStats = $state<{ label: string; c0: string; c1: string }[] | null>(null);
     // Measured width of the win-probability bar column; drives whether each
     // percentage label fits inside its bar. Updated on resize via bind:clientWidth.
     let winbarsWidth = $state(0);
@@ -136,9 +140,14 @@
         selectedEvent = event;
         selectedLeague = league;
         venueAddress = null;
+        matchEvents = null;
+        matchStats = null;
         showInfoModal = true;
-        if (event.location) {
-            venueFetching = true;
+        // The summary endpoint carries the venue address plus, once a game is
+        // under way, the keyEvents timeline and per-team boxscore stats.
+        const live = event.status !== 'pre';
+        if (event.location || live) {
+            venueFetching = !!event.location;
             try {
                 const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league.slug}/summary?event=${event.id}`);
                 const d = await res.json();
@@ -146,7 +155,11 @@
                 if (addr) {
                     venueAddress = [addr.city, addr.country].filter(Boolean).join(', ');
                 }
-            } catch { /* venue stays null */ }
+                if (live) {
+                    matchEvents = matchTimeline(event, d);
+                    matchStats = matchStatRows(event, d);
+                }
+            } catch { /* venue / live data stay null */ }
             finally { venueFetching = false; }
         }
     }
@@ -256,6 +269,100 @@
         const note = notes.find((n: any) => n.type === 'event-long')
             ?? notes.find((n: any) => n.type === 'event');
         return note?.text ?? note?.headline ?? null;
+    }
+    // ESPN team ("clubhouse") page for a competitor, straight from its own links
+    // so we don't have to reconstruct the /id/{id}/{slug} URL ourselves.
+    function teamLink(comp: any): string | null {
+        return comp?.links?.find((l: any) => l.rel?.includes('clubhouse'))?.href ?? null;
+    }
+    // The summary endpoint's keyEvents, distilled to goals and cards with just
+    // the minute, player, team and (for goals) the running score. ESPN doesn't
+    // put a running score on the event, and the per-league `text` formats are
+    // inconsistent, so we tally goals ourselves as we walk the (chronological)
+    // events. The event's `team.id` shares the summary's id namespace (which the
+    // scoreboard's competitor.id does not), so we map it to competitors[0|1] via
+    // the boxscore's homeAway, falling back to a name-substring match for leagues
+    // with no boxscore.
+    function matchTimeline(event: any, summary: any): { clock: string; icon: string; player: string; col: number; score: string }[] | null {
+        const sideById: Record<string, string> = {};
+        for (const t of summary?.boxscore?.teams ?? []) {
+            if (t.team?.id != null) sideById[t.team.id] = t.homeAway;
+        }
+        const idxByHomeAway: Record<string, number> = {};
+        event.competitors.forEach((c: any, i: number) => { idxByHomeAway[c.homeAway] = i; });
+        const compIndex = (team: any): number => {
+            if (!team) return -1;
+            const ha = sideById[team.id];
+            if (ha != null && idxByHomeAway[ha] != null) return idxByHomeAway[ha];
+            const n = (team.displayName ?? '').toLowerCase();
+            return n ? event.competitors.findIndex((c: any) =>
+                [c.name, c.displayName, c.shortDisplayName].filter(Boolean).some((x: string) => {
+                    const y = x.toLowerCase();
+                    return y === n || y.includes(n) || n.includes(y);
+                })) : -1;
+        };
+
+        const tally = [0, 0];
+        const rows: { clock: string; icon: string; player: string; col: number; score: string }[] = [];
+        for (const e of summary?.keyEvents ?? []) {
+            if (e.shootout) continue; // penalty-shootout kicks aren't match goals
+            const t = e.type?.text ?? '';
+            const isGoal = !!e.scoringPlay;
+            let icon: string;
+            if (isGoal) icon = '⚽';
+            else if (t === 'Red Card') icon = '🟥';
+            else if (t === 'Yellow Card') icon = '🟨';
+            else continue;
+            // Which team's column the event belongs to (-1 falls back to the left).
+            const col = compIndex(e.team);
+            let score = '';
+            if (isGoal && col >= 0) { tally[col]++; score = `${tally[0]}–${tally[1]}`; }
+            rows.push({
+                clock: e.clock?.displayValue ?? '',
+                icon,
+                player: e.participants?.[0]?.athlete?.displayName ?? '',
+                col,
+                score,
+            });
+        }
+        return rows.length ? rows : null;
+    }
+    // Per-team match stats, joined to competitors[0|1] by homeAway so the columns
+    // line up with the rest of the modal. `fraction` stats (e.g. passPct) arrive
+    // as 0.9 rather than 90, so they're scaled before the % is appended;
+    // possessionPct is already a percentage number and just takes the suffix.
+    function matchStatRows(event: any, summary: any): { label: string; c0: string; c1: string }[] | null {
+        const teams = summary?.boxscore?.teams ?? [];
+        if (teams.length < 2) return null;
+        const byside: Record<string, any[]> = {};
+        for (const t of teams) byside[t.homeAway] = t.statistics ?? [];
+        const s0 = byside[event.competitors[0].homeAway];
+        const s1 = byside[event.competitors[1].homeAway];
+        if (!s0 || !s1) return null;
+        const stat = (stats: any[], name: string): string | null =>
+            stats.find((s: any) => s.name === name)?.displayValue ?? null;
+        const want = [
+            { label: 'Possession', name: 'possessionPct', suffix: '%' },
+            { label: 'Shots', name: 'totalShots', suffix: '' },
+            { label: 'On target', name: 'shotsOnTarget', suffix: '' },
+            { label: 'Corners', name: 'wonCorners', suffix: '' },
+            { label: 'Fouls', name: 'foulsCommitted', suffix: '' },
+            { label: 'Pass %', name: 'passPct', fraction: true },
+        ];
+        const fmt = (v: string | null, w: any): string => {
+            if (v == null) return '–';
+            if (w.fraction) return Math.round(parseFloat(v) * 100) + '%';
+            return v + (w.suffix ?? '');
+        };
+        const rows = want
+            .map((w) => {
+                const a = stat(s0, w.name);
+                const b = stat(s1, w.name);
+                if (a == null && b == null) return null;
+                return { label: w.label, c0: fmt(a, w), c1: fmt(b, w) };
+            })
+            .filter(Boolean) as { label: string; c0: string; c1: string }[];
+        return rows.length ? rows : null;
     }
 
     // How balanced the three-way market is: ~1 for an even toss-up, ~0 for a
@@ -435,6 +542,21 @@
     <div class=spacing></div>
 </Accordion>
 
+{#snippet modalTeam(comp: any)}
+    {@const link = teamLink(comp)}
+    <div class="modal-team">
+        <img class="modal-logo" src={comp[`logo${mode === 'dark' ? 'Dark' : ''}`]} alt=""/>
+        {#if link}
+            <a class="modal-team-link" href={link} target="_blank"><strong>{comp.name}</strong></a>
+        {:else}
+            <strong>{comp.name}</strong>
+        {/if}
+        {#if selectedEvent.status !== 'pre'}
+            <span class="modal-score">{comp.score}</span>
+        {/if}
+    </div>
+{/snippet}
+
 {#if showInfoModal && selectedEvent}
 <Modal bind:showModal={showInfoModal}>
     <div slot="header">
@@ -446,20 +568,8 @@
             <div class="modal-live">● {selectedEvent.summary}</div>
         {/if}
         <div class="modal-teams">
-            <div class="modal-team">
-                <img class="modal-logo" src={selectedEvent.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]} alt=""/>
-                <strong>{selectedEvent.competitors[0].name}</strong>
-                {#if selectedEvent.status !== 'pre'}
-                    <span class="modal-score">{selectedEvent.competitors[0].score}</span>
-                {/if}
-            </div>
-            <div class="modal-team">
-                <img class="modal-logo" src={selectedEvent.competitors[1].logo} alt=""/>
-                <strong>{selectedEvent.competitors[1].name}</strong>
-                {#if selectedEvent.status !== 'pre'}
-                    <span class="modal-score">{selectedEvent.competitors[1].score}</span>
-                {/if}
-            </div>
+            {@render modalTeam(selectedEvent.competitors[0])}
+            {@render modalTeam(selectedEvent.competitors[1])}
         </div>
         <div class="modal-meta modal-datetime">{
             new Date(selectedEvent.date).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric'})
@@ -486,6 +596,53 @@
                 <div class="winbars" bind:clientWidth={winbarsWidth}>
                     {#each rows ?? [] as row}
                         {@render probRow(row)}
+                    {/each}
+                </div>
+            </div>
+        {/if}
+        {#if matchStats}
+            <div class="modal-row">
+                <span class="modal-label">Stats</span>
+                <div class="statgrid">
+                    <div class="stat-line stat-head">
+                        <span class="stat-c0">{selectedEvent.competitors[0].abbreviation}</span>
+                        <span class="stat-mid"></span>
+                        <span class="stat-c1">{selectedEvent.competitors[1].abbreviation}</span>
+                    </div>
+                    {#each matchStats as s}
+                        <div class="stat-line">
+                            <span class="stat-c0">{s.c0}</span>
+                            <span class="stat-mid">{s.label}</span>
+                            <span class="stat-c1">{s.c1}</span>
+                        </div>
+                    {/each}
+                </div>
+            </div>
+        {/if}
+        {#if matchEvents}
+            <div class="modal-row modal-timeline-row">
+                <span class="modal-label">Events</span>
+                <div class="timeline">
+                    <div class="tl-side tl-left tl-head">{selectedEvent.competitors[0].abbreviation}</div>
+                    <div class="tl-mid tl-head"></div>
+                    <div class="tl-side tl-right tl-head">{selectedEvent.competitors[1].abbreviation}</div>
+                    {#each matchEvents as ev}
+                        <div class="tl-side tl-left">
+                            {#if ev.col !== 1}
+                                <span class="tl-icon">{ev.icon}</span>
+                                <span class="tl-player">{ev.player}</span>
+                            {/if}
+                        </div>
+                        <div class="tl-mid">
+                            {#if ev.score}<span class="tl-score">{ev.score}</span>{/if}
+                            <span class="tl-clock">{ev.clock}</span>
+                        </div>
+                        <div class="tl-side tl-right">
+                            {#if ev.col === 1}
+                                <span class="tl-player">{ev.player}</span>
+                                <span class="tl-icon">{ev.icon}</span>
+                            {/if}
+                        </div>
                     {/each}
                 </div>
             </div>
@@ -678,11 +835,19 @@
         width: 48px;
         flex-shrink: 0;
     }
-    .modal-team strong {
+    .modal-team strong,
+    .modal-team-link {
         width: 8em;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+    .modal-team-link {
+        color: inherit;
+        text-decoration: none;
+    }
+    .modal-team-link:hover {
+        text-decoration: underline;
     }
     .modal-score {
         font-size: 1.4rem;
@@ -705,6 +870,10 @@
         display: flex;
         gap: 14px;
         align-items: baseline;
+    }
+    .modal-row + .modal-row {
+        border-top: 1px solid rgba(128, 128, 128, 0.2);
+        padding-top: 12px;
     }
     .modal-label {
         width: 58px;
@@ -790,6 +959,83 @@
         margin-right: 3px;
         opacity: 0.7;
         font-size: 0.85em;
+    }
+    .statgrid {
+        flex: 1;
+        max-width: 240px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+    .stat-line {
+        display: grid;
+        grid-template-columns: 3.5em 1fr 3.5em;
+        align-items: baseline;
+        font-size: 0.9rem;
+    }
+    .stat-c0 { text-align: left; font-weight: 600; }
+    .stat-c1 { text-align: right; font-weight: 600; }
+    .stat-mid { text-align: center; opacity: 0.7; }
+    .stat-head {
+        font-size: 0.75rem;
+        opacity: 0.55;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .modal-timeline-row {
+        align-items: flex-start;
+    }
+    .timeline {
+        flex: 1;
+        max-width: 340px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 7px 10px;
+        min-width: 0;
+        font-size: 0.85rem;
+        line-height: 1.3;
+    }
+    .tl-head {
+        font-size: 0.75rem;
+        font-weight: 600;
+        opacity: 0.55;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .tl-side {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+    .tl-right {
+        justify-content: flex-end;
+        text-align: right;
+    }
+    .tl-player {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .tl-icon {
+        flex-shrink: 0;
+    }
+    .tl-mid {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1.1;
+    }
+    .tl-clock {
+        opacity: 0.6;
+        font-size: 0.8rem;
+        font-variant-numeric: tabular-nums;
+    }
+    .tl-score {
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
     }
     .modal-footer {
         display: flex;
