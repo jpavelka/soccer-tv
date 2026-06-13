@@ -21,6 +21,11 @@
         // locked below, so this value stays accurate while the modal is open.
         const vv = window.visualViewport;
         node.style.top = `${vv ? vv.pageTop : window.scrollY}px`;
+        // Size the overlay to the *visible* viewport height in pixels. `vh`
+        // units resolve against the large (URL-bar-hidden) viewport, so a modal
+        // sized in `vh` can be taller than the area actually on screen, pushing
+        // the footer below the fold. Scroll is locked, so this stays accurate.
+        if (vv) node.style.setProperty('--vvh', `${vv.height}px`);
 
         /** @param {Event} e */
         const blockScroll = (e) => {
@@ -71,20 +76,22 @@
         /* `top` is set by the action to the current scroll offset */
         left: 0;
         width: 100%;
-        height: 100vh;
+        height: var(--vvh, 100vh);
         z-index: 1000;
         background-color: rgba(0, 0, 0, 0.5);
         display: flex;
         align-items: flex-start;
         justify-content: center;
-        padding-top: 8vh;
+        padding-top: calc(var(--vvh, 100vh) * 0.08);
     }
 
     .modal-content {
         box-sizing: border-box;
         width: min(700px, 90vw);
         max-width: 90vw;
-        max-height: 90vh;
+        /* Leave the 8% top padding plus a little breathing room at the bottom
+           so the footer stays on screen. */
+        max-height: calc(var(--vvh, 100vh) * 0.84);
         background-color: light-dark(white, #444444);
         border-radius: 8px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);

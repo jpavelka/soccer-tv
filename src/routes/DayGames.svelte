@@ -127,7 +127,15 @@
     let venueFetching = $state(false);
     // For in-progress / finished games: goals-cards-subs timeline and team stats,
     // both parsed from the same summary fetch that supplies the venue address.
-    let matchEvents = $state<{ clock: string; icon: string; player: string; col: number; score: string }[] | null>(null);
+    let matchEvents = $state<{ clock: string; icon: string; player: string; col: number; score: string; detail: string }[] | null>(null);
+    // Indices of the timeline events whose detail is expanded. A click toggles
+    // an event open/closed independently, so any number can be shown at once.
+    let openTips = $state<Set<number>>(new Set());
+    function toggleTip(i: number) {
+        const next = new Set(openTips);
+        if (next.has(i)) next.delete(i); else next.add(i);
+        openTips = next;
+    }
     let matchStats = $state<{ label: string; c0: string; c1: string }[] | null>(null);
     // Measured width of the win-probability bar column; drives whether each
     // percentage label fits inside its bar. Updated on resize via bind:clientWidth.
@@ -142,6 +150,7 @@
         venueAddress = null;
         matchEvents = null;
         matchStats = null;
+        openTips = new Set();
         showInfoModal = true;
         // The summary endpoint carries the venue address plus, once a game is
         // under way, the keyEvents timeline and per-team boxscore stats.
@@ -167,6 +176,19 @@
     function mlToProb(ml: number): number {
         return ml < 0 ? -ml / (-ml + 100) : 100 / (ml + 100);
     }
+    // Round a set of values (assumed to sum to ~100) to integers that sum to
+    // exactly 100. Floor each, then distribute the remaining points to the
+    // entries with the largest fractional remainders (i.e. those that lost the
+    // most to rounding down).
+    function roundTo100(vals: number[]): number[] {
+        const floors = vals.map(Math.floor);
+        let remaining = Math.round(vals.reduce((s, v) => s + v, 0)) - floors.reduce((s, v) => s + v, 0);
+        const order = vals
+            .map((v, i) => ({ i, frac: v - floors[i] }))
+            .sort((a, b) => b.frac - a.frac);
+        for (let k = 0; k < remaining; k++) floors[order[k].i]++;
+        return floors;
+    }
     // Derive fair home/draw/away win probabilities from the three-way moneyline
     // market, normalizing to remove the bookmaker's margin (vig). Returns null
     // unless all three moneylines are present.
@@ -177,10 +199,18 @@
         if (h == null || a == null || d == null) return null;
         const raw = { home: mlToProb(h), draw: mlToProb(d), away: mlToProb(a) };
         const sum = raw.home + raw.draw + raw.away;
+        // Round to whole percentages that always total 100 (largest-remainder
+        // method): floor each, then hand the leftover points to whichever
+        // entries lost the most to rounding.
+        const [home, draw, away] = roundTo100([
+            (100 * raw.home) / sum,
+            (100 * raw.draw) / sum,
+            (100 * raw.away) / sum,
+        ]);
         return {
-            home: { abbr: odds.homeTeamOdds?.team?.abbreviation, pct: Math.round((100 * raw.home) / sum) },
-            draw: { pct: Math.round((100 * raw.draw) / sum) },
-            away: { abbr: odds.awayTeamOdds?.team?.abbreviation, pct: Math.round((100 * raw.away) / sum) },
+            home: { abbr: odds.homeTeamOdds?.team?.abbreviation, pct: home },
+            draw: { pct: draw },
+            away: { abbr: odds.awayTeamOdds?.team?.abbreviation, pct: away },
         };
     }
 
@@ -283,7 +313,18 @@
     // scoreboard's competitor.id does not), so we map it to competitors[0|1] via
     // the boxscore's homeAway, falling back to a name-substring match for leagues
     // with no boxscore.
-    function matchTimeline(event: any, summary: any): { clock: string; icon: string; player: string; col: number; score: string }[] | null {
+    // A fuller description of a goal/card for the tooltip. ESPN's `text` already
+    // reads as a sentence ("Goal! ... assisted by ...", "Penalty conceded by ..."),
+    // so prefer it; otherwise assemble scorer + assist from the participants.
+    function keyEventDetail(e: any, icon: string): string {
+        const txt = (e.text ?? '').trim();
+        if (txt) return txt;
+        const names = (e.participants ?? []).map((p: any) => p.athlete?.displayName).filter(Boolean);
+        const kind = icon === '⚽' ? 'Goal' : e.type?.text ?? '';
+        const assist = names.length > 1 ? ` (assist: ${names.slice(1).join(', ')})` : '';
+        return [[kind, names[0]].filter(Boolean).join(' – ') + assist].join('').trim();
+    }
+    function matchTimeline(event: any, summary: any): { clock: string; icon: string; player: string; col: number; score: string; detail: string }[] | null {
         const sideById: Record<string, string> = {};
         for (const t of summary?.boxscore?.teams ?? []) {
             if (t.team?.id != null) sideById[t.team.id] = t.homeAway;
@@ -303,7 +344,7 @@
         };
 
         const tally = [0, 0];
-        const rows: { clock: string; icon: string; player: string; col: number; score: string }[] = [];
+        const rows: { clock: string; icon: string; player: string; col: number; score: string; detail: string }[] = [];
         for (const e of summary?.keyEvents ?? []) {
             if (e.shootout) continue; // penalty-shootout kicks aren't match goals
             const t = e.type?.text ?? '';
@@ -323,6 +364,7 @@
                 player: e.participants?.[0]?.athlete?.displayName ?? '',
                 col,
                 score,
+                detail: keyEventDetail(e, icon),
             });
         }
         return rows.length ? rows : null;
@@ -626,23 +668,39 @@
                     <div class="tl-side tl-left tl-head">{selectedEvent.competitors[0].abbreviation}</div>
                     <div class="tl-mid tl-head"></div>
                     <div class="tl-side tl-right tl-head">{selectedEvent.competitors[1].abbreviation}</div>
-                    {#each matchEvents as ev}
+                    {#each matchEvents as ev, i}
                         <div class="tl-side tl-left">
                             {#if ev.col !== 1}
-                                <span class="tl-icon">{ev.icon}</span>
-                                <span class="tl-player">{ev.player}</span>
+                                <button
+                                    type="button"
+                                    class="tl-trigger"
+                                    class:active={openTips.has(i)}
+                                    onclick={() => toggleTip(i)}
+                                >
+                                    <span class="tl-icon">{ev.icon}</span>
+                                    <span class="tl-player">{ev.player}</span>
+                                </button>
                             {/if}
                         </div>
                         <div class="tl-mid">
-                            {#if ev.score}<span class="tl-score">{ev.score}</span>{/if}
                             <span class="tl-clock">{ev.clock}</span>
                         </div>
                         <div class="tl-side tl-right">
                             {#if ev.col === 1}
-                                <span class="tl-player">{ev.player}</span>
-                                <span class="tl-icon">{ev.icon}</span>
+                                <button
+                                    type="button"
+                                    class="tl-trigger tl-trigger-right"
+                                    class:active={openTips.has(i)}
+                                    onclick={() => toggleTip(i)}
+                                >
+                                    <span class="tl-player">{ev.player}</span>
+                                    <span class="tl-icon">{ev.icon}</span>
+                                </button>
                             {/if}
                         </div>
+                        {#if openTips.has(i) && (ev.detail || ev.score)}
+                            <div class="tl-detail">{#if ev.score}<strong class="tl-detail-score">{ev.score}</strong>{' '}{/if}{ev.detail}</div>
+                        {/if}
                     {/each}
                 </div>
             </div>
@@ -1022,6 +1080,41 @@
     .tl-icon {
         flex-shrink: 0;
     }
+    /* The icon + player name double as the tooltip trigger; strip the native
+       button chrome so it reads like the surrounding text. */
+    .tl-trigger {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        max-width: 100%;
+        background: none;
+        border: none;
+        padding: 1px 3px;
+        margin: -1px 0;
+        border-radius: 4px;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+    .tl-trigger-right {
+        text-align: right;
+    }
+    .tl-trigger:hover,
+    .tl-trigger.active {
+        background: rgba(128, 128, 128, 0.18);
+    }
+    .tl-detail {
+        grid-column: 1 / -1;
+        margin-top: -2px;
+        padding: 6px 9px;
+        border-radius: 5px;
+        background: rgba(128, 128, 128, 0.16);
+        font-size: 0.8rem;
+        line-height: 1.35;
+        opacity: 0.9;
+    }
     .tl-mid {
         display: flex;
         flex-direction: column;
@@ -1033,9 +1126,13 @@
         font-size: 0.8rem;
         font-variant-numeric: tabular-nums;
     }
-    .tl-score {
-        font-weight: 600;
+    .tl-detail-score {
         font-variant-numeric: tabular-nums;
+        font-size: 0.95rem;
+        padding: 1px 6px;
+        border-radius: 4px;
+        background: rgba(128, 128, 128, 0.28);
+        color: light-dark(#111, #fff);
     }
     .modal-footer {
         display: flex;
