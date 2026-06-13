@@ -107,7 +107,6 @@
 
     .footer {
         border-top: 1pt solid lightgray;
-        margin-top: 5pt;
         padding-top: 5pt;
         flex-shrink: 0;
     }

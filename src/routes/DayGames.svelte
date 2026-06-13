@@ -601,7 +601,7 @@
 
 {#if showInfoModal && selectedEvent}
 <Modal bind:showModal={showInfoModal}>
-    <div slot="header">
+    <div slot="header" class="modal-header">
         <div class="modal-meta">{selectedLeague.name} <a class="modal-league-link" href={`https://www.espn.com/soccer/league/_/name/${selectedLeague.slug}`} target="_blank">↗</a></div>
         {#if eventStage(selectedEvent, selectedLeague) || eventNote(selectedEvent)}
             <div class="modal-stage">{[eventStage(selectedEvent, selectedLeague), eventNote(selectedEvent)].filter(Boolean).join(' · ')}</div>
@@ -916,6 +916,10 @@
     }
     .venue-address {
         opacity: 0.7;
+    }
+    .modal-header {
+        padding-bottom: 4px;
+        border-bottom: 1pt solid lightgray;
     }
     .modal-body {
         display: flex;
