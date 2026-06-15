@@ -1,0 +1,45 @@
+name: Build ESPN-GFR Crosswalk
+
+# Refreshes the ESPN <-> GFR ID crosswalk and commits it back to its branch when
+# it actually changes. GFR rankings are scraped first only as INPUT to the matcher
+# — that data is gitignored and regenerated fresh at deploy time (like
+# broadcasts.json), so it is never committed here. The crosswalk changes slowly
+# (renames, promotions), so this runs once a day; commits only happen on a real diff.
+on:
+  schedule:
+    - cron: '30 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-crosswalk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install -r scraper/requirements.txt
+
+      - name: Scrape GFR rankings (crosswalk input)
+        run: python scraper/scrape_rankings.py
+
+      - name: Build ESPN-GFR crosswalk
+        run: python scraper/build_crosswalk.py
+
+      - name: Commit crosswalk changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add static/crosswalk scraper/crosswalk_review.json
+          if git diff --staged --quiet; then
+            echo "No crosswalk changes."
+          else
+            git commit -m "chore: refresh ESPN-GFR crosswalk"
+            git push
+          fi

@@ -25,6 +25,7 @@ vite.config.ts.timestamp-*
 # Generated — fetched at build time by CI
 static/broadcasts.json
 static/league_order.json
+static/rankings/
 
 # Other
 GEMINI.md

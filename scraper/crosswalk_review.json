@@ -1,0 +1,846 @@
+{
+  "generated_at": "2026-06-15T19:22:12.168113+00:00",
+  "mode": "incremental",
+  "new_leagues": [],
+  "new_teams": [],
+  "fuzzy_leagues": [],
+  "fuzzy_teams": [],
+  "unmatched_leagues": [
+    {
+      "espn_slug": "eng.w.promotion.relegation",
+      "espn_name": "English Women's Super League Promotion/Relegation Playoff",
+      "country": "England",
+      "gender": "women"
+    },
+    {
+      "espn_slug": "usa.usl.l1",
+      "espn_name": "USL League One",
+      "country": "USA",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "por.1.promotion.relegation",
+      "espn_name": "Portuguese Primeira Liga Promotion/Relegation Playoffs",
+      "country": "Portugal",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "eng.5",
+      "espn_name": "English National League",
+      "country": "England",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "ned.3",
+      "espn_name": "Dutch Tweede Divisie",
+      "country": "Netherlands",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "ir1.1.promotion.relegation",
+      "espn_name": "Irish Premier Division Promotion/Relegation Playoffs",
+      "country": "Northern Ireland",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "irl.1",
+      "espn_name": "Irish Premier Division",
+      "country": "Northern Ireland",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "arg.copa_de_la_superliga",
+      "espn_name": "Argentine Copa de la Superliga",
+      "country": "Argentina",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "arg.trofeo_de_la_campeones",
+      "espn_name": "Argentine Trofeo de Campeones",
+      "country": "Argentina",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "arg.2",
+      "espn_name": "Argentine Nacional B",
+      "country": "Argentina",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "arg.3",
+      "espn_name": "Argentine Primera B",
+      "country": "Argentina",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "arg.4",
+      "espn_name": "Argentine Primera C",
+      "country": "Argentina",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "bra.3",
+      "espn_name": "Brazilian Serie C",
+      "country": "Brazil",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "bra.camp.carioca",
+      "espn_name": "Brazilian Campeonato Carioca",
+      "country": "Brazil",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "bra.camp.paulista",
+      "espn_name": "Brazilian Campeonato Paulista",
+      "country": "Brazil",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "bra.camp.gaucho",
+      "espn_name": "Brazilian Campeonato Gaucho",
+      "country": "Brazil",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "bra.camp.mineiro",
+      "espn_name": "Brazilian Campeonato Mineiro",
+      "country": "Brazil",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "chi.2",
+      "espn_name": "Segunda Divisi\u00f3n de Chile",
+      "country": "Chile",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "uru.2",
+      "espn_name": "Segunda Divisi\u00f3n de Uruguay",
+      "country": "Uruguay",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "col.2",
+      "espn_name": "Colombian Primera B",
+      "country": "Colombia",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "bol.ply.rel",
+      "espn_name": "Bolivian Liga Profesional Promotion/Relegation Playoffs",
+      "country": "Bolivia",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "gua.1",
+      "espn_name": "Guatemalan Liga Nacional",
+      "country": "Guatemala",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "slv.1",
+      "espn_name": "Salvadoran Primera Division",
+      "country": "El Salvador",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "rsa.1.promotion.relegation",
+      "espn_name": "South African Premiership Promotion/Relegation Playoffs",
+      "country": "South Africa",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "rsa.2",
+      "espn_name": "South African First Division",
+      "country": "South Africa",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "nga.1",
+      "espn_name": "Nigerian Professional League",
+      "country": "Nigeria",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "usa.ncaa.m.1",
+      "espn_name": "NCAA Men's Soccer",
+      "country": "USA",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "usa.ncaa.w.1",
+      "espn_name": "NCAA Women's Soccer",
+      "country": "USA",
+      "gender": "women"
+    }
+  ],
+  "unmatched_teams": [
+    {
+      "espn_id": "11972",
+      "espn_name": "Gimnasia (Mendoza)",
+      "country": "Argentina",
+      "gender": "men",
+      "espn_league_slug": "arg.1",
+      "best_score": 0.606
+    },
+    {
+      "espn_id": "6051",
+      "espn_name": "Real Potos\u00ed",
+      "country": "Bolivia",
+      "gender": "men",
+      "espn_league_slug": "bol.1",
+      "best_score": 0.692
+    },
+    {
+      "espn_id": "17333",
+      "espn_name": "Londrina",
+      "country": "Brazil",
+      "gender": "men",
+      "espn_league_slug": "bra.2",
+      "best_score": 0.533
+    },
+    {
+      "espn_id": "7633",
+      "espn_name": "N\u00e1utico",
+      "country": "Brazil",
+      "gender": "men",
+      "espn_league_slug": "bra.2",
+      "best_score": 0.471
+    },
+    {
+      "espn_id": "3459",
+      "espn_name": "Ponte Preta",
+      "country": "Brazil",
+      "gender": "men",
+      "espn_league_slug": "bra.2",
+      "best_score": 0.522
+    },
+    {
+      "espn_id": "11268",
+      "espn_name": "S\u00e3o Bernardo",
+      "country": "Brazil",
+      "gender": "men",
+      "espn_league_slug": "bra.2",
+      "best_score": 0.571
+    },
+    {
+      "espn_id": "8110",
+      "espn_name": "Deportes Concepcion",
+      "country": "Chile",
+      "gender": "men",
+      "espn_league_slug": "chi.1",
+      "best_score": 0.629
+    },
+    {
+      "espn_id": "5362",
+      "espn_name": "Universidad de Concepci\u00f3n",
+      "country": "Chile",
+      "gender": "men",
+      "espn_league_slug": "chi.1",
+      "best_score": 0.718
+    },
+    {
+      "espn_id": "6101",
+      "espn_name": "C\u00facuta Deportivo",
+      "country": "Colombia",
+      "gender": "men",
+      "espn_league_slug": "col.1",
+      "best_score": 0.6
+    },
+    {
+      "espn_id": "7445",
+      "espn_name": "Internacional de Bogot\u00e1",
+      "country": "Colombia",
+      "gender": "men",
+      "espn_league_slug": "col.1",
+      "best_score": 0.486
+    },
+    {
+      "espn_id": "10309",
+      "espn_name": "Jaguares de C\u00f3rdoba",
+      "country": "Colombia",
+      "gender": "men",
+      "espn_league_slug": "col.1",
+      "best_score": 0.645
+    },
+    {
+      "espn_id": "3585",
+      "espn_name": "AC Horsens",
+      "country": "Denmark",
+      "gender": "men",
+      "espn_league_slug": "den.1",
+      "best_score": 0.5
+    },
+    {
+      "espn_id": "7860",
+      "espn_name": "Lyngby Boldklub",
+      "country": "Denmark",
+      "gender": "men",
+      "espn_league_slug": "den.1",
+      "best_score": 0.273
+    },
+    {
+      "espn_id": "11550",
+      "espn_name": "Odense Boldklub",
+      "country": "Denmark",
+      "gender": "men",
+      "espn_league_slug": "den.1",
+      "best_score": 0.385
+    },
+    {
+      "espn_id": "11124",
+      "espn_name": "Guayaquil City FC",
+      "country": "Ecuador",
+      "gender": "men",
+      "espn_league_slug": "ecu.1",
+      "best_score": 0.435
+    },
+    {
+      "espn_id": "131702",
+      "espn_name": "Leones",
+      "country": "Ecuador",
+      "gender": "men",
+      "espn_league_slug": "ecu.1",
+      "best_score": 0.5
+    },
+    {
+      "espn_id": "280",
+      "espn_name": "Barnet",
+      "country": "England",
+      "gender": "men",
+      "espn_league_slug": "eng.4",
+      "best_score": 0.714
+    },
+    {
+      "espn_id": "332",
+      "espn_name": "Oldham Athletic",
+      "country": "England",
+      "gender": "men",
+      "espn_league_slug": "eng.4",
+      "best_score": 0.69
+    },
+    {
+      "espn_id": "7869",
+      "espn_name": "Boulogne",
+      "country": "France",
+      "gender": "men",
+      "espn_league_slug": "fra.2",
+      "best_score": 0.625
+    },
+    {
+      "espn_id": "3170",
+      "espn_name": "Dijon FCO",
+      "country": "France",
+      "gender": "men",
+      "espn_league_slug": "fra.2",
+      "best_score": 0.533
+    },
+    {
+      "espn_id": "272",
+      "espn_name": "Sochaux",
+      "country": "France",
+      "gender": "men",
+      "espn_league_slug": "fra.2",
+      "best_score": 0.429
+    },
+    {
+      "espn_id": "3952",
+      "espn_name": "Padova",
+      "country": "Italy",
+      "gender": "men",
+      "espn_league_slug": "ita.2",
+      "best_score": 0.615
+    },
+    {
+      "espn_id": "3290",
+      "espn_name": "Pescara",
+      "country": "Italy",
+      "gender": "men",
+      "espn_league_slug": "ita.2",
+      "best_score": 0.667
+    },
+    {
+      "espn_id": "4055",
+      "espn_name": "US Avellino",
+      "country": "Italy",
+      "gender": "men",
+      "espn_league_slug": "ita.2",
+      "best_score": 0.462
+    },
+    {
+      "espn_id": "11137",
+      "espn_name": "Virtus Entella",
+      "country": "Italy",
+      "gender": "men",
+      "espn_league_slug": "ita.2",
+      "best_score": 0.583
+    },
+    {
+      "espn_id": "7111",
+      "espn_name": "JEF United Ichihara-Chiba",
+      "country": "Japan",
+      "gender": "men",
+      "espn_league_slug": "jpn.1",
+      "best_score": 0.364
+    },
+    {
+      "espn_id": "131701",
+      "espn_name": "Mito Hollyhock",
+      "country": "Japan",
+      "gender": "men",
+      "espn_league_slug": "jpn.1",
+      "best_score": 0.345
+    },
+    {
+      "espn_id": "19001",
+      "espn_name": "V-Varen Nagasaki",
+      "country": "Japan",
+      "gender": "men",
+      "espn_league_slug": "jpn.1",
+      "best_score": 0.516
+    },
+    {
+      "espn_id": "17233",
+      "espn_name": "Alebrijes de Oaxaca",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.522
+    },
+    {
+      "espn_id": "226",
+      "espn_name": "Atlante",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.667
+    },
+    {
+      "espn_id": "20724",
+      "espn_name": "Canc\u00fan FC",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.421
+    },
+    {
+      "espn_id": "21533",
+      "espn_name": "Club Atl\u00e9tico La Paz",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.625
+    },
+    {
+      "espn_id": "221",
+      "espn_name": "Club Atl\u00e9tico Morelia",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.667
+    },
+    {
+      "espn_id": "10126",
+      "espn_name": "Club Deportivo Irapuato",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.343
+    },
+    {
+      "espn_id": "10131",
+      "espn_name": "Club Jaiba Brava",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.353
+    },
+    {
+      "espn_id": "8931",
+      "espn_name": "Correcaminos UAT",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.483
+    },
+    {
+      "espn_id": "3432",
+      "espn_name": "Dorados de Sinaloa",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.429
+    },
+    {
+      "espn_id": "10129",
+      "espn_name": "Leones Negros",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.471
+    },
+    {
+      "espn_id": "17514",
+      "espn_name": "Mineros de Zacatecas",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.417
+    },
+    {
+      "espn_id": "20720",
+      "espn_name": "Tapat\u00edo",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.4
+    },
+    {
+      "espn_id": "20721",
+      "espn_name": "Tepatitl\u00e1n FC",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.556
+    },
+    {
+      "espn_id": "20722",
+      "espn_name": "Tlaxcala FC",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.571
+    },
+    {
+      "espn_id": "10124",
+      "espn_name": "Venados FC",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.462
+    },
+    {
+      "espn_id": "3278",
+      "espn_name": "Aalesund",
+      "country": "Norway",
+      "gender": "men",
+      "espn_league_slug": "nor.1",
+      "best_score": 0.706
+    },
+    {
+      "espn_id": "6750",
+      "espn_name": "IK Start",
+      "country": "Norway",
+      "gender": "men",
+      "espn_league_slug": "nor.1",
+      "best_score": 0.526
+    },
+    {
+      "espn_id": "987",
+      "espn_name": "Lillestrom",
+      "country": "Norway",
+      "gender": "men",
+      "espn_league_slug": "nor.1",
+      "best_score": 0.533
+    },
+    {
+      "espn_id": "10080",
+      "espn_name": "Rubio \u00d1\u00fa",
+      "country": "Paraguay",
+      "gender": "men",
+      "espn_league_slug": "par.1",
+      "best_score": 0.417
+    },
+    {
+      "espn_id": "17671",
+      "espn_name": "Sportivo San Lorenzo",
+      "country": "Paraguay",
+      "gender": "men",
+      "espn_league_slug": "par.1",
+      "best_score": 0.722
+    },
+    {
+      "espn_id": "131654",
+      "espn_name": "Deportivo Moquegua",
+      "country": "Peru",
+      "gender": "men",
+      "espn_league_slug": "per.1",
+      "best_score": 0.632
+    },
+    {
+      "espn_id": "20704",
+      "espn_name": "FC Rotor Volgograd",
+      "country": "Russia",
+      "gender": "men",
+      "espn_league_slug": "rus.1.promotion.relegation",
+      "best_score": 0.476
+    },
+    {
+      "espn_id": "15582",
+      "espn_name": "FC Ural Ekaterinburg",
+      "country": "Russia",
+      "gender": "men",
+      "espn_league_slug": "rus.1.promotion.relegation",
+      "best_score": 0.56
+    },
+    {
+      "espn_id": "403",
+      "espn_name": "Alloa Athletic",
+      "country": "Scotland",
+      "gender": "men",
+      "espn_league_slug": "sco.2.promotion.relegation",
+      "best_score": 0.588
+    },
+    {
+      "espn_id": "406",
+      "espn_name": "Queen of the South",
+      "country": "Scotland",
+      "gender": "men",
+      "espn_league_slug": "sco.2.promotion.relegation",
+      "best_score": 0.538
+    },
+    {
+      "espn_id": "405",
+      "espn_name": "Stenhousemuir",
+      "country": "Scotland",
+      "gender": "men",
+      "espn_league_slug": "sco.2.promotion.relegation",
+      "best_score": 0.364
+    },
+    {
+      "espn_id": "3052",
+      "espn_name": "Kalmar FF",
+      "country": "Sweden",
+      "gender": "men",
+      "espn_league_slug": "swe.1",
+      "best_score": 0.706
+    },
+    {
+      "espn_id": "22163",
+      "espn_name": "V\u00e4ster\u00e5s SK",
+      "country": "Sweden",
+      "gender": "men",
+      "espn_league_slug": "swe.1",
+      "best_score": 0.615
+    },
+    {
+      "espn_id": "131552",
+      "espn_name": "\u00d6rgryte IS",
+      "country": "Sweden",
+      "gender": "men",
+      "espn_league_slug": "swe.1",
+      "best_score": 0.429
+    },
+    {
+      "espn_id": "21403",
+      "espn_name": "Albion FC",
+      "country": "Uruguay",
+      "gender": "men",
+      "espn_league_slug": "uru.1",
+      "best_score": 0.615
+    },
+    {
+      "espn_id": "131688",
+      "espn_name": "Central Espa\u00f1ol F\u00fatbol Club",
+      "country": "Uruguay",
+      "gender": "men",
+      "espn_league_slug": "uru.1",
+      "best_score": 0.359
+    },
+    {
+      "espn_id": "10000",
+      "espn_name": "Deportivo Maldonado",
+      "country": "Uruguay",
+      "gender": "men",
+      "espn_league_slug": "uru.1",
+      "best_score": 0.444
+    },
+    {
+      "espn_id": "131562",
+      "espn_name": "Boston Legacy FC",
+      "country": "USA",
+      "gender": "women",
+      "espn_league_slug": "usa.nwsl",
+      "best_score": 0.56
+    },
+    {
+      "espn_id": "131563",
+      "espn_name": "Denver Summit FC",
+      "country": "USA",
+      "gender": "women",
+      "espn_league_slug": "usa.nwsl",
+      "best_score": 0.348
+    },
+    {
+      "espn_id": "131579",
+      "espn_name": "Brooklyn FC",
+      "country": "USA",
+      "gender": "men",
+      "espn_league_slug": "usa.usl.1",
+      "best_score": 0.4
+    },
+    {
+      "espn_id": "131578",
+      "espn_name": "Sporting JAX",
+      "country": "USA",
+      "gender": "men",
+      "espn_league_slug": "usa.usl.1",
+      "best_score": 0.783
+    },
+    {
+      "espn_id": "5268",
+      "espn_name": "Trujillanos",
+      "country": "Venezuela",
+      "gender": "men",
+      "espn_league_slug": "ven.1",
+      "best_score": 0.56
+    },
+    {
+      "espn_id": "10094",
+      "espn_name": "UCV FC",
+      "country": "Venezuela",
+      "gender": "men",
+      "espn_league_slug": "ven.1",
+      "best_score": 0.2
+    }
+  ],
+  "league_disagreements": [
+    {
+      "espn_id": "22269",
+      "espn_name": "Lommel SK",
+      "espn_league_slug": "bel.promotion.relegation",
+      "expected_gfr_league": "Pro League",
+      "actual_gfr_league": "Challenger Pro League",
+      "gfr_team_name": "Lommel"
+    },
+    {
+      "espn_id": "3458",
+      "espn_name": "Athletico-PR",
+      "espn_league_slug": "bra.1",
+      "expected_gfr_league": "Serie A",
+      "actual_gfr_league": "Serie B",
+      "gfr_team_name": "Athletico Paranaense"
+    },
+    {
+      "espn_id": "9318",
+      "espn_name": "Chapecoense",
+      "espn_league_slug": "bra.1",
+      "expected_gfr_league": "Serie A",
+      "actual_gfr_league": "Serie B",
+      "gfr_team_name": "Chapecoense"
+    },
+    {
+      "espn_id": "3456",
+      "espn_name": "Coritiba",
+      "espn_league_slug": "bra.1",
+      "expected_gfr_league": "Serie A",
+      "actual_gfr_league": "Serie B",
+      "gfr_team_name": "Coritiba"
+    },
+    {
+      "espn_id": "4936",
+      "espn_name": "Remo",
+      "espn_league_slug": "bra.1",
+      "expected_gfr_league": "Serie A",
+      "actual_gfr_league": "Serie B",
+      "gfr_team_name": "Remo"
+    },
+    {
+      "espn_id": "9969",
+      "espn_name": "Cear\u00e1",
+      "espn_league_slug": "bra.2",
+      "expected_gfr_league": "Serie B",
+      "actual_gfr_league": "Serie A",
+      "gfr_team_name": "Ceara"
+    },
+    {
+      "espn_id": "6272",
+      "espn_name": "Fortaleza",
+      "espn_league_slug": "bra.2",
+      "expected_gfr_league": "Serie B",
+      "actual_gfr_league": "Serie A",
+      "gfr_team_name": "Fortaleza"
+    },
+    {
+      "espn_id": "6270",
+      "espn_name": "Juventude",
+      "espn_league_slug": "bra.2",
+      "expected_gfr_league": "Serie B",
+      "actual_gfr_league": "Serie A",
+      "gfr_team_name": "Juventude"
+    },
+    {
+      "espn_id": "7635",
+      "espn_name": "Sport",
+      "espn_league_slug": "bra.2",
+      "expected_gfr_league": "Serie B",
+      "actual_gfr_league": "Serie A",
+      "gfr_team_name": "Sport Recife"
+    },
+    {
+      "espn_id": "7853",
+      "espn_name": "AGF",
+      "espn_league_slug": "den.1",
+      "expected_gfr_league": "Superliga",
+      "actual_gfr_league": "Elitedivisionen",
+      "gfr_team_name": "AGF"
+    },
+    {
+      "espn_id": "2697",
+      "espn_name": "Le Mans",
+      "espn_league_slug": "fra.1",
+      "expected_gfr_league": "Ligue 1",
+      "actual_gfr_league": "Ligue 2",
+      "gfr_team_name": "Le Mans"
+    },
+    {
+      "espn_id": "170",
+      "espn_name": "Troyes",
+      "espn_league_slug": "fra.1",
+      "expected_gfr_league": "Ligue 1",
+      "actual_gfr_league": "Ligue 2",
+      "gfr_team_name": "Troyes"
+    },
+    {
+      "espn_id": "177",
+      "espn_name": "Metz",
+      "espn_league_slug": "fra.2",
+      "expected_gfr_league": "Ligue 2",
+      "actual_gfr_league": "Ligue 1",
+      "gfr_team_name": "Metz"
+    },
+    {
+      "espn_id": "165",
+      "espn_name": "Nantes",
+      "espn_league_slug": "fra.2",
+      "expected_gfr_league": "Ligue 2",
+      "actual_gfr_league": "Ligue 1",
+      "gfr_team_name": "Nantes"
+    },
+    {
+      "espn_id": "4057",
+      "espn_name": "Frosinone",
+      "espn_league_slug": "ita.1",
+      "expected_gfr_league": "Serie A",
+      "actual_gfr_league": "Serie B",
+      "gfr_team_name": "Frosinone"
+    },
+    {
+      "espn_id": "4007",
+      "espn_name": "Monza",
+      "espn_league_slug": "ita.1",
+      "expected_gfr_league": "Serie A",
+      "actual_gfr_league": "Serie B",
+      "gfr_team_name": "Monza"
+    },
+    {
+      "espn_id": "17530",
+      "espn_name": "Venezia",
+      "espn_league_slug": "ita.1",
+      "expected_gfr_league": "Serie A",
+      "actual_gfr_league": "Serie B",
+      "gfr_team_name": "Venezia"
+    }
+  ]
+}
