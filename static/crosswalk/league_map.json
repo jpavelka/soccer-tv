@@ -1,0 +1,210 @@
+{
+  "generated_at": "2026-06-15T20:40:24.293216+00:00",
+  "count": 51,
+  "leagues": [
+    {
+      "espn_slug": "arg.1",
+      "gfr_api_football_id": 128
+    },
+    {
+      "espn_slug": "aus.1",
+      "gfr_api_football_id": 188
+    },
+    {
+      "espn_slug": "aus.w.1",
+      "gfr_api_football_id": 190
+    },
+    {
+      "espn_slug": "aut.1",
+      "gfr_api_football_id": 218
+    },
+    {
+      "espn_slug": "bel.1",
+      "gfr_api_football_id": 144
+    },
+    {
+      "espn_slug": "bel.promotion.relegation",
+      "gfr_api_football_id": 144
+    },
+    {
+      "espn_slug": "bol.1",
+      "gfr_api_football_id": 344
+    },
+    {
+      "espn_slug": "bra.1",
+      "gfr_api_football_id": 71
+    },
+    {
+      "espn_slug": "bra.2",
+      "gfr_api_football_id": 72
+    },
+    {
+      "espn_slug": "chi.1",
+      "gfr_api_football_id": 265
+    },
+    {
+      "espn_slug": "col.1",
+      "gfr_api_football_id": 239
+    },
+    {
+      "espn_slug": "crc.1",
+      "gfr_api_football_id": 162
+    },
+    {
+      "espn_slug": "den.1",
+      "gfr_api_football_id": 119
+    },
+    {
+      "espn_slug": "ecu.1",
+      "gfr_api_football_id": 242
+    },
+    {
+      "espn_slug": "eng.1",
+      "gfr_api_football_id": 39
+    },
+    {
+      "espn_slug": "eng.2",
+      "gfr_api_football_id": 40
+    },
+    {
+      "espn_slug": "eng.3",
+      "gfr_api_football_id": 41
+    },
+    {
+      "espn_slug": "eng.4",
+      "gfr_api_football_id": 42
+    },
+    {
+      "espn_slug": "eng.w.1",
+      "gfr_api_football_id": 44
+    },
+    {
+      "espn_slug": "esp.1",
+      "gfr_api_football_id": 140
+    },
+    {
+      "espn_slug": "esp.2",
+      "gfr_api_football_id": 141
+    },
+    {
+      "espn_slug": "esp.w.1",
+      "gfr_api_football_id": 142
+    },
+    {
+      "espn_slug": "fra.1",
+      "gfr_api_football_id": 61
+    },
+    {
+      "espn_slug": "fra.2",
+      "gfr_api_football_id": 62
+    },
+    {
+      "espn_slug": "ger.1",
+      "gfr_api_football_id": 78
+    },
+    {
+      "espn_slug": "ger.2",
+      "gfr_api_football_id": 79
+    },
+    {
+      "espn_slug": "gre.1",
+      "gfr_api_football_id": 197
+    },
+    {
+      "espn_slug": "ita.1",
+      "gfr_api_football_id": 135
+    },
+    {
+      "espn_slug": "ita.2",
+      "gfr_api_football_id": 136
+    },
+    {
+      "espn_slug": "jpn.1",
+      "gfr_api_football_id": 98
+    },
+    {
+      "espn_slug": "mex.2",
+      "gfr_api_football_id": 262
+    },
+    {
+      "espn_slug": "ned.w.1",
+      "gfr_api_football_id": 91
+    },
+    {
+      "espn_slug": "nor.1",
+      "gfr_api_football_id": 103
+    },
+    {
+      "espn_slug": "nor.1.promotion.relegation",
+      "gfr_api_football_id": 103
+    },
+    {
+      "espn_slug": "par.1",
+      "gfr_api_football_id": 250
+    },
+    {
+      "espn_slug": "per.1",
+      "gfr_api_football_id": 281
+    },
+    {
+      "espn_slug": "por.1",
+      "gfr_api_football_id": 94
+    },
+    {
+      "espn_slug": "rsa.1",
+      "gfr_api_football_id": 288
+    },
+    {
+      "espn_slug": "rus.1",
+      "gfr_api_football_id": 235
+    },
+    {
+      "espn_slug": "rus.1.promotion.relegation",
+      "gfr_api_football_id": 235
+    },
+    {
+      "espn_slug": "sco.1",
+      "gfr_api_football_id": 179
+    },
+    {
+      "espn_slug": "sco.2",
+      "gfr_api_football_id": 180
+    },
+    {
+      "espn_slug": "sco.2.promotion.relegation",
+      "gfr_api_football_id": 180
+    },
+    {
+      "espn_slug": "swe.1",
+      "gfr_api_football_id": 113
+    },
+    {
+      "espn_slug": "swe.1.promotion.relegation",
+      "gfr_api_football_id": 113
+    },
+    {
+      "espn_slug": "tur.1",
+      "gfr_api_football_id": 203
+    },
+    {
+      "espn_slug": "uru.1",
+      "gfr_api_football_id": 270
+    },
+    {
+      "espn_slug": "usa.nwsl",
+      "gfr_api_football_id": 254
+    },
+    {
+      "espn_slug": "usa.usl.1",
+      "gfr_api_football_id": 255
+    },
+    {
+      "espn_slug": "usa.w.usl.1",
+      "gfr_api_football_id": 1130
+    },
+    {
+      "espn_slug": "ven.1",
+      "gfr_api_football_id": 299
+    }
+  ]
+}

@@ -76,5 +76,92 @@ export const load: PageLoad = async ({ fetch }) => {
 			return rank;
 		})
 		.catch(() => ({}));
-	return { days, broadcasts, leagueOrder };
+
+	// GFR rankings keyed by ESPN team id, as { rank, intl, points, url, grade }. Composes two ESPN<->GFR
+	// crosswalks with their respective ranking universes: clubs (team_map +
+	// {men,women}_team, intl:false) and national teams (national_map + the FIFA
+	// {men,women}_international tables, intl:true). The two rank scales differ, so
+	// the `intl` flag lets the UI distinguish them. Rankings live in static/rankings
+	// (gitignored; present in dev/build); the crosswalks are committed.
+	const json = (p: string, fallback: any) =>
+		fetch(`${base}/${p}?d=${new Date().toISOString()}`).then(res => res.json()).catch(() => fallback);
+	const GFR_BASE = 'https://globalfootballrankings.com';
+	// Per-api_football_id GFR info: rank, the raw score (clubs: `rating`, national:
+	// FIFA `points`), and a link to the relevant overall GFR ranking page. `kind`/
+	// `gender` select the value field and the (gender-scoped) ranking page.
+	const gfrInfo = (kind: 'club' | 'national', gender: 'men' | 'women', list: any) => {
+		const url = kind === 'club'
+			? `${GFR_BASE}/rankings/teams/${gender}`
+			: `${GFR_BASE}/rankings/fifa-world-ranking/${gender}`;
+		const idx: Record<number, { rank: number; points: number; url: string }> = {};
+		for (const t of list.rankings ?? []) {
+			idx[t.api_football_id] = { rank: t.rank, points: kind === 'club' ? t.rating : t.points, url };
+		}
+		return idx;
+	};
+	// Map a club rating to a standard American letter grade (with +/-). Returns
+	// null below D- (rating < 60) so the UI shows nothing for low-rated clubs.
+	const gradeFor = (rating: number | undefined): string | null => {
+		if (rating == null) return null;
+		if (rating >= 97) return 'A+';
+		if (rating >= 93) return 'A';
+		if (rating >= 90) return 'A-';
+		if (rating >= 87) return 'B+';
+		if (rating >= 83) return 'B';
+		if (rating >= 80) return 'B-';
+		if (rating >= 77) return 'C+';
+		if (rating >= 73) return 'C';
+		if (rating >= 70) return 'C-';
+		if (rating >= 67) return 'D+';
+		if (rating >= 63) return 'D';
+		if (rating >= 60) return 'D-';
+		return null;
+	};
+	// Normalize a single ranking table's value field (clubs: `rating`, national:
+	// FIFA `points`) to a 0..1 strength per api_football_id. Anchored so the table
+	// median maps to 0 and the table max to 1 — below-median teams contribute ~0,
+	// scaling up to the very top. Each table is normalized independently because
+	// the four scales differ; anchors (median/max) are easy to tune.
+	const strengthIndex = (field: string, list: any) => {
+		const rows = list.rankings ?? [];
+		const vals = rows.map((t: any) => t[field]).filter((v: any) => v != null).sort((a: number, b: number) => a - b);
+		const idx: Record<number, number> = {};
+		if (!vals.length) return idx;
+		const hi = vals[vals.length - 1];
+		const lo = vals[Math.floor(vals.length / 2)]; // median
+		const span = hi - lo;
+		for (const t of rows) {
+			const v = t[field];
+			if (v == null) continue;
+			idx[t.api_football_id] = span > 0 ? Math.max(0, Math.min(1, (v - lo) / span)) : 0;
+		}
+		return idx;
+	};
+	const teamRanks = Promise.all([
+		json('crosswalk/team_map.json', { teams: [] }),
+		json('crosswalk/national_map.json', { teams: [] }),
+		json('rankings/men_team.json', { rankings: [] }),
+		json('rankings/women_team.json', { rankings: [] }),
+		json('rankings/men_international.json', { rankings: [] }),
+		json('rankings/women_international.json', { rankings: [] }),
+	]).then(([clubXw, natXw, menT, womenT, menI, womenI]) => {
+		// Per-table info merged — an api_football_id belongs to a single club/national
+		// table, so no collision. Strength is normalized per table (men/women apart).
+		const clubInfo = { ...gfrInfo('club', 'men', menT), ...gfrInfo('club', 'women', womenT) };
+		const intlInfo = { ...gfrInfo('national', 'men', menI), ...gfrInfo('national', 'women', womenI) };
+		const clubStrength = { ...strengthIndex('rating', menT), ...strengthIndex('rating', womenT) };
+		const intlStrength = { ...strengthIndex('points', menI), ...strengthIndex('points', womenI) };
+		const out: Record<string, { rank: number; intl: boolean; strength: number; points: number; url: string; grade?: string | null }> = {};
+		for (const m of clubXw.teams ?? []) {
+			const info = clubInfo[m.gfr_api_football_id];
+			if (info) out[String(m.espn_id)] = { rank: info.rank, intl: false, strength: clubStrength[m.gfr_api_football_id] ?? 0, points: info.points, url: info.url, grade: gradeFor(info.points) };
+		}
+		for (const m of natXw.teams ?? []) {
+			const info = intlInfo[m.gfr_api_football_id];
+			if (info) out[String(m.espn_id)] = { rank: info.rank, intl: true, strength: intlStrength[m.gfr_api_football_id] ?? 0, points: info.points, url: info.url };
+		}
+		return out;
+	}).catch(() => ({}));
+
+	return { days, broadcasts, leagueOrder, teamRanks };
 };

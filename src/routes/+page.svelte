@@ -88,6 +88,7 @@
                     filterBroadcasts={$filterBcsts}
                     broadcasts={data.broadcasts}
                     leagueOrder={data.leagueOrder}
+                    teamRanks={data.teamRanks}
                     sortMode={$sortMode}
                 />
             {/key}
