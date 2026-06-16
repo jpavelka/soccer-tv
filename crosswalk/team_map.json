@@ -1,0 +1,2874 @@
+{
+  "generated_at": "2026-06-15T20:40:24.293216+00:00",
+  "count": 717,
+  "teams": [
+    {
+      "espn_id": "3",
+      "gfr_api_football_id": 458
+    },
+    {
+      "espn_id": "4",
+      "gfr_api_football_id": 440
+    },
+    {
+      "espn_id": "5",
+      "gfr_api_football_id": 451
+    },
+    {
+      "espn_id": "8",
+      "gfr_api_football_id": 450
+    },
+    {
+      "espn_id": "9",
+      "gfr_api_football_id": 434
+    },
+    {
+      "espn_id": "10",
+      "gfr_api_football_id": 445
+    },
+    {
+      "espn_id": "11",
+      "gfr_api_football_id": 453
+    },
+    {
+      "espn_id": "12",
+      "gfr_api_football_id": 446
+    },
+    {
+      "espn_id": "14",
+      "gfr_api_football_id": 457
+    },
+    {
+      "espn_id": "15",
+      "gfr_api_football_id": 436
+    },
+    {
+      "espn_id": "16",
+      "gfr_api_football_id": 435
+    },
+    {
+      "espn_id": "17",
+      "gfr_api_football_id": 437
+    },
+    {
+      "espn_id": "18",
+      "gfr_api_football_id": 460
+    },
+    {
+      "espn_id": "19",
+      "gfr_api_football_id": 456
+    },
+    {
+      "espn_id": "20",
+      "gfr_api_football_id": 441
+    },
+    {
+      "espn_id": "21",
+      "gfr_api_football_id": 438
+    },
+    {
+      "espn_id": "83",
+      "gfr_api_football_id": 529
+    },
+    {
+      "espn_id": "84",
+      "gfr_api_football_id": 798
+    },
+    {
+      "espn_id": "85",
+      "gfr_api_football_id": 538
+    },
+    {
+      "espn_id": "86",
+      "gfr_api_football_id": 541
+    },
+    {
+      "espn_id": "87",
+      "gfr_api_football_id": 4665
+    },
+    {
+      "espn_id": "88",
+      "gfr_api_football_id": 540
+    },
+    {
+      "espn_id": "89",
+      "gfr_api_football_id": 548
+    },
+    {
+      "espn_id": "90",
+      "gfr_api_football_id": 544
+    },
+    {
+      "espn_id": "91",
+      "gfr_api_football_id": 732
+    },
+    {
+      "espn_id": "92",
+      "gfr_api_football_id": 718
+    },
+    {
+      "espn_id": "93",
+      "gfr_api_football_id": 531
+    },
+    {
+      "espn_id": "94",
+      "gfr_api_football_id": 532
+    },
+    {
+      "espn_id": "95",
+      "gfr_api_football_id": 720
+    },
+    {
+      "espn_id": "96",
+      "gfr_api_football_id": 542
+    },
+    {
+      "espn_id": "97",
+      "gfr_api_football_id": 727
+    },
+    {
+      "espn_id": "98",
+      "gfr_api_football_id": 534
+    },
+    {
+      "espn_id": "99",
+      "gfr_api_football_id": 535
+    },
+    {
+      "espn_id": "101",
+      "gfr_api_football_id": 728
+    },
+    {
+      "espn_id": "102",
+      "gfr_api_football_id": 533
+    },
+    {
+      "espn_id": "103",
+      "gfr_api_football_id": 489
+    },
+    {
+      "espn_id": "104",
+      "gfr_api_football_id": 497
+    },
+    {
+      "espn_id": "105",
+      "gfr_api_football_id": 499
+    },
+    {
+      "espn_id": "106",
+      "gfr_api_football_id": 508
+    },
+    {
+      "espn_id": "107",
+      "gfr_api_football_id": 500
+    },
+    {
+      "espn_id": "109",
+      "gfr_api_football_id": 502
+    },
+    {
+      "espn_id": "110",
+      "gfr_api_football_id": 505
+    },
+    {
+      "espn_id": "111",
+      "gfr_api_football_id": 496
+    },
+    {
+      "espn_id": "112",
+      "gfr_api_football_id": 487
+    },
+    {
+      "espn_id": "113",
+      "gfr_api_football_id": 867
+    },
+    {
+      "espn_id": "114",
+      "gfr_api_football_id": 492
+    },
+    {
+      "espn_id": "115",
+      "gfr_api_football_id": 523
+    },
+    {
+      "espn_id": "118",
+      "gfr_api_football_id": 494
+    },
+    {
+      "espn_id": "121",
+      "gfr_api_football_id": 176
+    },
+    {
+      "espn_id": "122",
+      "gfr_api_football_id": 192
+    },
+    {
+      "espn_id": "124",
+      "gfr_api_football_id": 165
+    },
+    {
+      "espn_id": "125",
+      "gfr_api_football_id": 169
+    },
+    {
+      "espn_id": "126",
+      "gfr_api_football_id": 160
+    },
+    {
+      "espn_id": "127",
+      "gfr_api_football_id": 175
+    },
+    {
+      "espn_id": "129",
+      "gfr_api_football_id": 159
+    },
+    {
+      "espn_id": "130",
+      "gfr_api_football_id": 745
+    },
+    {
+      "espn_id": "131",
+      "gfr_api_football_id": 168
+    },
+    {
+      "espn_id": "132",
+      "gfr_api_football_id": 157
+    },
+    {
+      "espn_id": "133",
+      "gfr_api_football_id": 174
+    },
+    {
+      "espn_id": "134",
+      "gfr_api_football_id": 172
+    },
+    {
+      "espn_id": "137",
+      "gfr_api_football_id": 162
+    },
+    {
+      "espn_id": "138",
+      "gfr_api_football_id": 161
+    },
+    {
+      "espn_id": "160",
+      "gfr_api_football_id": 114
+    },
+    {
+      "espn_id": "165",
+      "gfr_api_football_id": 83
+    },
+    {
+      "espn_id": "166",
+      "gfr_api_football_id": 79
+    },
+    {
+      "espn_id": "167",
+      "gfr_api_football_id": 80
+    },
+    {
+      "espn_id": "169",
+      "gfr_api_football_id": 94
+    },
+    {
+      "espn_id": "170",
+      "gfr_api_football_id": 110
+    },
+    {
+      "espn_id": "171",
+      "gfr_api_football_id": 90
+    },
+    {
+      "espn_id": "172",
+      "gfr_api_football_id": 108
+    },
+    {
+      "espn_id": "174",
+      "gfr_api_football_id": 91
+    },
+    {
+      "espn_id": "175",
+      "gfr_api_football_id": 116
+    },
+    {
+      "espn_id": "176",
+      "gfr_api_football_id": 81
+    },
+    {
+      "espn_id": "177",
+      "gfr_api_football_id": 112
+    },
+    {
+      "espn_id": "178",
+      "gfr_api_football_id": 1063
+    },
+    {
+      "espn_id": "179",
+      "gfr_api_football_id": 96
+    },
+    {
+      "espn_id": "180",
+      "gfr_api_football_id": 95
+    },
+    {
+      "espn_id": "235",
+      "gfr_api_football_id": 449
+    },
+    {
+      "espn_id": "239",
+      "gfr_api_football_id": 503
+    },
+    {
+      "espn_id": "243",
+      "gfr_api_football_id": 536
+    },
+    {
+      "espn_id": "244",
+      "gfr_api_football_id": 543
+    },
+    {
+      "espn_id": "247",
+      "gfr_api_football_id": 901
+    },
+    {
+      "espn_id": "248",
+      "gfr_api_football_id": 1387
+    },
+    {
+      "espn_id": "249",
+      "gfr_api_football_id": 1385
+    },
+    {
+      "espn_id": "250",
+      "gfr_api_football_id": 251
+    },
+    {
+      "espn_id": "251",
+      "gfr_api_football_id": 902
+    },
+    {
+      "espn_id": "252",
+      "gfr_api_football_id": 4249
+    },
+    {
+      "espn_id": "254",
+      "gfr_api_football_id": 1389
+    },
+    {
+      "espn_id": "256",
+      "gfr_api_football_id": 247
+    },
+    {
+      "espn_id": "257",
+      "gfr_api_football_id": 257
+    },
+    {
+      "espn_id": "258",
+      "gfr_api_football_id": 249
+    },
+    {
+      "espn_id": "259",
+      "gfr_api_football_id": 255
+    },
+    {
+      "espn_id": "260",
+      "gfr_api_football_id": 250
+    },
+    {
+      "espn_id": "261",
+      "gfr_api_football_id": 253
+    },
+    {
+      "espn_id": "262",
+      "gfr_api_football_id": 254
+    },
+    {
+      "espn_id": "263",
+      "gfr_api_football_id": 252
+    },
+    {
+      "espn_id": "264",
+      "gfr_api_football_id": 1386
+    },
+    {
+      "espn_id": "265",
+      "gfr_api_football_id": 1388
+    },
+    {
+      "espn_id": "266",
+      "gfr_api_football_id": 256
+    },
+    {
+      "espn_id": "267",
+      "gfr_api_football_id": 258
+    },
+    {
+      "espn_id": "268",
+      "gfr_api_football_id": 163
+    },
+    {
+      "espn_id": "269",
+      "gfr_api_football_id": 171
+    },
+    {
+      "espn_id": "270",
+      "gfr_api_football_id": 186
+    },
+    {
+      "espn_id": "273",
+      "gfr_api_football_id": 97
+    },
+    {
+      "espn_id": "274",
+      "gfr_api_football_id": 82
+    },
+    {
+      "espn_id": "279",
+      "gfr_api_football_id": 1354
+    },
+    {
+      "espn_id": "285",
+      "gfr_api_football_id": 1368
+    },
+    {
+      "espn_id": "301",
+      "gfr_api_football_id": 1359
+    },
+    {
+      "espn_id": "302",
+      "gfr_api_football_id": 1352
+    },
+    {
+      "espn_id": "304",
+      "gfr_api_football_id": 1374
+    },
+    {
+      "espn_id": "306",
+      "gfr_api_football_id": 64
+    },
+    {
+      "espn_id": "307",
+      "gfr_api_football_id": 1357
+    },
+    {
+      "espn_id": "308",
+      "gfr_api_football_id": 1334
+    },
+    {
+      "espn_id": "309",
+      "gfr_api_football_id": 1373
+    },
+    {
+      "espn_id": "311",
+      "gfr_api_football_id": 1338
+    },
+    {
+      "espn_id": "314",
+      "gfr_api_football_id": 1379
+    },
+    {
+      "espn_id": "318",
+      "gfr_api_football_id": 76
+    },
+    {
+      "espn_id": "320",
+      "gfr_api_football_id": 1372
+    },
+    {
+      "espn_id": "324",
+      "gfr_api_football_id": 1364
+    },
+    {
+      "espn_id": "331",
+      "gfr_api_football_id": 51
+    },
+    {
+      "espn_id": "333",
+      "gfr_api_football_id": 56
+    },
+    {
+      "espn_id": "334",
+      "gfr_api_football_id": 72
+    },
+    {
+      "espn_id": "335",
+      "gfr_api_football_id": 37
+    },
+    {
+      "espn_id": "336",
+      "gfr_api_football_id": 75
+    },
+    {
+      "espn_id": "337",
+      "gfr_api_football_id": 55
+    },
+    {
+      "espn_id": "338",
+      "gfr_api_football_id": 53
+    },
+    {
+      "espn_id": "339",
+      "gfr_api_football_id": 1361
+    },
+    {
+      "espn_id": "340",
+      "gfr_api_football_id": 1376
+    },
+    {
+      "espn_id": "341",
+      "gfr_api_football_id": 1353
+    },
+    {
+      "espn_id": "342",
+      "gfr_api_football_id": 1350
+    },
+    {
+      "espn_id": "343",
+      "gfr_api_football_id": 1345
+    },
+    {
+      "espn_id": "344",
+      "gfr_api_football_id": 1358
+    },
+    {
+      "espn_id": "345",
+      "gfr_api_football_id": 1381
+    },
+    {
+      "espn_id": "346",
+      "gfr_api_football_id": 1356
+    },
+    {
+      "espn_id": "347",
+      "gfr_api_football_id": 43
+    },
+    {
+      "espn_id": "348",
+      "gfr_api_football_id": 1351
+    },
+    {
+      "espn_id": "349",
+      "gfr_api_football_id": 35
+    },
+    {
+      "espn_id": "350",
+      "gfr_api_football_id": 61
+    },
+    {
+      "espn_id": "351",
+      "gfr_api_football_id": 1370
+    },
+    {
+      "espn_id": "352",
+      "gfr_api_football_id": 1837
+    },
+    {
+      "espn_id": "353",
+      "gfr_api_football_id": 1337
+    },
+    {
+      "espn_id": "357",
+      "gfr_api_football_id": 63
+    },
+    {
+      "espn_id": "358",
+      "gfr_api_football_id": 68
+    },
+    {
+      "espn_id": "359",
+      "gfr_api_football_id": 42
+    },
+    {
+      "espn_id": "360",
+      "gfr_api_football_id": 33
+    },
+    {
+      "espn_id": "361",
+      "gfr_api_football_id": 34
+    },
+    {
+      "espn_id": "362",
+      "gfr_api_football_id": 66
+    },
+    {
+      "espn_id": "363",
+      "gfr_api_football_id": 49
+    },
+    {
+      "espn_id": "364",
+      "gfr_api_football_id": 40
+    },
+    {
+      "espn_id": "365",
+      "gfr_api_football_id": 67
+    },
+    {
+      "espn_id": "366",
+      "gfr_api_football_id": 746
+    },
+    {
+      "espn_id": "367",
+      "gfr_api_football_id": 47
+    },
+    {
+      "espn_id": "368",
+      "gfr_api_football_id": 45
+    },
+    {
+      "espn_id": "369",
+      "gfr_api_football_id": 70
+    },
+    {
+      "espn_id": "370",
+      "gfr_api_football_id": 36
+    },
+    {
+      "espn_id": "371",
+      "gfr_api_football_id": 48
+    },
+    {
+      "espn_id": "372",
+      "gfr_api_football_id": 1335
+    },
+    {
+      "espn_id": "373",
+      "gfr_api_football_id": 57
+    },
+    {
+      "espn_id": "374",
+      "gfr_api_football_id": 69
+    },
+    {
+      "espn_id": "375",
+      "gfr_api_football_id": 46
+    },
+    {
+      "espn_id": "376",
+      "gfr_api_football_id": 41
+    },
+    {
+      "espn_id": "379",
+      "gfr_api_football_id": 44
+    },
+    {
+      "espn_id": "380",
+      "gfr_api_football_id": 39
+    },
+    {
+      "espn_id": "381",
+      "gfr_api_football_id": 71
+    },
+    {
+      "espn_id": "382",
+      "gfr_api_football_id": 50
+    },
+    {
+      "espn_id": "383",
+      "gfr_api_football_id": 60
+    },
+    {
+      "espn_id": "384",
+      "gfr_api_football_id": 52
+    },
+    {
+      "espn_id": "385",
+      "gfr_api_football_id": 1355
+    },
+    {
+      "espn_id": "386",
+      "gfr_api_football_id": 1365
+    },
+    {
+      "espn_id": "387",
+      "gfr_api_football_id": 1343
+    },
+    {
+      "espn_id": "388",
+      "gfr_api_football_id": 1346
+    },
+    {
+      "espn_id": "389",
+      "gfr_api_football_id": 1347
+    },
+    {
+      "espn_id": "390",
+      "gfr_api_football_id": 1348
+    },
+    {
+      "espn_id": "391",
+      "gfr_api_football_id": 58
+    },
+    {
+      "espn_id": "392",
+      "gfr_api_football_id": 54
+    },
+    {
+      "espn_id": "393",
+      "gfr_api_football_id": 65
+    },
+    {
+      "espn_id": "394",
+      "gfr_api_football_id": 59
+    },
+    {
+      "espn_id": "395",
+      "gfr_api_football_id": 38
+    },
+    {
+      "espn_id": "396",
+      "gfr_api_football_id": 1363
+    },
+    {
+      "espn_id": "397",
+      "gfr_api_football_id": 747
+    },
+    {
+      "espn_id": "398",
+      "gfr_api_football_id": 62
+    },
+    {
+      "espn_id": "399",
+      "gfr_api_football_id": 74
+    },
+    {
+      "espn_id": "400",
+      "gfr_api_football_id": 4686
+    },
+    {
+      "espn_id": "401",
+      "gfr_api_football_id": 1342
+    },
+    {
+      "espn_id": "402",
+      "gfr_api_football_id": 73
+    },
+    {
+      "espn_id": "411",
+      "gfr_api_football_id": 23338
+    },
+    {
+      "espn_id": "422",
+      "gfr_api_football_id": 6778
+    },
+    {
+      "espn_id": "432",
+      "gfr_api_football_id": 645
+    },
+    {
+      "espn_id": "435",
+      "gfr_api_football_id": 553
+    },
+    {
+      "espn_id": "436",
+      "gfr_api_football_id": 611
+    },
+    {
+      "espn_id": "437",
+      "gfr_api_football_id": 212
+    },
+    {
+      "espn_id": "438",
+      "gfr_api_football_id": 331
+    },
+    {
+      "espn_id": "441",
+      "gfr_api_football_id": 554
+    },
+    {
+      "espn_id": "442",
+      "gfr_api_football_id": 597
+    },
+    {
+      "espn_id": "443",
+      "gfr_api_football_id": 617
+    },
+    {
+      "espn_id": "510",
+      "gfr_api_football_id": 759
+    },
+    {
+      "espn_id": "519",
+      "gfr_api_football_id": 781
+    },
+    {
+      "espn_id": "529",
+      "gfr_api_football_id": 372
+    },
+    {
+      "espn_id": "559",
+      "gfr_api_football_id": 733
+    },
+    {
+      "espn_id": "570",
+      "gfr_api_football_id": 569
+    },
+    {
+      "espn_id": "572",
+      "gfr_api_football_id": 397
+    },
+    {
+      "espn_id": "575",
+      "gfr_api_football_id": 407
+    },
+    {
+      "espn_id": "596",
+      "gfr_api_football_id": 1088
+    },
+    {
+      "espn_id": "598",
+      "gfr_api_football_id": 182
+    },
+    {
+      "espn_id": "605",
+      "gfr_api_football_id": 619
+    },
+    {
+      "espn_id": "606",
+      "gfr_api_football_id": 261
+    },
+    {
+      "espn_id": "607",
+      "gfr_api_football_id": 2073
+    },
+    {
+      "espn_id": "620",
+      "gfr_api_football_id": 319
+    },
+    {
+      "espn_id": "635",
+      "gfr_api_football_id": 1367
+    },
+    {
+      "espn_id": "642",
+      "gfr_api_football_id": 1819
+    },
+    {
+      "espn_id": "789",
+      "gfr_api_football_id": 994
+    },
+    {
+      "espn_id": "819",
+      "gfr_api_football_id": 127
+    },
+    {
+      "espn_id": "858",
+      "gfr_api_football_id": 816
+    },
+    {
+      "espn_id": "859",
+      "gfr_api_football_id": 25120
+    },
+    {
+      "espn_id": "862",
+      "gfr_api_football_id": 815
+    },
+    {
+      "espn_id": "874",
+      "gfr_api_football_id": 131
+    },
+    {
+      "espn_id": "885",
+      "gfr_api_football_id": 2994
+    },
+    {
+      "espn_id": "887",
+      "gfr_api_football_id": 575
+    },
+    {
+      "espn_id": "909",
+      "gfr_api_football_id": 400
+    },
+    {
+      "espn_id": "936",
+      "gfr_api_football_id": 735
+    },
+    {
+      "espn_id": "938",
+      "gfr_api_football_id": 742
+    },
+    {
+      "espn_id": "994",
+      "gfr_api_football_id": 377
+    },
+    {
+      "espn_id": "995",
+      "gfr_api_football_id": 7411
+    },
+    {
+      "espn_id": "996",
+      "gfr_api_football_id": 997
+    },
+    {
+      "espn_id": "997",
+      "gfr_api_football_id": 998
+    },
+    {
+      "espn_id": "1007",
+      "gfr_api_football_id": 2350
+    },
+    {
+      "espn_id": "1010",
+      "gfr_api_football_id": 1124
+    },
+    {
+      "espn_id": "1011",
+      "gfr_api_football_id": 1149
+    },
+    {
+      "espn_id": "1068",
+      "gfr_api_football_id": 530
+    },
+    {
+      "espn_id": "1382",
+      "gfr_api_football_id": 601
+    },
+    {
+      "espn_id": "1538",
+      "gfr_api_football_id": 539
+    },
+    {
+      "espn_id": "1895",
+      "gfr_api_football_id": 549
+    },
+    {
+      "espn_id": "1929",
+      "gfr_api_football_id": 211
+    },
+    {
+      "espn_id": "1936",
+      "gfr_api_football_id": 119
+    },
+    {
+      "espn_id": "1941",
+      "gfr_api_football_id": 558
+    },
+    {
+      "espn_id": "1963",
+      "gfr_api_football_id": 555
+    },
+    {
+      "espn_id": "2022",
+      "gfr_api_football_id": 135
+    },
+    {
+      "espn_id": "2026",
+      "gfr_api_football_id": 126
+    },
+    {
+      "espn_id": "2029",
+      "gfr_api_football_id": 121
+    },
+    {
+      "espn_id": "2057",
+      "gfr_api_football_id": 822
+    },
+    {
+      "espn_id": "2250",
+      "gfr_api_football_id": 228
+    },
+    {
+      "espn_id": "2339",
+      "gfr_api_football_id": 364
+    },
+    {
+      "espn_id": "2428",
+      "gfr_api_football_id": 166
+    },
+    {
+      "espn_id": "2495",
+      "gfr_api_football_id": 363
+    },
+    {
+      "espn_id": "2500",
+      "gfr_api_football_id": 4668
+    },
+    {
+      "espn_id": "2502",
+      "gfr_api_football_id": 84
+    },
+    {
+      "espn_id": "2506",
+      "gfr_api_football_id": 188
+    },
+    {
+      "espn_id": "2533",
+      "gfr_api_football_id": 596
+    },
+    {
+      "espn_id": "2556",
+      "gfr_api_football_id": 366
+    },
+    {
+      "espn_id": "2567",
+      "gfr_api_football_id": 748
+    },
+    {
+      "espn_id": "2572",
+      "gfr_api_football_id": 895
+    },
+    {
+      "espn_id": "2573",
+      "gfr_api_football_id": 899
+    },
+    {
+      "espn_id": "2574",
+      "gfr_api_football_id": 511
+    },
+    {
+      "espn_id": "2594",
+      "gfr_api_football_id": 1362
+    },
+    {
+      "espn_id": "2668",
+      "gfr_api_football_id": 1148
+    },
+    {
+      "espn_id": "2670",
+      "gfr_api_football_id": 1179
+    },
+    {
+      "espn_id": "2671",
+      "gfr_api_football_id": 1176
+    },
+    {
+      "espn_id": "2672",
+      "gfr_api_football_id": 1127
+    },
+    {
+      "espn_id": "2673",
+      "gfr_api_football_id": 2546
+    },
+    {
+      "espn_id": "2674",
+      "gfr_api_football_id": 128
+    },
+    {
+      "espn_id": "2675",
+      "gfr_api_football_id": 1182
+    },
+    {
+      "espn_id": "2680",
+      "gfr_api_football_id": 2553
+    },
+    {
+      "espn_id": "2681",
+      "gfr_api_football_id": 3702
+    },
+    {
+      "espn_id": "2682",
+      "gfr_api_football_id": 3707
+    },
+    {
+      "espn_id": "2683",
+      "gfr_api_football_id": 2348
+    },
+    {
+      "espn_id": "2684",
+      "gfr_api_football_id": 2356
+    },
+    {
+      "espn_id": "2685",
+      "gfr_api_football_id": 2540
+    },
+    {
+      "espn_id": "2686",
+      "gfr_api_football_id": 1152
+    },
+    {
+      "espn_id": "2687",
+      "gfr_api_football_id": 3711
+    },
+    {
+      "espn_id": "2688",
+      "gfr_api_football_id": 2315
+    },
+    {
+      "espn_id": "2690",
+      "gfr_api_football_id": 1128
+    },
+    {
+      "espn_id": "2697",
+      "gfr_api_football_id": 1298
+    },
+    {
+      "espn_id": "2715",
+      "gfr_api_football_id": 329
+    },
+    {
+      "espn_id": "2720",
+      "gfr_api_football_id": 375
+    },
+    {
+      "espn_id": "2731",
+      "gfr_api_football_id": 1360
+    },
+    {
+      "espn_id": "2734",
+      "gfr_api_football_id": 498
+    },
+    {
+      "espn_id": "2737",
+      "gfr_api_football_id": 722
+    },
+    {
+      "espn_id": "2790",
+      "gfr_api_football_id": 571
+    },
+    {
+      "espn_id": "2791",
+      "gfr_api_football_id": 326
+    },
+    {
+      "espn_id": "2919",
+      "gfr_api_football_id": 1136
+    },
+    {
+      "espn_id": "2922",
+      "gfr_api_football_id": 546
+    },
+    {
+      "espn_id": "2923",
+      "gfr_api_football_id": 522
+    },
+    {
+      "espn_id": "2925",
+      "gfr_api_football_id": 490
+    },
+    {
+      "espn_id": "2950",
+      "gfr_api_football_id": 164
+    },
+    {
+      "espn_id": "2975",
+      "gfr_api_football_id": 478
+    },
+    {
+      "espn_id": "2980",
+      "gfr_api_football_id": 327
+    },
+    {
+      "espn_id": "2991",
+      "gfr_api_football_id": 1085
+    },
+    {
+      "espn_id": "2994",
+      "gfr_api_football_id": 217
+    },
+    {
+      "espn_id": "3017",
+      "gfr_api_football_id": 766
+    },
+    {
+      "espn_id": "3039",
+      "gfr_api_football_id": 2149
+    },
+    {
+      "espn_id": "3067",
+      "gfr_api_football_id": 744
+    },
+    {
+      "espn_id": "3070",
+      "gfr_api_football_id": 178
+    },
+    {
+      "espn_id": "3101",
+      "gfr_api_football_id": 398
+    },
+    {
+      "espn_id": "3129",
+      "gfr_api_football_id": 1832
+    },
+    {
+      "espn_id": "3132",
+      "gfr_api_football_id": 401
+    },
+    {
+      "espn_id": "3153",
+      "gfr_api_football_id": 2070
+    },
+    {
+      "espn_id": "3171",
+      "gfr_api_football_id": 99
+    },
+    {
+      "espn_id": "3236",
+      "gfr_api_football_id": 111
+    },
+    {
+      "espn_id": "3243",
+      "gfr_api_football_id": 93
+    },
+    {
+      "espn_id": "3257",
+      "gfr_api_football_id": 1687
+    },
+    {
+      "espn_id": "3263",
+      "gfr_api_football_id": 495
+    },
+    {
+      "espn_id": "3266",
+      "gfr_api_football_id": 433
+    },
+    {
+      "espn_id": "3267",
+      "gfr_api_football_id": 102
+    },
+    {
+      "espn_id": "3279",
+      "gfr_api_football_id": 332
+    },
+    {
+      "espn_id": "3307",
+      "gfr_api_football_id": 185
+    },
+    {
+      "espn_id": "3337",
+      "gfr_api_football_id": 509
+    },
+    {
+      "espn_id": "3372",
+      "gfr_api_football_id": 2562
+    },
+    {
+      "espn_id": "3384",
+      "gfr_api_football_id": 292
+    },
+    {
+      "espn_id": "3385",
+      "gfr_api_football_id": 287
+    },
+    {
+      "espn_id": "3393",
+      "gfr_api_football_id": 306
+    },
+    {
+      "espn_id": "3395",
+      "gfr_api_football_id": 151
+    },
+    {
+      "espn_id": "3445",
+      "gfr_api_football_id": 124
+    },
+    {
+      "espn_id": "3454",
+      "gfr_api_football_id": 133
+    },
+    {
+      "espn_id": "3456",
+      "gfr_api_football_id": 147
+    },
+    {
+      "espn_id": "3457",
+      "gfr_api_football_id": 136
+    },
+    {
+      "espn_id": "3458",
+      "gfr_api_football_id": 134
+    },
+    {
+      "espn_id": "3472",
+      "gfr_api_football_id": 225
+    },
+    {
+      "espn_id": "3610",
+      "gfr_api_football_id": 741
+    },
+    {
+      "espn_id": "3611",
+      "gfr_api_football_id": 631
+    },
+    {
+      "espn_id": "3616",
+      "gfr_api_football_id": 736
+    },
+    {
+      "espn_id": "3643",
+      "gfr_api_football_id": 1001
+    },
+    {
+      "espn_id": "3696",
+      "gfr_api_football_id": 215
+    },
+    {
+      "espn_id": "3699",
+      "gfr_api_football_id": 762
+    },
+    {
+      "espn_id": "3746",
+      "gfr_api_football_id": 637
+    },
+    {
+      "espn_id": "3747",
+      "gfr_api_football_id": 715
+    },
+    {
+      "espn_id": "3751",
+      "gfr_api_football_id": 797
+    },
+    {
+      "espn_id": "3752",
+      "gfr_api_football_id": 545
+    },
+    {
+      "espn_id": "3759",
+      "gfr_api_football_id": 1028
+    },
+    {
+      "espn_id": "3788",
+      "gfr_api_football_id": 731
+    },
+    {
+      "espn_id": "3794",
+      "gfr_api_football_id": 1005
+    },
+    {
+      "espn_id": "3802",
+      "gfr_api_football_id": 1333
+    },
+    {
+      "espn_id": "3812",
+      "gfr_api_football_id": 181
+    },
+    {
+      "espn_id": "3822",
+      "gfr_api_football_id": 226
+    },
+    {
+      "espn_id": "3841",
+      "gfr_api_football_id": 170
+    },
+    {
+      "espn_id": "3842",
+      "gfr_api_football_id": 724
+    },
+    {
+      "espn_id": "3850",
+      "gfr_api_football_id": 1079
+    },
+    {
+      "espn_id": "3851",
+      "gfr_api_football_id": 1083
+    },
+    {
+      "espn_id": "3852",
+      "gfr_api_football_id": 779
+    },
+    {
+      "espn_id": "3891",
+      "gfr_api_football_id": 1336
+    },
+    {
+      "espn_id": "3942",
+      "gfr_api_football_id": 880
+    },
+    {
+      "espn_id": "3975",
+      "gfr_api_football_id": 863
+    },
+    {
+      "espn_id": "3988",
+      "gfr_api_football_id": 1581
+    },
+    {
+      "espn_id": "3991",
+      "gfr_api_football_id": 1693
+    },
+    {
+      "espn_id": "3997",
+      "gfr_api_football_id": 488
+    },
+    {
+      "espn_id": "4007",
+      "gfr_api_football_id": 1579
+    },
+    {
+      "espn_id": "4056",
+      "gfr_api_football_id": 515
+    },
+    {
+      "espn_id": "4057",
+      "gfr_api_football_id": 512
+    },
+    {
+      "espn_id": "4129",
+      "gfr_api_football_id": 2325
+    },
+    {
+      "espn_id": "4133",
+      "gfr_api_football_id": 2331
+    },
+    {
+      "espn_id": "4134",
+      "gfr_api_football_id": 2328
+    },
+    {
+      "espn_id": "4137",
+      "gfr_api_football_id": 2341
+    },
+    {
+      "espn_id": "4138",
+      "gfr_api_football_id": 2329
+    },
+    {
+      "espn_id": "4139",
+      "gfr_api_football_id": 2323
+    },
+    {
+      "espn_id": "4405",
+      "gfr_api_football_id": 618
+    },
+    {
+      "espn_id": "4411",
+      "gfr_api_football_id": 1026
+    },
+    {
+      "espn_id": "4422",
+      "gfr_api_football_id": 2318
+    },
+    {
+      "espn_id": "4438",
+      "gfr_api_football_id": 5524
+    },
+    {
+      "espn_id": "4471",
+      "gfr_api_football_id": 785
+    },
+    {
+      "espn_id": "4515",
+      "gfr_api_football_id": 799
+    },
+    {
+      "espn_id": "4691",
+      "gfr_api_football_id": 600
+    },
+    {
+      "espn_id": "4703",
+      "gfr_api_football_id": 1844
+    },
+    {
+      "espn_id": "4811",
+      "gfr_api_football_id": 2808
+    },
+    {
+      "espn_id": "4812",
+      "gfr_api_football_id": 1154
+    },
+    {
+      "espn_id": "4815",
+      "gfr_api_football_id": 1135
+    },
+    {
+      "espn_id": "4816",
+      "gfr_api_football_id": 1158
+    },
+    {
+      "espn_id": "4817",
+      "gfr_api_football_id": 2352
+    },
+    {
+      "espn_id": "4818",
+      "gfr_api_football_id": 2807
+    },
+    {
+      "espn_id": "4928",
+      "gfr_api_football_id": 1147
+    },
+    {
+      "espn_id": "4936",
+      "gfr_api_football_id": 1198
+    },
+    {
+      "espn_id": "5002",
+      "gfr_api_football_id": 333
+    },
+    {
+      "espn_id": "5264",
+      "gfr_api_football_id": 1137
+    },
+    {
+      "espn_id": "5267",
+      "gfr_api_football_id": 2560
+    },
+    {
+      "espn_id": "5270",
+      "gfr_api_football_id": 325
+    },
+    {
+      "espn_id": "5276",
+      "gfr_api_football_id": 957
+    },
+    {
+      "espn_id": "5309",
+      "gfr_api_football_id": 224
+    },
+    {
+      "espn_id": "5321",
+      "gfr_api_football_id": 948
+    },
+    {
+      "espn_id": "5322",
+      "gfr_api_football_id": 940
+    },
+    {
+      "espn_id": "5323",
+      "gfr_api_football_id": 946
+    },
+    {
+      "espn_id": "5325",
+      "gfr_api_football_id": 941
+    },
+    {
+      "espn_id": "5326",
+      "gfr_api_football_id": 947
+    },
+    {
+      "espn_id": "5327",
+      "gfr_api_football_id": 943
+    },
+    {
+      "espn_id": "5328",
+      "gfr_api_football_id": 944
+    },
+    {
+      "espn_id": "5404",
+      "gfr_api_football_id": 5255
+    },
+    {
+      "espn_id": "5413",
+      "gfr_api_football_id": 726
+    },
+    {
+      "espn_id": "5480",
+      "gfr_api_football_id": 20878
+    },
+    {
+      "espn_id": "5484",
+      "gfr_api_football_id": 1125
+    },
+    {
+      "espn_id": "5485",
+      "gfr_api_football_id": 1126
+    },
+    {
+      "espn_id": "5486",
+      "gfr_api_football_id": 1462
+    },
+    {
+      "espn_id": "5488",
+      "gfr_api_football_id": 1139
+    },
+    {
+      "espn_id": "5489",
+      "gfr_api_football_id": 1142
+    },
+    {
+      "espn_id": "5490",
+      "gfr_api_football_id": 2362
+    },
+    {
+      "espn_id": "5492",
+      "gfr_api_football_id": 2358
+    },
+    {
+      "espn_id": "5501",
+      "gfr_api_football_id": 2360
+    },
+    {
+      "espn_id": "5570",
+      "gfr_api_football_id": 2544
+    },
+    {
+      "espn_id": "5579",
+      "gfr_api_football_id": 260
+    },
+    {
+      "espn_id": "5583",
+      "gfr_api_football_id": 1183
+    },
+    {
+      "espn_id": "5584",
+      "gfr_api_football_id": 1175
+    },
+    {
+      "espn_id": "5807",
+      "gfr_api_football_id": 1393
+    },
+    {
+      "espn_id": "6017",
+      "gfr_api_football_id": 1156
+    },
+    {
+      "espn_id": "6037",
+      "gfr_api_football_id": 2810
+    },
+    {
+      "espn_id": "6038",
+      "gfr_api_football_id": 2818
+    },
+    {
+      "espn_id": "6041",
+      "gfr_api_football_id": 2811
+    },
+    {
+      "espn_id": "6046",
+      "gfr_api_football_id": 3637
+    },
+    {
+      "espn_id": "6047",
+      "gfr_api_football_id": 3701
+    },
+    {
+      "espn_id": "6072",
+      "gfr_api_football_id": 2320
+    },
+    {
+      "espn_id": "6079",
+      "gfr_api_football_id": 794
+    },
+    {
+      "espn_id": "6086",
+      "gfr_api_football_id": 120
+    },
+    {
+      "espn_id": "6097",
+      "gfr_api_football_id": 2140
+    },
+    {
+      "espn_id": "6137",
+      "gfr_api_football_id": 1131
+    },
+    {
+      "espn_id": "6154",
+      "gfr_api_football_id": 125
+    },
+    {
+      "espn_id": "6270",
+      "gfr_api_football_id": 152
+    },
+    {
+      "espn_id": "6272",
+      "gfr_api_football_id": 154
+    },
+    {
+      "espn_id": "6273",
+      "gfr_api_football_id": 130
+    },
+    {
+      "espn_id": "6418",
+      "gfr_api_football_id": 180
+    },
+    {
+      "espn_id": "6672",
+      "gfr_api_football_id": 320
+    },
+    {
+      "espn_id": "6762",
+      "gfr_api_football_id": 2814
+    },
+    {
+      "espn_id": "6763",
+      "gfr_api_football_id": 2806
+    },
+    {
+      "espn_id": "6790",
+      "gfr_api_football_id": 12260
+    },
+    {
+      "espn_id": "6832",
+      "gfr_api_football_id": 723
+    },
+    {
+      "espn_id": "6851",
+      "gfr_api_football_id": 114
+    },
+    {
+      "espn_id": "6866",
+      "gfr_api_football_id": 2363
+    },
+    {
+      "espn_id": "6870",
+      "gfr_api_football_id": 1004
+    },
+    {
+      "espn_id": "6907",
+      "gfr_api_football_id": 1072
+    },
+    {
+      "espn_id": "6994",
+      "gfr_api_football_id": 101
+    },
+    {
+      "espn_id": "6997",
+      "gfr_api_football_id": 106
+    },
+    {
+      "espn_id": "7017",
+      "gfr_api_football_id": 183
+    },
+    {
+      "espn_id": "7077",
+      "gfr_api_football_id": 2690
+    },
+    {
+      "espn_id": "7079",
+      "gfr_api_football_id": 2669
+    },
+    {
+      "espn_id": "7081",
+      "gfr_api_football_id": 2691
+    },
+    {
+      "espn_id": "7084",
+      "gfr_api_football_id": 2699
+    },
+    {
+      "espn_id": "7085",
+      "gfr_api_football_id": 2700
+    },
+    {
+      "espn_id": "7099",
+      "gfr_api_football_id": 2693
+    },
+    {
+      "espn_id": "7102",
+      "gfr_api_football_id": 293
+    },
+    {
+      "espn_id": "7104",
+      "gfr_api_football_id": 283
+    },
+    {
+      "espn_id": "7107",
+      "gfr_api_football_id": 316
+    },
+    {
+      "espn_id": "7108",
+      "gfr_api_football_id": 288
+    },
+    {
+      "espn_id": "7109",
+      "gfr_api_football_id": 291
+    },
+    {
+      "espn_id": "7112",
+      "gfr_api_football_id": 294
+    },
+    {
+      "espn_id": "7114",
+      "gfr_api_football_id": 282
+    },
+    {
+      "espn_id": "7115",
+      "gfr_api_football_id": 290
+    },
+    {
+      "espn_id": "7116",
+      "gfr_api_football_id": 296
+    },
+    {
+      "espn_id": "7234",
+      "gfr_api_football_id": 819
+    },
+    {
+      "espn_id": "7237",
+      "gfr_api_football_id": 2045
+    },
+    {
+      "espn_id": "7239",
+      "gfr_api_football_id": 820
+    },
+    {
+      "espn_id": "7312",
+      "gfr_api_football_id": 2554
+    },
+    {
+      "espn_id": "7385",
+      "gfr_api_football_id": 1174
+    },
+    {
+      "espn_id": "7427",
+      "gfr_api_football_id": 2337
+    },
+    {
+      "espn_id": "7466",
+      "gfr_api_football_id": 1187
+    },
+    {
+      "espn_id": "7476",
+      "gfr_api_football_id": 281
+    },
+    {
+      "espn_id": "7477",
+      "gfr_api_football_id": 289
+    },
+    {
+      "espn_id": "7632",
+      "gfr_api_football_id": 1062
+    },
+    {
+      "espn_id": "7635",
+      "gfr_api_football_id": 123
+    },
+    {
+      "espn_id": "7648",
+      "gfr_api_football_id": 607
+    },
+    {
+      "espn_id": "7656",
+      "gfr_api_football_id": 1007
+    },
+    {
+      "espn_id": "7719",
+      "gfr_api_football_id": 1301
+    },
+    {
+      "espn_id": "7732",
+      "gfr_api_football_id": 1304
+    },
+    {
+      "espn_id": "7764",
+      "gfr_api_football_id": 1064
+    },
+    {
+      "espn_id": "7767",
+      "gfr_api_football_id": 452
+    },
+    {
+      "espn_id": "7834",
+      "gfr_api_football_id": 367
+    },
+    {
+      "espn_id": "7853",
+      "gfr_api_football_id": 14243
+    },
+    {
+      "espn_id": "7868",
+      "gfr_api_football_id": 77
+    },
+    {
+      "espn_id": "7878",
+      "gfr_api_football_id": 6215
+    },
+    {
+      "espn_id": "7879",
+      "gfr_api_football_id": 266
+    },
+    {
+      "espn_id": "7884",
+      "gfr_api_football_id": 191
+    },
+    {
+      "espn_id": "7911",
+      "gfr_api_football_id": 167
+    },
+    {
+      "espn_id": "7914",
+      "gfr_api_football_id": 564
+    },
+    {
+      "espn_id": "7915",
+      "gfr_api_football_id": 1464
+    },
+    {
+      "espn_id": "8109",
+      "gfr_api_football_id": 1138
+    },
+    {
+      "espn_id": "8118",
+      "gfr_api_football_id": 396
+    },
+    {
+      "espn_id": "8186",
+      "gfr_api_football_id": 2330
+    },
+    {
+      "espn_id": "8221",
+      "gfr_api_football_id": 371
+    },
+    {
+      "espn_id": "8222",
+      "gfr_api_football_id": 2170
+    },
+    {
+      "espn_id": "8352",
+      "gfr_api_football_id": 942
+    },
+    {
+      "espn_id": "8354",
+      "gfr_api_football_id": 955
+    },
+    {
+      "espn_id": "8416",
+      "gfr_api_football_id": 2353
+    },
+    {
+      "espn_id": "8447",
+      "gfr_api_football_id": 713
+    },
+    {
+      "espn_id": "8544",
+      "gfr_api_football_id": 378
+    },
+    {
+      "espn_id": "8547",
+      "gfr_api_football_id": 370
+    },
+    {
+      "espn_id": "8950",
+      "gfr_api_football_id": 442
+    },
+    {
+      "espn_id": "9078",
+      "gfr_api_football_id": 996
+    },
+    {
+      "espn_id": "9169",
+      "gfr_api_football_id": 7848
+    },
+    {
+      "espn_id": "9283",
+      "gfr_api_football_id": 1157
+    },
+    {
+      "espn_id": "9292",
+      "gfr_api_football_id": 1151
+    },
+    {
+      "espn_id": "9318",
+      "gfr_api_football_id": 132
+    },
+    {
+      "espn_id": "9361",
+      "gfr_api_football_id": 826
+    },
+    {
+      "espn_id": "9497",
+      "gfr_api_football_id": 3704
+    },
+    {
+      "espn_id": "9707",
+      "gfr_api_football_id": 158
+    },
+    {
+      "espn_id": "9729",
+      "gfr_api_football_id": 3990
+    },
+    {
+      "espn_id": "9739",
+      "gfr_api_football_id": 463
+    },
+    {
+      "espn_id": "9744",
+      "gfr_api_football_id": 473
+    },
+    {
+      "espn_id": "9761",
+      "gfr_api_football_id": 1141
+    },
+    {
+      "espn_id": "9762",
+      "gfr_api_football_id": 1144
+    },
+    {
+      "espn_id": "9785",
+      "gfr_api_football_id": 455
+    },
+    {
+      "espn_id": "9812",
+      "gfr_api_football_id": 547
+    },
+    {
+      "espn_id": "9867",
+      "gfr_api_football_id": 1313
+    },
+    {
+      "espn_id": "9902",
+      "gfr_api_football_id": 2369
+    },
+    {
+      "espn_id": "9903",
+      "gfr_api_football_id": 2359
+    },
+    {
+      "espn_id": "9966",
+      "gfr_api_football_id": 145
+    },
+    {
+      "espn_id": "9967",
+      "gfr_api_football_id": 118
+    },
+    {
+      "espn_id": "9969",
+      "gfr_api_football_id": 129
+    },
+    {
+      "espn_id": "9970",
+      "gfr_api_football_id": 146
+    },
+    {
+      "espn_id": "9971",
+      "gfr_api_football_id": 140
+    },
+    {
+      "espn_id": "9973",
+      "gfr_api_football_id": 142
+    },
+    {
+      "espn_id": "9999",
+      "gfr_api_football_id": 2361
+    },
+    {
+      "espn_id": "10060",
+      "gfr_api_football_id": 2432
+    },
+    {
+      "espn_id": "10122",
+      "gfr_api_football_id": 2539
+    },
+    {
+      "espn_id": "10144",
+      "gfr_api_football_id": 2326
+    },
+    {
+      "espn_id": "10158",
+      "gfr_api_football_id": 474
+    },
+    {
+      "espn_id": "10281",
+      "gfr_api_football_id": 2618
+    },
+    {
+      "espn_id": "10307",
+      "gfr_api_football_id": 1980
+    },
+    {
+      "espn_id": "10311",
+      "gfr_api_football_id": 3706
+    },
+    {
+      "espn_id": "10318",
+      "gfr_api_football_id": 2555
+    },
+    {
+      "espn_id": "10357",
+      "gfr_api_football_id": 144
+    },
+    {
+      "espn_id": "10382",
+      "gfr_api_football_id": 179
+    },
+    {
+      "espn_id": "10388",
+      "gfr_api_football_id": 1660
+    },
+    {
+      "espn_id": "10418",
+      "gfr_api_football_id": 953
+    },
+    {
+      "espn_id": "10629",
+      "gfr_api_football_id": 725
+    },
+    {
+      "espn_id": "10678",
+      "gfr_api_football_id": 1297
+    },
+    {
+      "espn_id": "11139",
+      "gfr_api_football_id": 1578
+    },
+    {
+      "espn_id": "11143",
+      "gfr_api_football_id": 945
+    },
+    {
+      "espn_id": "11336",
+      "gfr_api_football_id": 621
+    },
+    {
+      "espn_id": "11420",
+      "gfr_api_football_id": 173
+    },
+    {
+      "espn_id": "11429",
+      "gfr_api_football_id": 3603
+    },
+    {
+      "espn_id": "11431",
+      "gfr_api_football_id": 949
+    },
+    {
+      "espn_id": "11553",
+      "gfr_api_football_id": 1123
+    },
+    {
+      "espn_id": "11884",
+      "gfr_api_football_id": 104
+    },
+    {
+      "espn_id": "11913",
+      "gfr_api_football_id": 2698
+    },
+    {
+      "espn_id": "11989",
+      "gfr_api_football_id": 1065
+    },
+    {
+      "espn_id": "11995",
+      "gfr_api_football_id": 10013
+    },
+    {
+      "espn_id": "12215",
+      "gfr_api_football_id": 227
+    },
+    {
+      "espn_id": "12216",
+      "gfr_api_football_id": 230
+    },
+    {
+      "espn_id": "12597",
+      "gfr_api_football_id": 9580
+    },
+    {
+      "espn_id": "12698",
+      "gfr_api_football_id": 242
+    },
+    {
+      "espn_id": "12706",
+      "gfr_api_football_id": 218
+    },
+    {
+      "espn_id": "13150",
+      "gfr_api_football_id": 2011
+    },
+    {
+      "espn_id": "13294",
+      "gfr_api_football_id": 1025
+    },
+    {
+      "espn_id": "13317",
+      "gfr_api_football_id": 2682
+    },
+    {
+      "espn_id": "13481",
+      "gfr_api_football_id": 2825
+    },
+    {
+      "espn_id": "13696",
+      "gfr_api_football_id": 939
+    },
+    {
+      "espn_id": "13783",
+      "gfr_api_football_id": 18806
+    },
+    {
+      "espn_id": "15360",
+      "gfr_api_football_id": 2997
+    },
+    {
+      "espn_id": "15362",
+      "gfr_api_football_id": 3001
+    },
+    {
+      "espn_id": "15363",
+      "gfr_api_football_id": 3002
+    },
+    {
+      "espn_id": "15364",
+      "gfr_api_football_id": 3003
+    },
+    {
+      "espn_id": "15365",
+      "gfr_api_football_id": 3005
+    },
+    {
+      "espn_id": "15366",
+      "gfr_api_football_id": 2999
+    },
+    {
+      "espn_id": "15784",
+      "gfr_api_football_id": 240
+    },
+    {
+      "espn_id": "17086",
+      "gfr_api_football_id": 1153
+    },
+    {
+      "espn_id": "17090",
+      "gfr_api_football_id": 2813
+    },
+    {
+      "espn_id": "17176",
+      "gfr_api_football_id": 1162
+    },
+    {
+      "espn_id": "17313",
+      "gfr_api_football_id": 1193
+    },
+    {
+      "espn_id": "17346",
+      "gfr_api_football_id": 2998
+    },
+    {
+      "espn_id": "17360",
+      "gfr_api_football_id": 3996
+    },
+    {
+      "espn_id": "17361",
+      "gfr_api_football_id": 4021
+    },
+    {
+      "espn_id": "17530",
+      "gfr_api_football_id": 517
+    },
+    {
+      "espn_id": "17534",
+      "gfr_api_football_id": 537
+    },
+    {
+      "espn_id": "17544",
+      "gfr_api_football_id": 740
+    },
+    {
+      "espn_id": "17702",
+      "gfr_api_football_id": 476
+    },
+    {
+      "espn_id": "17827",
+      "gfr_api_football_id": 4010
+    },
+    {
+      "espn_id": "17828",
+      "gfr_api_football_id": 4015
+    },
+    {
+      "espn_id": "17830",
+      "gfr_api_football_id": 3992
+    },
+    {
+      "espn_id": "17832",
+      "gfr_api_football_id": 4000
+    },
+    {
+      "espn_id": "17850",
+      "gfr_api_football_id": 4009
+    },
+    {
+      "espn_id": "18066",
+      "gfr_api_football_id": 3012
+    },
+    {
+      "espn_id": "18127",
+      "gfr_api_football_id": 7834
+    },
+    {
+      "espn_id": "18153",
+      "gfr_api_football_id": 2558
+    },
+    {
+      "espn_id": "18159",
+      "gfr_api_football_id": 9030
+    },
+    {
+      "espn_id": "18187",
+      "gfr_api_football_id": 2217
+    },
+    {
+      "espn_id": "18206",
+      "gfr_api_football_id": 3000
+    },
+    {
+      "espn_id": "18265",
+      "gfr_api_football_id": 4017
+    },
+    {
+      "espn_id": "18285",
+      "gfr_api_football_id": 1080
+    },
+    {
+      "espn_id": "18439",
+      "gfr_api_football_id": 1155
+    },
+    {
+      "espn_id": "18446",
+      "gfr_api_football_id": 4022
+    },
+    {
+      "espn_id": "18455",
+      "gfr_api_football_id": 4007
+    },
+    {
+      "espn_id": "18611",
+      "gfr_api_football_id": 2670
+    },
+    {
+      "espn_id": "18615",
+      "gfr_api_football_id": 2667
+    },
+    {
+      "espn_id": "18794",
+      "gfr_api_football_id": 1398
+    },
+    {
+      "espn_id": "18825",
+      "gfr_api_football_id": 2681
+    },
+    {
+      "espn_id": "18987",
+      "gfr_api_football_id": 3998
+    },
+    {
+      "espn_id": "18995",
+      "gfr_api_football_id": 2827
+    },
+    {
+      "espn_id": "19000",
+      "gfr_api_football_id": 10592
+    },
+    {
+      "espn_id": "19002",
+      "gfr_api_football_id": 2365
+    },
+    {
+      "espn_id": "19141",
+      "gfr_api_football_id": 3004
+    },
+    {
+      "espn_id": "19179",
+      "gfr_api_football_id": 9043
+    },
+    {
+      "espn_id": "19195",
+      "gfr_api_football_id": 16730
+    },
+    {
+      "espn_id": "19257",
+      "gfr_api_football_id": 1854
+    },
+    {
+      "espn_id": "19262",
+      "gfr_api_football_id": 1842
+    },
+    {
+      "espn_id": "19298",
+      "gfr_api_football_id": 2687
+    },
+    {
+      "espn_id": "19340",
+      "gfr_api_football_id": 15550
+    },
+    {
+      "espn_id": "19405",
+      "gfr_api_football_id": 3989
+    },
+    {
+      "espn_id": "19407",
+      "gfr_api_football_id": 3993
+    },
+    {
+      "espn_id": "19408",
+      "gfr_api_football_id": 4003
+    },
+    {
+      "espn_id": "19410",
+      "gfr_api_football_id": 3999
+    },
+    {
+      "espn_id": "19411",
+      "gfr_api_football_id": 3995
+    },
+    {
+      "espn_id": "19425",
+      "gfr_api_football_id": 3700
+    },
+    {
+      "espn_id": "19685",
+      "gfr_api_football_id": 450
+    },
+    {
+      "espn_id": "19970",
+      "gfr_api_football_id": 1853
+    },
+    {
+      "espn_id": "19971",
+      "gfr_api_football_id": 1847
+    },
+    {
+      "espn_id": "19972",
+      "gfr_api_football_id": 1855
+    },
+    {
+      "espn_id": "19973",
+      "gfr_api_football_id": 1850
+    },
+    {
+      "espn_id": "19975",
+      "gfr_api_football_id": 1856
+    },
+    {
+      "espn_id": "19976",
+      "gfr_api_football_id": 1857
+    },
+    {
+      "espn_id": "20019",
+      "gfr_api_football_id": 2012
+    },
+    {
+      "espn_id": "20043",
+      "gfr_api_football_id": 2110
+    },
+    {
+      "espn_id": "20061",
+      "gfr_api_football_id": 4898
+    },
+    {
+      "espn_id": "20062",
+      "gfr_api_football_id": 4899
+    },
+    {
+      "espn_id": "20070",
+      "gfr_api_football_id": 1008
+    },
+    {
+      "espn_id": "20091",
+      "gfr_api_football_id": 1918
+    },
+    {
+      "espn_id": "20093",
+      "gfr_api_football_id": 1910
+    },
+    {
+      "espn_id": "20114",
+      "gfr_api_football_id": 1899
+    },
+    {
+      "espn_id": "20179",
+      "gfr_api_football_id": 8157
+    },
+    {
+      "espn_id": "20280",
+      "gfr_api_football_id": 1971
+    },
+    {
+      "espn_id": "20281",
+      "gfr_api_football_id": 1973
+    },
+    {
+      "espn_id": "20282",
+      "gfr_api_football_id": 1969
+    },
+    {
+      "espn_id": "20283",
+      "gfr_api_football_id": 1974
+    },
+    {
+      "espn_id": "20284",
+      "gfr_api_football_id": 1976
+    },
+    {
+      "espn_id": "20285",
+      "gfr_api_football_id": 1968
+    },
+    {
+      "espn_id": "20286",
+      "gfr_api_football_id": 1972
+    },
+    {
+      "espn_id": "20287",
+      "gfr_api_football_id": 1975
+    },
+    {
+      "espn_id": "20288",
+      "gfr_api_football_id": 1970
+    },
+    {
+      "espn_id": "20293",
+      "gfr_api_football_id": 2564
+    },
+    {
+      "espn_id": "20301",
+      "gfr_api_football_id": 2240
+    },
+    {
+      "espn_id": "20687",
+      "gfr_api_football_id": 10874
+    },
+    {
+      "espn_id": "20695",
+      "gfr_api_football_id": 1992
+    },
+    {
+      "espn_id": "20705",
+      "gfr_api_football_id": 2047
+    },
+    {
+      "espn_id": "20707",
+      "gfr_api_football_id": 14219
+    },
+    {
+      "espn_id": "20729",
+      "gfr_api_football_id": 3588
+    },
+    {
+      "espn_id": "20736",
+      "gfr_api_football_id": 3589
+    },
+    {
+      "espn_id": "20796",
+      "gfr_api_football_id": 1898
+    },
+    {
+      "espn_id": "20797",
+      "gfr_api_football_id": 1900
+    },
+    {
+      "espn_id": "20798",
+      "gfr_api_football_id": 1894
+    },
+    {
+      "espn_id": "20799",
+      "gfr_api_football_id": 1902
+    },
+    {
+      "espn_id": "20800",
+      "gfr_api_football_id": 1897
+    },
+    {
+      "espn_id": "20802",
+      "gfr_api_football_id": 1895
+    },
+    {
+      "espn_id": "20814",
+      "gfr_api_football_id": 15537
+    },
+    {
+      "espn_id": "20851",
+      "gfr_api_football_id": 13975
+    },
+    {
+      "espn_id": "20856",
+      "gfr_api_football_id": 2172
+    },
+    {
+      "espn_id": "20889",
+      "gfr_api_football_id": 15702
+    },
+    {
+      "espn_id": "20890",
+      "gfr_api_football_id": 15708
+    },
+    {
+      "espn_id": "20905",
+      "gfr_api_football_id": 16488
+    },
+    {
+      "espn_id": "20907",
+      "gfr_api_football_id": 16487
+    },
+    {
+      "espn_id": "20983",
+      "gfr_api_football_id": 9585
+    },
+    {
+      "espn_id": "20984",
+      "gfr_api_football_id": 16853
+    },
+    {
+      "espn_id": "21036",
+      "gfr_api_football_id": 15404
+    },
+    {
+      "espn_id": "21053",
+      "gfr_api_football_id": 15406
+    },
+    {
+      "espn_id": "21128",
+      "gfr_api_football_id": 15224
+    },
+    {
+      "espn_id": "21133",
+      "gfr_api_football_id": 17905
+    },
+    {
+      "espn_id": "21137",
+      "gfr_api_football_id": 19895
+    },
+    {
+      "espn_id": "21140",
+      "gfr_api_football_id": 22018
+    },
+    {
+      "espn_id": "21145",
+      "gfr_api_football_id": 6376
+    },
+    {
+      "espn_id": "21149",
+      "gfr_api_football_id": 19896
+    },
+    {
+      "espn_id": "21154",
+      "gfr_api_football_id": 1919
+    },
+    {
+      "espn_id": "21175",
+      "gfr_api_football_id": 1923
+    },
+    {
+      "espn_id": "21313",
+      "gfr_api_football_id": 10487
+    },
+    {
+      "espn_id": "21314",
+      "gfr_api_football_id": 10492
+    },
+    {
+      "espn_id": "21361",
+      "gfr_api_football_id": 302
+    },
+    {
+      "espn_id": "21370",
+      "gfr_api_football_id": 18375
+    },
+    {
+      "espn_id": "21372",
+      "gfr_api_football_id": 1905
+    },
+    {
+      "espn_id": "21376",
+      "gfr_api_football_id": 15225
+    },
+    {
+      "espn_id": "21379",
+      "gfr_api_football_id": 3875
+    },
+    {
+      "espn_id": "21380",
+      "gfr_api_football_id": 2159
+    },
+    {
+      "espn_id": "21422",
+      "gfr_api_football_id": 18450
+    },
+    {
+      "espn_id": "21423",
+      "gfr_api_football_id": 18451
+    },
+    {
+      "espn_id": "21424",
+      "gfr_api_football_id": 1920
+    },
+    {
+      "espn_id": "21425",
+      "gfr_api_football_id": 1921
+    },
+    {
+      "espn_id": "21426",
+      "gfr_api_football_id": 1911
+    },
+    {
+      "espn_id": "21428",
+      "gfr_api_football_id": 1912
+    },
+    {
+      "espn_id": "21581",
+      "gfr_api_football_id": 4716
+    },
+    {
+      "espn_id": "21610",
+      "gfr_api_football_id": 15130
+    },
+    {
+      "espn_id": "21613",
+      "gfr_api_football_id": 4724
+    },
+    {
+      "espn_id": "21819",
+      "gfr_api_football_id": 20960
+    },
+    {
+      "espn_id": "21822",
+      "gfr_api_football_id": 20808
+    },
+    {
+      "espn_id": "21843",
+      "gfr_api_football_id": 18762
+    },
+    {
+      "espn_id": "21846",
+      "gfr_api_football_id": 4256
+    },
+    {
+      "espn_id": "21850",
+      "gfr_api_football_id": 2805
+    },
+    {
+      "espn_id": "21949",
+      "gfr_api_football_id": 2006
+    },
+    {
+      "espn_id": "21950",
+      "gfr_api_football_id": 1394
+    },
+    {
+      "espn_id": "21969",
+      "gfr_api_football_id": 5050
+    },
+    {
+      "espn_id": "21970",
+      "gfr_api_football_id": 2099
+    },
+    {
+      "espn_id": "21977",
+      "gfr_api_football_id": 21939
+    },
+    {
+      "espn_id": "21978",
+      "gfr_api_football_id": 21940
+    },
+    {
+      "espn_id": "21991",
+      "gfr_api_football_id": 22292
+    },
+    {
+      "espn_id": "22064",
+      "gfr_api_football_id": 21595
+    },
+    {
+      "espn_id": "22137",
+      "gfr_api_football_id": 17760
+    },
+    {
+      "espn_id": "22164",
+      "gfr_api_football_id": 22855
+    },
+    {
+      "espn_id": "22165",
+      "gfr_api_football_id": 2143
+    },
+    {
+      "espn_id": "22167",
+      "gfr_api_football_id": 303
+    },
+    {
+      "espn_id": "22168",
+      "gfr_api_football_id": 2572
+    },
+    {
+      "espn_id": "22174",
+      "gfr_api_football_id": 3710
+    },
+    {
+      "espn_id": "22187",
+      "gfr_api_football_id": 22943
+    },
+    {
+      "espn_id": "22269",
+      "gfr_api_football_id": 259
+    },
+    {
+      "espn_id": "22271",
+      "gfr_api_football_id": 6786
+    },
+    {
+      "espn_id": "22300",
+      "gfr_api_football_id": 6813
+    },
+    {
+      "espn_id": "22344",
+      "gfr_api_football_id": 24608
+    },
+    {
+      "espn_id": "22348",
+      "gfr_api_football_id": 24757
+    },
+    {
+      "espn_id": "22517",
+      "gfr_api_football_id": 10476
+    },
+    {
+      "espn_id": "22522",
+      "gfr_api_football_id": 310
+    },
+    {
+      "espn_id": "22523",
+      "gfr_api_football_id": 20252
+    },
+    {
+      "espn_id": "22530",
+      "gfr_api_football_id": 2142
+    },
+    {
+      "espn_id": "22534",
+      "gfr_api_football_id": 22479
+    },
+    {
+      "espn_id": "22538",
+      "gfr_api_football_id": 26498
+    },
+    {
+      "espn_id": "130875",
+      "gfr_api_football_id": 17743
+    },
+    {
+      "espn_id": "131235",
+      "gfr_api_football_id": 6218
+    },
+    {
+      "espn_id": "131361",
+      "gfr_api_football_id": 2694
+    },
+    {
+      "espn_id": "131393",
+      "gfr_api_football_id": 1913
+    },
+    {
+      "espn_id": "131397",
+      "gfr_api_football_id": 26670
+    },
+    {
+      "espn_id": "131447",
+      "gfr_api_football_id": 24660
+    },
+    {
+      "espn_id": "131448",
+      "gfr_api_football_id": 24662
+    },
+    {
+      "espn_id": "131449",
+      "gfr_api_football_id": 24661
+    },
+    {
+      "espn_id": "131450",
+      "gfr_api_football_id": 24659
+    },
+    {
+      "espn_id": "131451",
+      "gfr_api_football_id": 24664
+    },
+    {
+      "espn_id": "131452",
+      "gfr_api_football_id": 24657
+    },
+    {
+      "espn_id": "131453",
+      "gfr_api_football_id": 25855
+    },
+    {
+      "espn_id": "131454",
+      "gfr_api_football_id": 24658
+    },
+    {
+      "espn_id": "131455",
+      "gfr_api_football_id": 24663
+    },
+    {
+      "espn_id": "131655",
+      "gfr_api_football_id": 2539
+    },
+    {
+      "espn_id": "131790",
+      "gfr_api_football_id": 25120
+    }
+  ]
+}
