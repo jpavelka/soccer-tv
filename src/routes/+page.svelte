@@ -1,5 +1,5 @@
 <script>
-    import { goodStatuses, filterBcsts, allBcsts, windowInfo, sortMode } from "$lib/stores";
+    import { goodStatuses, filterBcsts, bcstCounts, windowInfo, sortMode } from "$lib/stores";
     import { onMount } from "svelte";
     import BcstSelect from "./BcstSelect.svelte";
     import DayGames from "./DayGames.svelte";
@@ -70,7 +70,7 @@
         <div slot="header">
             <h2>Filter Broadcasts</h2>
         </div>
-        <BcstSelect allBcsts={$allBcsts} />
+        <BcstSelect counts={$bcstCounts} />
         <div slot="footer">
             <button onclick={() => {
                 showBcstModal = false

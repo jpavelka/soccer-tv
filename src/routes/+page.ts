@@ -1,5 +1,6 @@
 import type { PageLoad } from './$types';
 import { base } from '$app/paths';
+import { canonicalBcst } from '$lib/broadcasters';
 
 const getDateGames = (dt) => {
 	// The /all scoreboard carries the venue address, goals/cards timeline, and
@@ -100,7 +101,7 @@ const adaptEvent = (e: any) => {
 	const seen = new Set<string>();
 	const broadcasts: { name: string; isNational: boolean }[] = [];
 	for (const g of comp.geoBroadcasts ?? []) {
-		const name = g.media?.shortName;
+		const name = g.media?.shortName ? canonicalBcst(g.media.shortName) : null;
 		if (name && !seen.has(name)) {
 			seen.add(name);
 			broadcasts.push({ name, isNational: g.market?.type === 'National' });

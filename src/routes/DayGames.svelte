@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { goodBcsts, allBcsts, windowInfo, accordionShow } from "$lib/stores";
+    import { goodBcsts, bcstCountsByDay, windowInfo, accordionShow } from "$lib/stores";
+    import { canonicalBcst } from "$lib/broadcasters";
     import Accordion from "./Accordion.svelte";
     import Modal from "./Modal.svelte";
 
@@ -64,19 +65,23 @@
                     (leagueRank[a.slug] ?? Infinity) - (leagueRank[b.slug] ?? Infinity));
             }
             numToShow = 0;
+            // Per-canonical-broadcaster game counts for this day, feeding the
+            // picker's count badges. Written once at the end (idempotent re-run).
+            const dayCounts: Record<string, number> = {};
             for (const [leagueIndex, league] of leagueData.entries()) {
                 league.numToShow = 0;
                 for (const event of league.events) {
                     event.bcstsToShow = [];
                     event.show = false;
+                    // All canonical broadcasters for this event (ESPN + livesoccertv),
+                    // independent of the user's filter — drives the availability counts.
+                    const eventBcsts = new Set<string>();
 
-                    // ESPN broadcasts
+                    // ESPN broadcasts (already canonical from +page.ts)
                     for (const bcst of event.broadcasts || []) {
-                        if (!$allBcsts.includes(bcst.name)) {
-                            allBcsts.update((a) => [...a, bcst.name])
-                        }
+                        eventBcsts.add(bcst.name);
                         if (!filterBroadcasts || $goodBcsts.includes(bcst.name)) {
-                            event.bcstsToShow.push(bcst.name)
+                            if (!event.bcstsToShow.includes(bcst.name)) event.bcstsToShow.push(bcst.name)
                         }
                     }
 
@@ -86,16 +91,20 @@
                     event.topmatch = wstGame?.topmatch ?? false;
                     event.interest = interestScore(event, league, leagueIndex, leagueRank, ranks ?? {});
                     if (wstGame) {
-                        for (const bcst of wstGame.broadcasts) {
-                            if (!$allBcsts.includes(bcst)) {
-                                allBcsts.update((a) => [...a, bcst])
-                            }
+                        for (const raw of wstGame.broadcasts) {
+                            const bcst = canonicalBcst(raw);
+                            eventBcsts.add(bcst);
                             if (!event.bcstsToShow.includes(bcst)) {
                                 if (!filterBroadcasts || $goodBcsts.includes(bcst)) {
                                     event.bcstsToShow.push(bcst);
                                 }
                             }
                         }
+                    }
+
+                    // Count availability among still-watchable (upcoming/live) games.
+                    if (event.status === 'pre' || event.status === 'in') {
+                        for (const name of eventBcsts) dayCounts[name] = (dayCounts[name] ?? 0) + 1;
                     }
 
                     event.bcstStr = event.bcstsToShow.join('/');
@@ -108,6 +117,7 @@
                     }
                 }
             }
+            bcstCountsByDay.update((m) => ({ ...m, [dt]: dayCounts }));
             for (const ld of leagueData) {
                 if (!Object.keys($accordionShow).includes(dt + '-' + ld.name)) {
                     $accordionShow[dt + '-' + ld.name] = true;

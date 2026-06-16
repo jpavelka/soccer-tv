@@ -1,31 +1,53 @@
 <script lang="ts">
     import { goodBcsts } from "$lib/stores";
+    import { isHiddenBcst } from "$lib/broadcasters";
 
-    export let allBcsts;
+    // Canonical broadcaster -> upcoming game count.
+    export let counts: Record<string, number> = {};
 
-    const fullBcstList = [...new Set(allBcsts.concat($goodBcsts))].sort();
+    let showHidden = false;
+
+    // Universe = everything seen this week, plus anything already selected (so a
+    // picked channel with no current games still shows up, checked).
+    $: universe = [...new Set([...Object.keys(counts), ...$goodBcsts])].sort();
+    $: visibleBcsts = universe.filter((b) => !isHiddenBcst(b) || $goodBcsts.includes(b));
+    $: hiddenBcsts = universe.filter((b) => isHiddenBcst(b) && !$goodBcsts.includes(b));
+
+    const toggle = (bcst: string, checked: boolean) => {
+        if (checked) {
+            goodBcsts.update((gb) => (gb.includes(bcst) ? gb : [...gb, bcst]));
+        } else {
+            goodBcsts.update((gb) => gb.filter((b) => b !== bcst));
+        }
+    };
 </script>
 
 <div class="bcstSelectContainer">
-    {#each fullBcstList as bcst}
+    {#each visibleBcsts as bcst}
         <span class="bcstSelect">
-            <input id={'bcstCheck' + bcst} type="checkbox" checked={$goodBcsts.includes(bcst)} onchange={(e) => {
-                if (e.target.checked) {
-                    goodBcsts.update(gb => {
-                        gb.push(bcst)
-                        return gb
-                    })
-                } else {
-                    goodBcsts.update(gb => {
-                        gb = gb.filter(b => b !== bcst);
-                        return gb
-                    })                    
-                }
-            }}/>
-            <label for={'bcstCheck' + bcst}>{bcst}</label>
+            <input id={'bcstCheck' + bcst} type="checkbox" checked={$goodBcsts.includes(bcst)}
+                onchange={(e) => toggle(bcst, e.currentTarget.checked)}/>
+            <label for={'bcstCheck' + bcst}>{bcst}{#if counts[bcst]} <span class="count">({counts[bcst]})</span>{/if}</label>
         </span>
     {/each}
 </div>
+
+{#if hiddenBcsts.length}
+    <button class="showMore" onclick={() => { showHidden = !showHidden }}>
+        {showHidden ? 'Hide' : 'Show'} {hiddenBcsts.length} more
+    </button>
+    {#if showHidden}
+        <div class="bcstSelectContainer">
+            {#each hiddenBcsts as bcst}
+                <span class="bcstSelect">
+                    <input id={'bcstCheck' + bcst} type="checkbox" checked={$goodBcsts.includes(bcst)}
+                        onchange={(e) => toggle(bcst, e.currentTarget.checked)}/>
+                    <label for={'bcstCheck' + bcst}>{bcst}{#if counts[bcst]} <span class="count">({counts[bcst]})</span>{/if}</label>
+                </span>
+            {/each}
+        </div>
+    {/if}
+{/if}
 
 <style>
     .bcstSelectContainer {
@@ -35,5 +57,12 @@
     }
     .bcstSelect {
         width: 160px;
+    }
+    .count {
+        opacity: 0.6;
+    }
+    .showMore {
+        margin-top: 12px;
+        cursor: pointer;
     }
 </style>
