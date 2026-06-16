@@ -521,8 +521,7 @@
                     .replace(' AM', 'am').replace(' PM', 'pm')
             ) : event.summary
         }</span>
-        <span class="interest-score" title="interest score">{Math.round(event.interest ?? 0)}</span>
-        {#if event.topmatch}<span class="topmatch-flag" title="livesoccertv topmatch">⭐</span>{/if}
+        <span class={`interest-score${event.topmatch ? ' interest-score-top' : ''}`} title={event.topmatch ? 'interest score · livesoccertv topmatch' : 'interest score'}>{Math.round(event.interest ?? 0)}</span>
         <span class="broadcast">{event.bcstStr}</span>
         {#if event.lstv_matched}
             <a
@@ -651,7 +650,7 @@
             new Date(selectedEvent.date).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric'})
         } · {
             new Date(selectedEvent.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true}).replace(' AM', 'am').replace(' PM', 'pm')
-        }{selectedEvent.status === 'post' ? ' · ' + selectedEvent.summary : ''}</div>
+        }{selectedEvent.status === 'post' ? ' · ' + selectedEvent.summary : ''}{#if selectedEvent.topmatch}<span class="modal-topmatch" title="livesoccertv topmatch">Top match</span>{/if}</div>
     </div>
     <div class="modal-body">
         {#if selectedEvent.location}
@@ -875,10 +874,11 @@
         opacity: 0.8;
         flex-shrink: 0;
     }
-    .topmatch-flag {
-        margin-left: 6px;
-        font-size: 0.8rem;
-        flex-shrink: 0;
+    /* Top matches (livesoccertv topmatch) get a gold interest-score badge. */
+    .interest-score-top {
+        background: light-dark(#ffd24d, #b8860b);
+        color: light-dark(#000, #fff);
+        opacity: 1;
     }
     .timeGameGroup {
         margin-top: 3px;
@@ -945,6 +945,16 @@
     }
     .modal-datetime {
         margin-top: 8px;
+    }
+    .modal-topmatch {
+        margin-left: 8px;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        background: light-dark(#ffd24d, #b8860b);
+        color: light-dark(#000, #fff);
+        white-space: nowrap;
     }
     .modal-live {
         margin-top: 4px;
