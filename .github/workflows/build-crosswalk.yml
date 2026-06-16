@@ -1,13 +1,14 @@
 name: Build ESPN-GFR Crosswalk
 
 # Refreshes the ESPN <-> GFR ID crosswalk and commits it back to its branch when
-# it actually changes. GFR rankings are scraped first only as INPUT to the matcher
-# — that data is gitignored and regenerated fresh at deploy time (like
-# broadcasts.json), so it is never committed here. The crosswalk changes slowly
-# (renames, promotions), so this runs once a day; commits only happen on a real diff.
+# it actually changes. GFR rankings are pulled from the gh-pages branch (where the
+# deploy workflows publish them every ~8h) only as INPUT to the matcher — that data
+# is gitignored and never committed here. Fetching instead of re-scraping keeps this
+# off GFR's backend. The crosswalk changes slowly (renames, promotions), so this runs
+# twice a week; commits only happen on a real diff.
 on:
   schedule:
-    - cron: '30 6 * * *'
+    - cron: '30 6 * * 1,4'
   workflow_dispatch:
 
 permissions:
@@ -26,8 +27,10 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r scraper/requirements.txt
 
-      - name: Scrape GFR rankings (crosswalk input)
-        run: python scraper/scrape_rankings.py
+      - name: Fetch GFR rankings (crosswalk input)
+        run: |
+          git fetch origin gh-pages
+          git checkout origin/gh-pages -- rankings && mv rankings static/
 
       - name: Build ESPN-GFR crosswalk
         run: python scraper/build_crosswalk.py

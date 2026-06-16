@@ -23,6 +23,16 @@ jobs:
       - name: Scrape broadcast data
         run: python scraper/scrape.py
 
+      - name: Fetch latest rankings data
+        run: |
+          git fetch origin gh-pages
+          git checkout origin/gh-pages -- rankings && mv rankings static/ || true
+
+      - name: Scrape GFR rankings
+        id: rankings
+        continue-on-error: true
+        run: python scraper/scrape_rankings.py
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -36,3 +46,9 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build
+
+      - name: Flag stale rankings
+        if: steps.rankings.outcome == 'failure'
+        run: |
+          echo "::warning::GFR rankings scrape failed — deployed with stale fallback rankings from gh-pages."
+          exit 1

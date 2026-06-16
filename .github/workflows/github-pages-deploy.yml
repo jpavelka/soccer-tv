@@ -17,6 +17,19 @@ jobs:
           git fetch origin gh-pages
           git checkout origin/gh-pages -- broadcasts.json && mv broadcasts.json static/ || true
           git checkout origin/gh-pages -- league_order.json && mv league_order.json static/ || true
+          git checkout origin/gh-pages -- rankings && mv rankings static/ || true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install -r scraper/requirements.txt
+
+      - name: Scrape GFR rankings
+        id: rankings
+        continue-on-error: true
+        run: python scraper/scrape_rankings.py
 
       - name: Install and Build
         run: |
@@ -28,3 +41,9 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build
+
+      - name: Flag stale rankings
+        if: steps.rankings.outcome == 'failure'
+        run: |
+          echo "::warning::GFR rankings scrape failed — deployed with stale fallback rankings from gh-pages."
+          exit 1
