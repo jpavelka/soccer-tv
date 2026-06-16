@@ -503,13 +503,13 @@
                 <span class={`teamRank${r0?.intl ? ' teamRankIntl' : ''}`} title={r0 ? (r0.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r0 ? (r0.intl ? `${r0.rank}` : (r0.grade ?? '')) : ''}</span>
                 <span class="teamName">{event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}</span>
             </span>
-            <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
+            <img class=teamLogo alt="" src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
             <span class=betweenTeams>{
                 event.status === 'pre' ? (
                     'vs'
                 ) : `${event.competitors[0].score}-${event.competitors[1].score}`
             }</span>
-            <img class=teamLogo src={event.competitors[1].logo}/>
+            <img class=teamLogo alt="" src={event.competitors[1].logo}/>
             <span class={`teamGroup teamGroup1${narrowScreen ? ' teamGroupNarrow' : ''}`}>
                 <span class="teamName">{event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}</span>
                 <span class={`teamRank${r1?.intl ? ' teamRankIntl' : ''}`} title={r1 ? (r1.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r1 ? (r1.intl ? `${r1.rank}` : (r1.grade ?? '')) : ''}</span>

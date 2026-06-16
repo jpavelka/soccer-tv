@@ -1,4 +1,5 @@
 <script>
+	/** @type {(value: boolean) => void} */
 	export let onClickFunc = () => {};
     export let initValue = true;
     let value = initValue;
@@ -7,9 +8,19 @@
 <div
 	class="switch"
 	class:checked={value}
-	on:click={(e) => {
+	role="switch"
+	aria-checked={value}
+	tabindex="0"
+	on:click={() => {
         value = !value;
         onClickFunc(value)
+    }}
+	on:keydown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            value = !value;
+            onClickFunc(value);
+        }
     }}
 >
 	<div class="thumb">

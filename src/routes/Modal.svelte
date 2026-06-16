@@ -52,10 +52,23 @@
             }
         };
     }
+
+    /** @param {KeyboardEvent} e */
+    function onOverlayKeydown(e) {
+        if (e.key === 'Escape') showModal = false;
+    }
 </script>
 
 {#if showModal}
-    <div class="modal-overlay" use:viewportModal on:click|self={() => (showModal = false)}>
+    <div
+        class="modal-overlay"
+        use:viewportModal
+        role="button"
+        tabindex="-1"
+        aria-label="Close modal"
+        on:click|self={() => (showModal = false)}
+        on:keydown={onOverlayKeydown}
+    >
         <div class="modal-content" style={`padding:${padding}px`}>
             <slot name="header"/>
             <div class="body">
