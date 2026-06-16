@@ -498,33 +498,32 @@
     {@const r0 = rankOf(event.competitors[0])}
     {@const r1 = rankOf(event.competitors[1])}
     <div class=gameLine>
-        <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
-            {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
-        </span>
-        <span class={`teamRank${r0?.intl ? ' teamRankIntl' : ''}`} title={r0 ? (r0.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r0 ? (r0.intl ? `#${r0.rank}` : (r0.grade ?? '')) : ''}</span>
-        <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
-        <span class=betweenTeams>{
-            event.status === 'pre' ? (
-                'vs'
-            ) : `${event.competitors[0].score}-${event.competitors[1].score}`
-        }</span>
-        <img class=teamLogo src={event.competitors[1].logo}/>
-        <span class={`teamRank${r1?.intl ? ' teamRankIntl' : ''}`} title={r1 ? (r1.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r1 ? (r1.intl ? `#${r1.rank}` : (r1.grade ?? '')) : ''}</span>
-        <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
-            {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
-        </span>
-        <button class="info-btn" onclick={() => showInfo(event, league)} title="More info">ⓘ</button>
-        <span class=when>{
+        <button class="matchup" onclick={() => showInfo(event, league)} title="More info">
+            <span class={`teamGroup teamGroup0${narrowScreen ? ' teamGroupNarrow' : ''}`}>
+                <span class={`teamRank${r0?.intl ? ' teamRankIntl' : ''}`} title={r0 ? (r0.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r0 ? (r0.intl ? `${r0.rank}` : (r0.grade ?? '')) : ''}</span>
+                <span class="teamName">{event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}</span>
+            </span>
+            <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
+            <span class=betweenTeams>{
+                event.status === 'pre' ? (
+                    'vs'
+                ) : `${event.competitors[0].score}-${event.competitors[1].score}`
+            }</span>
+            <img class=teamLogo src={event.competitors[1].logo}/>
+            <span class={`teamGroup teamGroup1${narrowScreen ? ' teamGroupNarrow' : ''}`}>
+                <span class="teamName">{event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}</span>
+                <span class={`teamRank${r1?.intl ? ' teamRankIntl' : ''}`} title={r1 ? (r1.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r1 ? (r1.intl ? `${r1.rank}` : (r1.grade ?? '')) : ''}</span>
+            </span>
+        </button>
+        <span class={`when${event.status === 'in' ? ' whenLive' : ''}`}>{#if event.status === 'in'}<span class="live-dot" title="in progress"></span>{/if}{
             event.status === 'pre' ? (
                 new Date(event.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true})
                     .replace(' AM', 'am').replace(' PM', 'pm')
             ) : event.summary
         }</span>
-        <span class="broadcast">
-            {event.bcstStr}
-        </span>
         <span class="interest-score" title="interest score">{Math.round(event.interest ?? 0)}</span>
         {#if event.topmatch}<span class="topmatch-flag" title="livesoccertv topmatch">⭐</span>{/if}
+        <span class="broadcast">{event.bcstStr}</span>
         {#if event.lstv_matched}
             <a
                 class="lstv-dot"
@@ -791,26 +790,39 @@
     .teamLogo {
         height: 30px;
         width: 30px;
-        padding: 0 10px;
+        padding: 0 5px;
+    }
+    /* rank + name share a fixed-width group so the name hugs the logo while the
+       rank sits beside it; the fixed width keeps logos column-aligned across rows. */
+    .teamGroup {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        width: 116px;
+        overflow: hidden;
+    }
+    .teamGroupNarrow {
+        width: 71px;
+    }
+    .teamGroup0 {
+        justify-content: flex-end;   /* name hugs the logo on its right; rank to its left */
+    }
+    .teamGroup1 {
+        justify-content: flex-start; /* name hugs the logo on its left; rank to its right */
     }
     .teamName {
-        width: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-    }
-    .teamNameNarrow {
-        width: 55px;
-    }
-    .team0 {
-        text-align: right;
+        min-width: 0;       /* allow the name to shrink → it (not the rank) ellipsizes */
+        flex: 0 1 auto;
     }
     /* TEMP: rank label beside each team name. Club ranks (blue) vs FIFA national
        ranks (green) use different colors since the two scales aren't comparable. */
     .teamRank {
-        min-width: 20px;
+        flex: 0 0 auto;     /* never shrink → rank/grade stays fully visible */
         text-align: center;
-        font-size: 0.7rem;
+        font-size: 0.6rem;
         font-weight: bold;
         color: light-dark(#1565c0, #64b5f6);
     }
@@ -825,7 +837,32 @@
         width: 60px;
         padding: 0 10px;
     }
+    .whenLive {
+        display: inline-flex;
+        align-items: center;
+        color: light-dark(#d32f2f, #ef5350);
+        font-weight: 600;
+    }
+    .live-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        margin-right: 4px;
+        border-radius: 50%;
+        background: light-dark(#d32f2f, #ef5350);
+        vertical-align: middle;
+        animation: livePulse 5s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+        0%, 65% { opacity: 1; }
+        82% { opacity: 0.15; }
+        100% { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .live-dot { animation: none; }
+    }
     .broadcast {
+        margin-left: 10px;
         white-space: nowrap;
     }
     .interest-score {
@@ -852,11 +889,6 @@
     .leagueName {
         display: flex;
     }
-    .leagueName::before {
-        content: '';
-        width: 165px;
-        flex-shrink: 0;
-    }
     .narrowLeague::before {
         width: 120px;
     }
@@ -864,7 +896,7 @@
         font-size: 0.75rem;
         opacity: 0.6;
         white-space: nowrap;
-        transform: translateX(-50%);
+        font-weight: bold;
     }
     .lstv-dot {
         font-size: 0.55rem;
@@ -877,23 +909,21 @@
     .lstv-dot:hover {
         opacity: 0.9;
     }
-    .info-btn {
+    .matchup {
+        display: flex;
+        align-items: center;
         background: none;
-        border: 1.5px solid currentColor;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.8rem;
-        opacity: 0.45;
-        padding: 1px 0;
-        width: 28px;
-        text-align: center;
-        flex-shrink: 0;
+        border: none;
+        padding: 1px 4px;
+        margin: 0 -4px;        /* cancel the padding so column alignment is unchanged */
         color: inherit;
-        line-height: 1.4;
-        margin: 0 5px;
+        font: inherit;
+        cursor: pointer;
+        border-radius: 4px;
+        box-shadow: none;
+        -webkit-tap-highlight-color: transparent;
     }
-    .info-btn:hover {
-        opacity: 0.85;
+    .matchup:hover {
         background-color: rgba(128, 128, 128, 0.12);
     }
     .modal-meta {
