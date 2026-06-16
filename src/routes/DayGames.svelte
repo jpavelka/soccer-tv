@@ -55,7 +55,14 @@
         Promise.all([dayData, broadcasts, leagueOrder, teamRanks]).then(([d, bcstData, leagueRank, ranks]) => {
             const wstGames = bcstData?.games ?? [];
             teamRankMap = ranks ?? {};
-            leagueData = d.sports[0].leagues;
+            // /all yields leagues in event order, so re-sort by ESPN's prominence
+            // rank (the header endpoint used to return them pre-ordered). Falls back
+            // to the as-received order if the rank map didn't load.
+            leagueData = [...d.sports[0].leagues];
+            if (leagueRank && Object.keys(leagueRank).length > 0) {
+                leagueData.sort((a: any, b: any) =>
+                    (leagueRank[a.slug] ?? Infinity) - (leagueRank[b.slug] ?? Infinity));
+            }
             numToShow = 0;
             for (const [leagueIndex, league] of leagueData.entries()) {
                 league.numToShow = 0;
@@ -132,9 +139,8 @@
     let selectedLeague = $state<any>(null);
     let showInfoModal = $state(false);
     let venueAddress = $state<string | null>(null);
-    let venueFetching = $state(false);
     // For in-progress / finished games: goals-cards-subs timeline and team stats,
-    // both parsed from the same summary fetch that supplies the venue address.
+    // both read off the adapted event (see +page.ts) — no per-game fetch.
     let matchEvents = $state<{ clock: string; icon: string; player: string; col: number; score: string; detail: string }[] | null>(null);
     // Indices of the timeline events whose detail is expanded. A click toggles
     // an event open/closed independently, so any number can be shown at once.
@@ -152,33 +158,19 @@
     // container width to get the bar track width.
     const PROW_LABEL_OFFSET = 66;
 
-    async function showInfo(event: any, league: any) {
+    function showInfo(event: any, league: any) {
         selectedEvent = event;
         selectedLeague = league;
-        venueAddress = null;
-        matchEvents = null;
-        matchStats = null;
         openTips = new Set();
         showInfoModal = true;
-        // The summary endpoint carries the venue address plus, once a game is
-        // under way, the keyEvents timeline and per-team boxscore stats.
+        // The /all scoreboard supplies the venue address, the goals/cards timeline,
+        // and per-team stats inline (precomputed/adapted upstream in +page.ts), so
+        // there's no per-game fetch here. Timeline + stats apply once a game is
+        // under way.
+        venueAddress = event.venueAddress ?? null;
         const live = event.status !== 'pre';
-        if (event.location || live) {
-            venueFetching = !!event.location;
-            try {
-                const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league.slug}/summary?event=${event.id}`);
-                const d = await res.json();
-                const addr = d.gameInfo?.venue?.address;
-                if (addr) {
-                    venueAddress = [addr.city, addr.country].filter(Boolean).join(', ');
-                }
-                if (live) {
-                    matchEvents = matchTimeline(event, d);
-                    matchStats = matchStatRows(event, d);
-                }
-            } catch { /* venue / live data stay null */ }
-            finally { venueFetching = false; }
-        }
+        matchEvents = live ? matchTimeline(event) : null;
+        matchStats = live ? matchStatRows(event) : null;
     }
     // Convert an American moneyline to a raw implied probability.
     function mlToProb(ml: number): number {
@@ -313,63 +305,42 @@
     function teamLink(comp: any): string | null {
         return comp?.links?.find((l: any) => l.rel?.includes('clubhouse'))?.href ?? null;
     }
-    // The summary endpoint's keyEvents, distilled to goals and cards with just
-    // the minute, player, team and (for goals) the running score. ESPN doesn't
-    // put a running score on the event, and the per-league `text` formats are
-    // inconsistent, so we tally goals ourselves as we walk the (chronological)
-    // events. The event's `team.id` shares the summary's id namespace (which the
-    // scoreboard's competitor.id does not), so we map it to competitors[0|1] via
-    // the boxscore's homeAway, falling back to a name-substring match for leagues
-    // with no boxscore.
-    // A fuller description of a goal/card for the tooltip. ESPN's `text` already
-    // reads as a sentence ("Goal! ... assisted by ...", "Penalty conceded by ..."),
-    // so prefer it; otherwise assemble scorer + assist from the participants.
+    // The /all event's `details`, distilled to goals and cards with just the
+    // minute, player, team and (for goals) the running score. ESPN doesn't put a
+    // running score on each play, so we tally goals ourselves as we walk the
+    // (chronological) details. Each play's `team.id` matches the scoreboard
+    // competitor id directly, so we map it to competitors[0|1] by id.
+    // A fuller description of a goal/card for the tooltip, assembled from the
+    // scorer + any assist (the /all details carry no prose `text`).
     function keyEventDetail(e: any, icon: string): string {
-        const txt = (e.text ?? '').trim();
-        if (txt) return txt;
-        const names = (e.participants ?? []).map((p: any) => p.athlete?.displayName).filter(Boolean);
+        const names = (e.athletesInvolved ?? []).map((a: any) => a?.displayName).filter(Boolean);
         const kind = icon === '⚽' ? 'Goal' : e.type?.text ?? '';
         const assist = names.length > 1 ? ` (assist: ${names.slice(1).join(', ')})` : '';
         return [[kind, names[0]].filter(Boolean).join(' – ') + assist].join('').trim();
     }
-    function matchTimeline(event: any, summary: any): { clock: string; icon: string; player: string; col: number; score: string; detail: string }[] | null {
-        const sideById: Record<string, string> = {};
-        for (const t of summary?.boxscore?.teams ?? []) {
-            if (t.team?.id != null) sideById[t.team.id] = t.homeAway;
-        }
-        const idxByHomeAway: Record<string, number> = {};
-        event.competitors.forEach((c: any, i: number) => { idxByHomeAway[c.homeAway] = i; });
-        const compIndex = (team: any): number => {
-            if (!team) return -1;
-            const ha = sideById[team.id];
-            if (ha != null && idxByHomeAway[ha] != null) return idxByHomeAway[ha];
-            const n = (team.displayName ?? '').toLowerCase();
-            return n ? event.competitors.findIndex((c: any) =>
-                [c.name, c.displayName, c.shortDisplayName].filter(Boolean).some((x: string) => {
-                    const y = x.toLowerCase();
-                    return y === n || y.includes(n) || n.includes(y);
-                })) : -1;
-        };
+    function matchTimeline(event: any): { clock: string; icon: string; player: string; col: number; score: string; detail: string }[] | null {
+        const idxById: Record<string, number> = {};
+        event.competitors.forEach((c: any, i: number) => { if (c.id != null) idxById[c.id] = i; });
 
         const tally = [0, 0];
         const rows: { clock: string; icon: string; player: string; col: number; score: string; detail: string }[] = [];
-        for (const e of summary?.keyEvents ?? []) {
+        for (const e of event.details ?? []) {
             if (e.shootout) continue; // penalty-shootout kicks aren't match goals
             const t = e.type?.text ?? '';
             const isGoal = !!e.scoringPlay;
             let icon: string;
             if (isGoal) icon = '⚽';
-            else if (t === 'Red Card') icon = '🟥';
-            else if (t === 'Yellow Card') icon = '🟨';
+            else if (e.redCard || t === 'Red Card') icon = '🟥';
+            else if (e.yellowCard || t === 'Yellow Card') icon = '🟨';
             else continue;
             // Which team's column the event belongs to (-1 falls back to the left).
-            const col = compIndex(e.team);
+            const col = e.team?.id != null && idxById[e.team.id] != null ? idxById[e.team.id] : -1;
             let score = '';
             if (isGoal && col >= 0) { tally[col]++; score = `${tally[0]}–${tally[1]}`; }
             rows.push({
                 clock: e.clock?.displayValue ?? '',
                 icon,
-                player: e.participants?.[0]?.athlete?.displayName ?? '',
+                player: e.athletesInvolved?.[0]?.displayName ?? '',
                 col,
                 score,
                 detail: keyEventDetail(e, icon),
@@ -377,17 +348,12 @@
         }
         return rows.length ? rows : null;
     }
-    // Per-team match stats, joined to competitors[0|1] by homeAway so the columns
-    // line up with the rest of the modal. `fraction` stats (e.g. passPct) arrive
-    // as 0.9 rather than 90, so they're scaled before the % is appended;
-    // possessionPct is already a percentage number and just takes the suffix.
-    function matchStatRows(event: any, summary: any): { label: string; c0: string; c1: string }[] | null {
-        const teams = summary?.boxscore?.teams ?? [];
-        if (teams.length < 2) return null;
-        const byside: Record<string, any[]> = {};
-        for (const t of teams) byside[t.homeAway] = t.statistics ?? [];
-        const s0 = byside[event.competitors[0].homeAway];
-        const s1 = byside[event.competitors[1].homeAway];
+    // Per-team match stats, read straight off the adapted competitors (already
+    // ordered as columns 0/1). possessionPct is already a percentage number and
+    // just takes the suffix. (passPct isn't carried by /all, so it's omitted.)
+    function matchStatRows(event: any): { label: string; c0: string; c1: string }[] | null {
+        const s0 = event.competitors?.[0]?.statistics;
+        const s1 = event.competitors?.[1]?.statistics;
         if (!s0 || !s1) return null;
         const stat = (stats: any[], name: string): string | null =>
             stats.find((s: any) => s.name === name)?.displayValue ?? null;
@@ -397,7 +363,6 @@
             { label: 'On target', name: 'shotsOnTarget', suffix: '' },
             { label: 'Corners', name: 'wonCorners', suffix: '' },
             { label: 'Fouls', name: 'foulsCommitted', suffix: '' },
-            { label: 'Pass %', name: 'passPct', fraction: true },
         ];
         const fmt = (v: string | null, w: any): string => {
             if (v == null) return '–';
@@ -415,13 +380,16 @@
         return rows.length ? rows : null;
     }
 
-    // How balanced the three-way market is: ~1 for an even toss-up, ~0 for a
-    // heavy favorite. Returns 0 when no odds are available.
-    function competitiveness(odds: any): number {
-        const wp = winProbabilities(odds);
-        if (!wp) return 0;
-        const pcts = [wp.home.pct, wp.draw.pct, wp.away.pct];
-        return Math.max(0, 1 - (Math.max(...pcts) - Math.min(...pcts)) / 100);
+    // How evenly matched the two sides are by GFR/FIFA `strength` (0..1, normalized
+    // upstream so the club and national scales are comparable): ~1 when the two
+    // strengths are equal (a toss-up), ~0 for a lopsided mismatch. Requires both
+    // teams to be ranked — two unranked sides aren't a known toss-up, just unknown.
+    // (Previously read off the betting market, but /all drops odds at full-time, so
+    // a game's score would fall the moment it finished; rankings are state-stable.)
+    function competitiveness(event: any, ranks: Record<string, { strength: number }>): number {
+        const r = (event.competitors ?? []).map((c: any) => ranks[String(c?.id)]);
+        if (r.length < 2 || !r[0] || !r[1]) return 0;
+        return Math.max(0, 1 - Math.abs(r[0].strength - r[1].strength));
     }
     // Extra interest from the competition stage (knockout rounds matter more).
     // Order matters: "semifinal"/"quarterfinal" contain "final", and "round of
@@ -436,25 +404,14 @@
         if (stage.includes('playoff') || stage.includes('knockout')) return 5;
         return 0;
     }
-    // Bonus for a clash of two highly-ranked teams, using ESPN's per-team table
-    // position (recordStats.rank — table rank for league play, seed for groups).
-    // Keys off the *worse* of the two ranks so both sides must be near the top:
-    // full bonus when both lead the table, decaying to 0 by TOPTABLE_SPAN.
-    const TOPTABLE_MAX = 10;
-    const TOPTABLE_SPAN = 6;
-    function topTableBonus(event: any): number {
-        const ranks = (event.competitors ?? []).map((c: any) => c?.recordStats?.rank?.value);
-        if (ranks.length < 2 || ranks.some((r: any) => !r || r <= 0)) return 0;
-        const worst = Math.max(ranks[0], ranks[1]);
-        return TOPTABLE_MAX * Math.max(0, 1 - (worst - 1) / TOPTABLE_SPAN);
-    }
     // Bonus for a clash of two strong sides by GFR power rating (clubs) / FIFA
     // points (national teams), normalized to a 0..1 `strength` upstream in +page.ts
     // (so the differing scales are already comparable). Blends the two: weighted
     // toward the *weaker* side so a genuine clash of elites scores highest, with
     // partial credit when only one team is a standout. Replaces the old flat
-    // topmatch bonus; tops out at TEAMSTRENGTH_MAX.
-    const TEAMSTRENGTH_MAX = 25;
+    // topmatch bonus; tops out at TEAMSTRENGTH_MAX. (Carries the 10 points the
+    // dropped top-table-clash bonus used to contribute — /all has no table rank.)
+    const TEAMSTRENGTH_MAX = 35;
     const STRENGTH_BLEND_ALPHA = 0.6;
     function teamStrengthBonus(event: any, ranks: Record<string, { strength: number }>): number {
         const s = (event.competitors ?? []).map((c: any) => ranks[String(c?.id)]?.strength ?? 0);
@@ -474,23 +431,22 @@
     // per-day index.
     const LEAGUE_MISSING_RANK = 100;
     // Per-game interest score (higher = more compelling). Combines a league base
-    // (from ESPN's master prominence list), a GFR/FIFA team-strength bonus, market
-    // competitiveness, stage stakes, an in-league top-table clash, and ESPN coverage
-    // prominence. (The livesoccertv topmatch flag no longer feeds the score — it
-    // survives only as the ⭐ UI marker.) Weights are deliberately easy to tune.
+    // (from ESPN's master prominence list), a GFR/FIFA team-strength bonus, a
+    // ranking-based competitiveness (how evenly matched), stage stakes, and ESPN
+    // coverage prominence. (The livesoccertv topmatch flag no longer feeds the
+    // score — it survives only as the ⭐ UI marker.) Weights are easy to tune.
     function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>, ranks: Record<string, { strength: number }>): number {
         const hasMap = leagueRank && Object.keys(leagueRank).length > 0;
         // Fall back to the per-day index only if the whole map failed to load.
         const rank = hasMap ? (leagueRank[league.slug] ?? LEAGUE_MISSING_RANK) : leagueIndex;
         const leagueBase = Math.max(0, LEAGUE_TOP - rank * LEAGUE_STEP);
         const teamStrength = teamStrengthBonus(event, ranks);
-        const competitive = competitiveness(event.odds) * 15;
+        const competitive = competitiveness(event, ranks) * 15;
         const stage = stageBonus(event, league);
-        const topTable = topTableBonus(event);
         let prominence = 0;
         if (event.onWatch) prominence += 5;
         if ((event.broadcasts ?? []).some((b: any) => b.isNational)) prominence += 3;
-        return leagueBase + teamStrength + competitive + stage + topTable + prominence;
+        return leagueBase + teamStrength + competitive + stage + prominence;
     }
 </script>
 
@@ -658,9 +614,7 @@
                 <span class="modal-label">Venue</span>
                 <span>
                     {selectedEvent.location}{selectedEvent.neutralSite ? ' · neutral' : ''}
-                    {#if venueFetching}<span class="venue-loading">…</span>
-                    {:else if venueAddress}<span class="venue-address"> · {venueAddress}</span>
-                    {/if}
+                    {#if venueAddress}<span class="venue-address"> · {venueAddress}</span>{/if}
                 </span>
             </div>
         {/if}
@@ -1013,9 +967,6 @@
     .modal-score {
         font-size: 1.4rem;
         font-weight: bold;
-    }
-    .venue-loading {
-        opacity: 0.4;
     }
     .venue-address {
         opacity: 0.7;

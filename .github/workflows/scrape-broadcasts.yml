@@ -23,10 +23,13 @@ jobs:
       - name: Scrape broadcast data
         run: python scraper/scrape.py
 
-      - name: Fetch latest rankings data
+      - name: Fetch latest rankings + league data
         run: |
           git fetch origin gh-pages
           git checkout origin/gh-pages -- rankings && mv rankings static/ || true
+          # league_order.json is refreshed weekly by scrape-leagues.yml, not here;
+          # carry the last copy forward so this deploy doesn't drop it.
+          git checkout origin/gh-pages -- league_order.json && mv league_order.json static/ || true
 
       - name: Scrape GFR rankings
         id: rankings

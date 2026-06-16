@@ -8,6 +8,7 @@ import datetime
 import json
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from bs4 import BeautifulSoup
@@ -89,7 +90,29 @@ def scrape_leagues() -> list:
     return slugs
 
 
+def resolve_league(slug: str):
+    """Resolve a league slug to its numeric id and display name via the core API.
+    Returns (id, name) or None on any failure (renamed/removed leagues are skipped)."""
+    try:
+        url = f"https://sports.core.api.espn.com/v2/sports/soccer/leagues/{slug}"
+        resp = requests.get(url, headers=HEADERS, timeout=30)
+        resp.raise_for_status()
+        d = resp.json()
+        lid, name = d.get("id"), d.get("name")
+        if lid and name:
+            return str(lid), name
+    except Exception:
+        pass
+    return None
+
+
 def write_league_order():
+    """Refresh static/league_order.json: ESPN's ordered league slugs (for interest
+    ranking) plus a numeric-id -> {slug, name} map. The /all/scoreboard endpoint
+    only encodes a numeric league id per event, so the app uses `meta` to recover
+    each league's slug and display name. Run on its own (weekly) schedule, not with
+    the 8-hourly broadcast scrape -- resolving every league is slow and the data
+    barely changes."""
     try:
         slugs = scrape_leagues()
     except Exception as e:
@@ -98,13 +121,21 @@ def write_league_order():
     if not slugs:
         print("  league order: empty, leaving existing file", file=sys.stderr)
         return
+    # Resolve id + name for each league concurrently; failures are skipped.
+    meta = {}
+    with ThreadPoolExecutor(max_workers=16) as ex:
+        for slug, res in zip(slugs, ex.map(resolve_league, slugs)):
+            if res:
+                lid, name = res
+                meta[lid] = {"slug": slug, "name": name}
     path = "static/league_order.json"
     with open(path, "w") as f:
         json.dump({
             "generated_at": datetime.datetime.now(UTC).isoformat(),
             "leagues": slugs,
+            "meta": meta,
         }, f)
-    print(f"Wrote {len(slugs)} leagues to {path}", file=sys.stderr)
+    print(f"Wrote {len(slugs)} leagues ({len(meta)} resolved) to {path}", file=sys.stderr)
 
 
 def main():
@@ -137,8 +168,11 @@ def main():
         json.dump(output, f)
     print(f"Wrote {len(all_games)} games to {path}", file=sys.stderr)
 
-    write_league_order()
-
 
 if __name__ == "__main__":
-    main()
+    # `scrape.py leagues` refreshes only league_order.json (its own weekly job);
+    # the default run scrapes broadcasts and leaves league_order.json untouched.
+    if len(sys.argv) > 1 and sys.argv[1] == "leagues":
+        write_league_order()
+    else:
+        main()

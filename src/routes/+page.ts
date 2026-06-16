@@ -2,7 +2,12 @@ import type { PageLoad } from './$types';
 import { base } from '$app/paths';
 
 const getDateGames = (dt) => {
-	const url = `https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=soccer&dates=${dt.replaceAll('-', '')}&limit=999&d=${(new Date()).toISOString()}`;
+	// The /all scoreboard carries the venue address, goals/cards timeline, and
+	// per-team stats inline (unlike the lean header endpoint), so the match modal
+	// needs no per-game summary fetch. Its events are a flat list in the standard
+	// site-API shape; `adaptEvent` normalizes each one back to the header shape the
+	// rest of the app reads.
+	const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${dt.replaceAll('-', '')}&limit=999&d=${(new Date()).toISOString()}`;
 	return fetch(url).then(res => res.json());
 }
 
@@ -18,6 +23,119 @@ const localDate = (iso: string) => {
 	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
+// --- /all scoreboard -> header-shape adapter --------------------------------
+// /all encodes only a numeric league id per event (in the uid, `s:600~l:700~e:`);
+// the slug + display name come from league_order.json's `meta` map.
+const LEAGUE_ID_RE = /~l:(\d+)~/;
+const leagueIdOf = (uid: string | undefined): string | null => {
+	const m = LEAGUE_ID_RE.exec(uid ?? '');
+	return m ? m[1] : null;
+};
+
+// /all gives no per-game stage label; `season.slug` is the only signal, but it's
+// usually just the league-season name ("2025-26-english-premier-league"). Only
+// treat it as a stage when it carries a knockout token, then prettify it.
+const STAGE_RE = /round-of-\d+|quarter-?final|semi-?final|knockout|playoff|(^|-)finals?(-|$)/;
+const deriveStage = (slug?: string): string | null => {
+	if (!slug) return null;
+	const s = slug.toLowerCase();
+	if (!STAGE_RE.test(s)) return null;
+	return s.replace(/-+/g, ' ').trim()
+		.replace(/\b\w/g, (c) => c.toUpperCase())
+		.replace(/\bOf\b/g, 'of');
+};
+
+const toMoneyLine = (v: any): number | undefined => {
+	if (v == null) return undefined;
+	const n = Number(v);
+	return Number.isFinite(n) ? n : undefined;
+};
+
+// Normalize /all's odds array into the flat { home/away/draw: { moneyLine } }
+// shape winProbabilities reads. Home/away moneylines are strings under
+// moneyline.{side}.close.odds; the draw is a number under drawOdds.moneyLine.
+const adaptOdds = (oddsArr: any) => {
+	const o = Array.isArray(oddsArr) ? oddsArr.find((x: any) => x) : oddsArr;
+	if (!o) return undefined;
+	const ml = o.moneyline ?? {};
+	const home = toMoneyLine(ml.home?.close?.odds ?? ml.home?.open?.odds);
+	const away = toMoneyLine(ml.away?.close?.odds ?? ml.away?.open?.odds);
+	const draw = toMoneyLine(o.drawOdds?.moneyLine);
+	if (home == null && away == null && draw == null) return undefined;
+	return {
+		...o,
+		home: home != null ? { moneyLine: home } : undefined,
+		away: away != null ? { moneyLine: away } : undefined,
+		draw: draw != null ? { moneyLine: draw } : undefined,
+	};
+};
+
+// Dark-mode logos aren't given by /all; the dark variant lives in the sibling
+// `500-dark` directory for both club and country logos.
+const darkLogo = (url?: string) => (url ? url.replace('/500/', '/500-dark/') : url);
+
+const adaptCompetitor = (c: any) => {
+	const t = c.team ?? {};
+	return {
+		id: c.id ?? t.id,
+		homeAway: c.homeAway,
+		score: c.score,
+		winner: c.winner,
+		name: t.shortDisplayName ?? t.displayName ?? t.name,
+		abbreviation: t.abbreviation,
+		logo: t.logo,
+		logoDark: darkLogo(t.logo),
+		color: t.color,
+		alternateColor: t.alternateColor,
+		links: t.links,
+		statistics: c.statistics,
+	};
+};
+
+// Adapt one /all event into the header-shaped event the rest of the app reads.
+const adaptEvent = (e: any) => {
+	const comp = e.competitions?.[0] ?? {};
+	const st = comp.status?.type ?? {};
+	const addr = comp.venue?.address;
+	const seen = new Set<string>();
+	const broadcasts: { name: string; isNational: boolean }[] = [];
+	for (const g of comp.geoBroadcasts ?? []) {
+		const name = g.media?.shortName;
+		if (name && !seen.has(name)) {
+			seen.add(name);
+			broadcasts.push({ name, isNational: g.market?.type === 'National' });
+		}
+	}
+	const stage = deriveStage(e.season?.slug);
+	const link = (e.links ?? []).find((l: any) => l.rel?.includes('desktop'))?.href ?? e.links?.[0]?.href;
+	return {
+		id: e.id,
+		uid: e.uid,
+		date: e.date,
+		name: e.name,
+		shortName: e.shortName,
+		link,
+		status: st.state,
+		summary: st.shortDetail ?? st.detail,
+		location: comp.venue?.fullName,
+		// Precomputed city/country, so the modal shows it without a per-game fetch.
+		venueAddress: addr ? [addr.city, addr.country].filter(Boolean).join(', ') : null,
+		neutralSite: comp.neutralSite,
+		group: stage ? { name: stage } : null,
+		notes: comp.notes ?? [],
+		onWatch: false,
+		broadcasts,
+		odds: adaptOdds(comp.odds),
+		details: comp.details ?? [],
+		// The header endpoint listed competitors away-first (away on the left, score
+		// shown as away-home); /all lists them home-first. Sort by `order` desc
+		// (home=0, away=1) to keep the previous left/right arrangement.
+		competitors: [...(comp.competitors ?? [])]
+			.sort((a: any, b: any) => (b.order ?? 0) - (a.order ?? 0))
+			.map(adaptCompetitor),
+	};
+};
+
 export const load: PageLoad = async ({ fetch }) => {
 	// The 7 local days we display.
 	const displayDts: string[] = [];
@@ -31,26 +149,40 @@ export const load: PageLoad = async ({ fetch }) => {
 	for (let i = -1; i <= 7; i++) fetchDts.push(dateNDaysFromNow(i));
 	const fetches = fetchDts.map(getDateGames);
 
+	// league_order.json carries both ESPN's prominence-ordered slug list and a
+	// numeric-id -> { slug, name } map. The slug list drives the interest rank
+	// (leagueOrder); the map (leagueMeta) resolves each /all event's league.
+	const leagueOrderData = fetch(`${base}/league_order.json?d=${new Date().toISOString()}`)
+		.then(res => res.json())
+		.catch(() => ({}));
+	const leagueOrder = leagueOrderData.then((d: any) => {
+		const rank: Record<string, number> = {};
+		(d.leagues ?? []).forEach((slug: string, i: number) => { rank[slug] = i; });
+		return rank;
+	});
+	const leagueMeta = leagueOrderData.then((d: any) => d.meta ?? {});
+
 	// Resolve every ESPN day, then redistribute events into local-date buckets,
-	// merging leagues that span more than one fetch and de-duplicating events.
-	const rebucketed = Promise.all(fetches).then((responses) => {
+	// grouping by league id (parsed from the event uid, resolved to slug/name via
+	// leagueMeta), merging leagues that span more than one fetch, de-duplicating
+	// events, and adapting each /all event to the header shape the app reads.
+	const rebucketed = Promise.all([Promise.all(fetches), leagueMeta]).then(([responses, meta]) => {
 		const dayMap: Record<string, Map<string, any>> = {};
 		for (const dt of displayDts) dayMap[dt] = new Map();
 		const seen = new Set<string>();
 		for (const res of responses) {
-			for (const league of res?.sports?.[0]?.leagues ?? []) {
-				for (const event of league.events ?? []) {
-					const dt = localDate(event.date);
-					if (!dayMap[dt] || seen.has(event.id)) continue;
-					seen.add(event.id);
-					const key = league.id ?? league.slug ?? league.name;
-					let lg = dayMap[dt].get(key);
-					if (!lg) {
-						lg = { ...league, events: [] };
-						dayMap[dt].set(key, lg);
-					}
-					lg.events.push(event);
+			for (const event of res?.events ?? []) {
+				const dt = localDate(event.date);
+				const lid = leagueIdOf(event.uid);
+				if (!dayMap[dt] || !lid || seen.has(event.id)) continue;
+				seen.add(event.id);
+				let lg = dayMap[dt].get(lid);
+				if (!lg) {
+					const m = meta[lid];
+					lg = { id: lid, slug: m?.slug ?? lid, name: m?.name ?? `League ${lid}`, events: [] };
+					dayMap[dt].set(lid, lg);
 				}
+				lg.events.push(adaptEvent(event));
 			}
 		}
 		const out: Record<string, any> = {};
@@ -67,15 +199,6 @@ export const load: PageLoad = async ({ fetch }) => {
 	const broadcasts = fetch(`${base}/broadcasts.json?d=${new Date().toISOString()}`)
 		.then(res => res.json())
 		.catch(() => ({ games: [] }));
-	// ESPN's master league prominence order (slug -> rank), baked by the scraper.
-	const leagueOrder = fetch(`${base}/league_order.json?d=${new Date().toISOString()}`)
-		.then(res => res.json())
-		.then((d) => {
-			const rank: Record<string, number> = {};
-			(d.leagues ?? []).forEach((slug: string, i: number) => { rank[slug] = i; });
-			return rank;
-		})
-		.catch(() => ({}));
 
 	// GFR rankings keyed by ESPN team id, as { rank, intl, points, url, grade }. Composes two ESPN<->GFR
 	// crosswalks with their respective ranking universes: clubs (team_map +

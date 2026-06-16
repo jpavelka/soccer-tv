@@ -1,0 +1,50 @@
+name: Refresh League Metadata and Deploy
+# ESPN's league list + names change very slowly, and resolving every league's
+# core-API doc is ~244 requests, so this runs weekly rather than with the
+# 8-hourly broadcast scrape. It regenerates static/league_order.json (ordered
+# slugs + numeric-id -> {slug, name} map, used to resolve /all scoreboard events)
+# and deploys, carrying the frequently-updated broadcasts.json and rankings
+# forward from gh-pages so they aren't dropped.
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install -r scraper/requirements.txt
+
+      - name: Refresh league metadata
+        run: python scraper/scrape.py leagues
+
+      - name: Fetch latest broadcast + rankings data
+        run: |
+          git fetch origin gh-pages
+          git checkout origin/gh-pages -- broadcasts.json && mv broadcasts.json static/ || true
+          git checkout origin/gh-pages -- rankings && mv rankings static/ || true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build
