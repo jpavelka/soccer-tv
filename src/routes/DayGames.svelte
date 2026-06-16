@@ -521,7 +521,7 @@
                     .replace(' AM', 'am').replace(' PM', 'pm')
             ) : event.summary
         }</span>
-        <span class={`interest-score${event.topmatch ? ' interest-score-top' : ''}`} title={event.topmatch ? 'interest score · livesoccertv topmatch' : 'interest score'}>{Math.round(event.interest ?? 0)}</span>
+        <span class={`interest-score${event.topmatch ? ' interest-score-top' : ''}`} title={event.topmatch ? 'interest score · livesoccertv top match' : 'interest score'}>{Math.round(event.interest ?? 0)}</span>
         <span class="broadcast">{event.bcstStr}</span>
         {#if event.lstv_matched}
             <a
@@ -650,7 +650,7 @@
             new Date(selectedEvent.date).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric'})
         } · {
             new Date(selectedEvent.date).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true}).replace(' AM', 'am').replace(' PM', 'pm')
-        }{selectedEvent.status === 'post' ? ' · ' + selectedEvent.summary : ''}{#if selectedEvent.topmatch}<span class="modal-topmatch" title="livesoccertv topmatch">Top match</span>{/if}</div>
+        }{selectedEvent.status === 'post' ? ' · ' + selectedEvent.summary : ''}{#if selectedEvent.topmatch}<span class="modal-topmatch" title="livesoccertv top match">Top match</span>{/if}</div>
     </div>
     <div class="modal-body">
         {#if selectedEvent.location}
