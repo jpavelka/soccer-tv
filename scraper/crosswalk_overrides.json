@@ -3,10 +3,15 @@
     "purpose": "Hand-curated corrections applied by build_crosswalk.py AFTER auto-matching, so re-runs are deterministic and manual fixes are never lost.",
     "country_aliases": "ESPN-spelling -> GFR-spelling, in addition to the defaults baked into the script. Matched case-insensitively.",
     "leagues": "ESPN league slug -> GFR league api_football_id (force a league pairing).",
-    "teams": "ESPN team id (string) -> GFR team api_football_id to force the pairing, or null to block a wrong auto-match and leave the team unmatched."
+    "teams": "ESPN team id (string) -> GFR team api_football_id to force the pairing, or null to block a wrong auto-match and leave the team unmatched.",
+    "national": "ESPN national-team id (string) -> FIFA-ranking api_football_id, or null to block. Same shape as teams but maps into the international (FIFA) tables."
   },
   "country_aliases": {},
   "leagues": {},
+  "national": {
+    "2850": 1508,
+    "10525": 5538
+  },
   "teams": {
     "110": 505,
     "122": 192,

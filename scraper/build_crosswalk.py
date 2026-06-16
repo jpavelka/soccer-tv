@@ -55,7 +55,25 @@ MAX_WORKERS = 12
 OVERRIDES_PATH = "scraper/crosswalk_overrides.json"
 LEAGUE_MAP_PATH = "static/crosswalk/league_map.json"
 TEAM_MAP_PATH = "static/crosswalk/team_map.json"
+NATIONAL_MAP_PATH = "static/crosswalk/national_map.json"
 REVIEW_PATH = "scraper/crosswalk_review.json"
+
+# ESPN competitions whose rosters are SENIOR national teams, used to harvest the
+# espn national-team ids that get matched to the FIFA ranking tables. WC qualifiers
+# give the widest coverage (every nation enters); continental events fill gaps.
+# Youth (u17/u20/u23), Olympic (U23), and club competitions are deliberately excluded.
+NATIONAL_COMP_SLUGS = {
+    "men": ["fifa.world", "fifa.worldq.uefa", "fifa.worldq.conmebol",
+            "fifa.worldq.concacaf", "fifa.worldq.afc", "fifa.worldq.caf",
+            "fifa.worldq.ofc", "uefa.nations", "uefa.euro", "uefa.euroq",
+            "caf.nations", "caf.nations_qual", "afc.asian.cup", "concacaf.gold",
+            "concacaf.gold_qual", "concacaf.nations.league", "conmebol.america",
+            "fifa.friendly"],
+    "women": ["fifa.wwc", "fifa.wworldq.uefa", "fifa.wwcq.ply", "uefa.weuro",
+              "uefa.w.nations", "caf.w.nations", "concacaf.w.gold",
+              "concacaf.womens.championship", "conmebol.america.femenina",
+              "afc.w.asian.cup", "fifa.friendly.w"],
+}
 
 # Match kinds trusted enough to persist into the map. Fuzzy is deliberately
 # excluded: it stays provisional (review-only) until a human promotes it to an
@@ -113,8 +131,10 @@ def load_gfr():
     def rows(name):
         return json.load(open(f"static/rankings/{name}.json"))["rankings"]
     return {
-        "men": {"teams": rows("men_team"), "leagues": rows("men_league")},
-        "women": {"teams": rows("women_team"), "leagues": rows("women_league")},
+        "men": {"teams": rows("men_team"), "leagues": rows("men_league"),
+                "intl": rows("men_international")},
+        "women": {"teams": rows("women_team"), "leagues": rows("women_league"),
+                  "intl": rows("women_international")},
     }
 
 
@@ -250,6 +270,7 @@ def main(argv=None) -> int:
                             for k, v in overrides.get("country_aliases", {}).items()})
     league_overrides = {str(k): v for k, v in overrides.get("leagues", {}).items()}
     team_overrides = {str(k): v for k, v in overrides.get("teams", {}).items()}
+    national_overrides = {str(k): v for k, v in overrides.get("national", {}).items()}
 
     gfr = load_gfr()
     generated_at = datetime.datetime.now(UTC).isoformat()
@@ -381,28 +402,74 @@ def main(argv=None) -> int:
           f"{len(fuzzy_teams)} provisional, {len(unmatched_teams)} unmatched, "
           f"{len(disagreements)} league-disagreements", file=sys.stderr)
 
+    # --- national teams: ESPN national-team ids -> FIFA ranking api_football_id
+    # Harvest senior national teams from the international competitions, then match
+    # by country name (clean; uses the same aliases) to the FIFA ranking tables.
+    fifa_idx = {g: {country_key(t["team_name"], country_aliases): t
+                    for t in gfr[g]["intl"]} for g in ("men", "women")}
+    national_map = {} if rebuild else load_map(NATIONAL_MAP_PATH, "teams", "espn_id")
+    nat_blocked = set()
+    for eid, fid in national_overrides.items():
+        if fid is None:
+            national_map.pop(eid, None)
+            nat_blocked.add(eid)
+        else:
+            national_map[eid] = fid
+
+    new_nationals, unmatched_nationals = [], []
+    nat_seen = set()
+    for gender in ("men", "women"):
+        comp_slugs = NATIONAL_COMP_SLUGS[gender]
+        harvest = {}  # espn_id -> name (deduped across this gender's competitions)
+        with concurrent.futures.ThreadPoolExecutor(MAX_WORKERS) as ex:
+            for teams in ex.map(espn_league_teams, comp_slugs):
+                for tid, tname in teams:
+                    harvest[str(tid)] = tname
+        for eid, name in harvest.items():
+            if eid in nat_seen or eid in nat_blocked or eid in national_map:
+                continue
+            nat_seen.add(eid)
+            row = fifa_idx[gender].get(country_key(name, country_aliases))
+            if row:
+                national_map[eid] = row["api_football_id"]
+                new_nationals.append({"espn_id": eid, "espn_name": name,
+                                      "gfr_api_football_id": row["api_football_id"],
+                                      "gfr_team_name": row["team_name"], "gender": gender})
+            else:
+                unmatched_nationals.append({"espn_id": eid, "espn_name": name,
+                                            "gender": gender})
+    print(f"  nationals: {len(national_map)} mapped (+{len(new_nationals)} new), "
+          f"{len(unmatched_nationals)} unmatched", file=sys.stderr)
+
     # --- write (maps carry only join keys; detail lives in the review file) ---
     os.makedirs("static/crosswalk", exist_ok=True)
     leagues_out = [{"espn_slug": s, "gfr_api_football_id": f}
                    for s, f in sorted(league_map.items())]
     teams_out = [{"espn_id": e, "gfr_api_football_id": f}
                  for e, f in sorted(team_map.items(), key=lambda kv: int(kv[0]))]
+    nationals_out = [{"espn_id": e, "gfr_api_football_id": f}
+                     for e, f in sorted(national_map.items(), key=lambda kv: int(kv[0]))]
     with open(LEAGUE_MAP_PATH, "w") as f:
         json.dump({"generated_at": generated_at,
                    "count": len(leagues_out), "leagues": leagues_out}, f, indent=2)
     with open(TEAM_MAP_PATH, "w") as f:
         json.dump({"generated_at": generated_at,
                    "count": len(teams_out), "teams": teams_out}, f, indent=2)
+    with open(NATIONAL_MAP_PATH, "w") as f:
+        json.dump({"generated_at": generated_at,
+                   "count": len(nationals_out), "teams": nationals_out}, f, indent=2)
     with open(REVIEW_PATH, "w") as f:
         json.dump({
             "generated_at": generated_at,
             "mode": "rebuild" if rebuild else "incremental",
             "new_leagues": new_leagues,
             "new_teams": new_teams,
+            "new_nationals": new_nationals,
             "fuzzy_leagues": fuzzy_leagues,
             "fuzzy_teams": fuzzy_teams,
             "unmatched_leagues": unmatched_leagues,
             "unmatched_teams": unmatched_teams,
+            "unmatched_nationals": unmatched_nationals,
             "league_disagreements": disagreements,
         }, f, indent=2)
     print(f"  wrote maps and {REVIEW_PATH} "

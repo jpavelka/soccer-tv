@@ -3,7 +3,14 @@
     import Accordion from "./Accordion.svelte";
     import Modal from "./Modal.svelte";
 
-    let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, sortMode } = $props();
+    let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, sortMode } = $props();
+
+    // GFR data by ESPN team id ({ rank, intl, strength }). `rank` drives the inline
+    // labels below; `strength` (0..1, normalized upstream in +page.ts) feeds the
+    // interest score. intl=true means a FIFA national team (different scale, already
+    // normalized). Populated from the resolved map in the main effect below.
+    let teamRankMap = $state<Record<string, { rank: number; intl: boolean; strength: number; points: number; url: string; grade?: string | null }>>({});
+    const rankOf = (c: any) => teamRankMap[String(c?.id)] ?? null;
 
     const nameMatch = (a: string, b: string) => {
         const al = a.toLowerCase(), bl = b.toLowerCase();
@@ -45,8 +52,9 @@
             .sort((a: any, b: any) => (b.event.interest ?? 0) - (a.event.interest ?? 0))
     );
     $effect(() => {
-        Promise.all([dayData, broadcasts, leagueOrder]).then(([d, bcstData, leagueRank]) => {
+        Promise.all([dayData, broadcasts, leagueOrder, teamRanks]).then(([d, bcstData, leagueRank, ranks]) => {
             const wstGames = bcstData?.games ?? [];
+            teamRankMap = ranks ?? {};
             leagueData = d.sports[0].leagues;
             numToShow = 0;
             for (const [leagueIndex, league] of leagueData.entries()) {
@@ -69,7 +77,7 @@
                     const wstGame = findLstvGame(event, wstGames);
                     event.lstv_matched = !!wstGame;
                     event.topmatch = wstGame?.topmatch ?? false;
-                    event.interest = interestScore(event, league, leagueIndex, leagueRank);
+                    event.interest = interestScore(event, league, leagueIndex, leagueRank, ranks ?? {});
                     if (wstGame) {
                         for (const bcst of wstGame.broadcasts) {
                             if (!$allBcsts.includes(bcst)) {
@@ -440,6 +448,20 @@
         const worst = Math.max(ranks[0], ranks[1]);
         return TOPTABLE_MAX * Math.max(0, 1 - (worst - 1) / TOPTABLE_SPAN);
     }
+    // Bonus for a clash of two strong sides by GFR power rating (clubs) / FIFA
+    // points (national teams), normalized to a 0..1 `strength` upstream in +page.ts
+    // (so the differing scales are already comparable). Blends the two: weighted
+    // toward the *weaker* side so a genuine clash of elites scores highest, with
+    // partial credit when only one team is a standout. Replaces the old flat
+    // topmatch bonus; tops out at TEAMSTRENGTH_MAX.
+    const TEAMSTRENGTH_MAX = 25;
+    const STRENGTH_BLEND_ALPHA = 0.6;
+    function teamStrengthBonus(event: any, ranks: Record<string, { strength: number }>): number {
+        const s = (event.competitors ?? []).map((c: any) => ranks[String(c?.id)]?.strength ?? 0);
+        if (s.length < 2) return 0;
+        const blend = STRENGTH_BLEND_ALPHA * Math.min(s[0], s[1]) + (1 - STRENGTH_BLEND_ALPHA) * Math.max(s[0], s[1]);
+        return TEAMSTRENGTH_MAX * blend;
+    }
     // League base comes from a league's rank in ESPN's master prominence list
     // (slug -> rank, baked by the scraper into league_order.json). A fixed step
     // keeps a league worth the same day to day. The master list has ~244 leagues,
@@ -452,30 +474,34 @@
     // per-day index.
     const LEAGUE_MISSING_RANK = 100;
     // Per-game interest score (higher = more compelling). Combines a league base
-    // (from ESPN's master prominence list), the livesoccertv topmatch flag, market
-    // competitiveness, stage stakes, and ESPN coverage prominence. Weights are
-    // deliberately easy to tune.
-    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>): number {
+    // (from ESPN's master prominence list), a GFR/FIFA team-strength bonus, market
+    // competitiveness, stage stakes, an in-league top-table clash, and ESPN coverage
+    // prominence. (The livesoccertv topmatch flag no longer feeds the score — it
+    // survives only as the ⭐ UI marker.) Weights are deliberately easy to tune.
+    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>, ranks: Record<string, { strength: number }>): number {
         const hasMap = leagueRank && Object.keys(leagueRank).length > 0;
         // Fall back to the per-day index only if the whole map failed to load.
         const rank = hasMap ? (leagueRank[league.slug] ?? LEAGUE_MISSING_RANK) : leagueIndex;
         const leagueBase = Math.max(0, LEAGUE_TOP - rank * LEAGUE_STEP);
-        const topmatch = event.topmatch ? 25 : 0;
+        const teamStrength = teamStrengthBonus(event, ranks);
         const competitive = competitiveness(event.odds) * 15;
         const stage = stageBonus(event, league);
         const topTable = topTableBonus(event);
         let prominence = 0;
         if (event.onWatch) prominence += 5;
         if ((event.broadcasts ?? []).some((b: any) => b.isNational)) prominence += 3;
-        return leagueBase + topmatch + competitive + stage + topTable + prominence;
+        return leagueBase + teamStrength + competitive + stage + topTable + prominence;
     }
 </script>
 
 {#snippet gameEntry(event: any, league: any)}
+    {@const r0 = rankOf(event.competitors[0])}
+    {@const r1 = rankOf(event.competitors[1])}
     <div class=gameLine>
         <span class={`teamName team0${narrowScreen ? ' teamNameNarrow' : ''}`}>
             {event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}
         </span>
+        <span class={`teamRank${r0?.intl ? ' teamRankIntl' : ''}`} title={r0 ? (r0.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r0 ? (r0.intl ? `#${r0.rank}` : (r0.grade ?? '')) : ''}</span>
         <img class=teamLogo src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
         <span class=betweenTeams>{
             event.status === 'pre' ? (
@@ -483,6 +509,7 @@
             ) : `${event.competitors[0].score}-${event.competitors[1].score}`
         }</span>
         <img class=teamLogo src={event.competitors[1].logo}/>
+        <span class={`teamRank${r1?.intl ? ' teamRankIntl' : ''}`} title={r1 ? (r1.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r1 ? (r1.intl ? `#${r1.rank}` : (r1.grade ?? '')) : ''}</span>
         <span class={`teamName${narrowScreen ? ' teamNameNarrow' : ''}`}>
             {event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}
         </span>
@@ -586,13 +613,21 @@
 
 {#snippet modalTeam(comp: any)}
     {@const link = teamLink(comp)}
+    {@const rk = rankOf(comp)}
     <div class="modal-team">
         <img class="modal-logo" src={comp[`logo${mode === 'dark' ? 'Dark' : ''}`]} alt=""/>
-        {#if link}
-            <a class="modal-team-link" href={link} target="_blank"><strong>{comp.name}</strong></a>
-        {:else}
-            <strong>{comp.name}</strong>
-        {/if}
+        <div class="modal-team-info">
+            {#if link}
+                <a class="modal-team-link" href={link} target="_blank"><strong>{comp.name}</strong></a>
+            {:else}
+                <strong>{comp.name}</strong>
+            {/if}
+            {#if rk}
+                <a class="modal-gfr" href={rk.url} target="_blank">
+                    {rk.intl ? 'FIFA Rank' : 'GFR Club Rank'}: {rk.rank} ({Math.round(rk.points)} Points) ↗
+                </a>
+            {/if}
+        </div>
         {#if selectedEvent.status !== 'pre'}
             <span class="modal-score">{comp.score}</span>
         {/if}
@@ -770,6 +805,18 @@
     .team0 {
         text-align: right;
     }
+    /* TEMP: rank label beside each team name. Club ranks (blue) vs FIFA national
+       ranks (green) use different colors since the two scales aren't comparable. */
+    .teamRank {
+        min-width: 20px;
+        text-align: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+        color: light-dark(#1565c0, #64b5f6);
+    }
+    .teamRankIntl {
+        color: light-dark(#2e7d32, #81c784);
+    }
     .betweenTeams {
         width: 30px;
         text-align: center;
@@ -905,6 +952,22 @@
         text-decoration: none;
     }
     .modal-team-link:hover {
+        text-decoration: underline;
+    }
+    .modal-team-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        min-width: 0;
+    }
+    .modal-gfr {
+        font-size: 0.7rem;
+        opacity: 0.6;
+        color: inherit;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+    .modal-gfr:hover {
         text-decoration: underline;
     }
     .modal-score {

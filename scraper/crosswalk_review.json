@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-06-15T19:22:12.168113+00:00",
+  "generated_at": "2026-06-15T20:40:24.293216+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
+  "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [],
   "unmatched_leagues": [
@@ -703,6 +704,43 @@
       "gender": "men",
       "espn_league_slug": "ven.1",
       "best_score": 0.2
+    }
+  ],
+  "unmatched_nationals": [
+    {
+      "espn_id": "2665",
+      "espn_name": "Turks and Caicos Islands",
+      "gender": "men"
+    },
+    {
+      "espn_id": "7657",
+      "espn_name": "Guadeloupe",
+      "gender": "men"
+    },
+    {
+      "espn_id": "2728",
+      "espn_name": "Martinique",
+      "gender": "men"
+    },
+    {
+      "espn_id": "19314",
+      "espn_name": "Bonaire",
+      "gender": "men"
+    },
+    {
+      "espn_id": "10532",
+      "espn_name": "French Guiana",
+      "gender": "men"
+    },
+    {
+      "espn_id": "18243",
+      "espn_name": "Sint Maarten",
+      "gender": "men"
+    },
+    {
+      "espn_id": "10596",
+      "espn_name": "St. Martin",
+      "gender": "men"
     }
   ],
   "league_disagreements": [
