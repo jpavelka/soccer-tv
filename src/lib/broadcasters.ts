@@ -32,6 +32,7 @@ const REGISTRY: BroadcasterDef[] = [
 
     // NBC / Telemundo.
     { canonical: 'NBC', aliases: ['NBC'] },
+    { canonical: 'NBCSN', aliases: ['NBCSN', 'NBC Sports Network'] },
     { canonical: 'USA', aliases: ['USA', 'USA Network'] },
     { canonical: 'Peacock', aliases: ['Peacock'] },
     { canonical: 'Telemundo', aliases: ['Telemundo', 'Telemundo Deportes En Vivo', 'Tele'] },
@@ -39,7 +40,7 @@ const REGISTRY: BroadcasterDef[] = [
 
     // CBS / Paramount.
     { canonical: 'CBS', aliases: ['CBS'] },
-    { canonical: 'CBS Sports Network', aliases: ['CBS Sports Network', 'CBSSN'] },
+    { canonical: 'CBSSN', aliases: ['CBS Sports Network', 'CBSSN'] },
     { canonical: 'CBS Sports Golazo', aliases: ['CBS Sports Golazo', 'Golazo Network'] },
     { canonical: 'Paramount+', aliases: ['Paramount+', 'Paramount Plus'] },
 
