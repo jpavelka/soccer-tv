@@ -36,6 +36,7 @@
 
     let leagueData = $state<any[]>([]);
     let numToShow = $state(0);
+    let loaded = $state(false);
     let flatEvents = $derived(
         leagueData
             .flatMap((league: any) => league.events
@@ -123,6 +124,7 @@
                     $accordionShow[dt + '-' + ld.name] = true;
                 }
             }
+            loaded = true;
         })
     })
     const narrowWidth = 550;
@@ -470,7 +472,7 @@
                 <span class="teamName">{event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}</span>
             </span>
             <img class=teamLogo alt="" src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
-            <span class=betweenTeams>{
+            <span class={`betweenTeams${event.status === 'in' ? ' betweenTeamsLive' : ''}`}>{
                 event.status === 'pre' ? (
                     'vs'
                 ) : `${event.competitors[0].score}-${event.competitors[1].score}`
@@ -523,20 +525,25 @@
 <hr>
 <Accordion
     headerText={dtStr}
-    headerStyle='font-weight:bold;font-size:1.9rem;margin-bottom:12pt;cursor:pointer;'
+    headerStyle='font-weight:bold;font-size:1.9rem;line-height:1;display:inline-block;margin-bottom:0;cursor:pointer;'
     bind:showContent={$accordionShow[dt]}
 >
-    <span slot=inlineAfter>
+    <div class=dayLinks>
+        <a
+            class=linkAfter
+            href={`https://www.espn.com/soccer/scoreboard/_/date/${dt.replaceAll('-', '')}`}
+            target=_blank
+        >ESPN ↗</a>
         <a
             class=linkAfter
             href={`https://www.livesoccertv.com/schedules/${dt}`}
             target=_blank
-        >📺</a>
-    </span>
-    <div class=spacing></div>
-    {#await dayData}
+        >LSTV ↗</a>
+    </div>
+    <div class=spacing style="height:5pt"></div>
+    {#if !loaded}
         Loading games...
-    {:then}
+    {:else}
         {#if numToShow > 0}
             {#if sortMode === 'time' || sortMode === 'interest'}
                 {@const list = sortMode === 'interest' ? flatEventsByInterest : flatEvents}
@@ -556,9 +563,6 @@
                             headerStyle='font-weight:bold;font-size:1.6rem;cursor:pointer;'
                             bind:showContent={$accordionShow[dt + '-' + league.name]}
                         >
-                            <span slot=inlineAfter>
-                                <a class=linkAfter target=_blank href={`https://www.google.com/search?q=${league.name}`}>🔎</a>
-                            </span>
                             {#each league.events as event}
                                 {#if event.show}
                                     {@render gameEntry(event, league)}
@@ -571,7 +575,7 @@
         {:else}
             <div class=noShow>No games for this date</div>
         {/if}
-    {/await}
+    {/if}
     <div class=spacing></div>
 </Accordion>
 
@@ -601,7 +605,7 @@
 {#if showInfoModal && selectedEvent}
 <Modal bind:showModal={showInfoModal}>
     <div slot="header" class="modal-header">
-        <div class="modal-meta">{selectedLeague.name} <a class="modal-league-link" href={`https://www.espn.com/soccer/league/_/name/${selectedLeague.slug}`} target="_blank">↗</a></div>
+        <div class="modal-meta">{selectedLeague.name} <a class="modal-league-link" href={`https://www.espn.com/soccer/league/_/name/${selectedLeague.slug}`} target="_blank">ESPN ↗</a> <a class="modal-league-link" href={`https://www.google.com/search?q=${encodeURIComponent(selectedLeague.name)}`} target="_blank">Google ↗</a></div>
         {#if eventStage(selectedEvent, selectedLeague) || eventNote(selectedEvent)}
             <div class="modal-stage">{[eventStage(selectedEvent, selectedLeague), eventNote(selectedEvent)].filter(Boolean).join(' · ')}</div>
         {/if}
@@ -796,6 +800,10 @@
         width: 30px;
         text-align: center;
     }
+    .betweenTeamsLive {
+        color: light-dark(#d32f2f, #ef5350);
+        font-weight: 600;
+    }
     .when {
         width: 60px;
         padding: 0 10px;
@@ -891,8 +899,8 @@
         background-color: rgba(128, 128, 128, 0.12);
     }
     .modal-meta {
-        font-size: 1rem;
-        opacity: 0.6;
+        font-size: 1.25rem;
+        opacity: 0.8;
     }
     .modal-stage {
         font-size: 0.9rem;
@@ -903,11 +911,14 @@
         color: light-dark(#0066cc, #4da6ff);
         text-decoration: none;
         margin-left: 3px;
+        font-size: 0.6em;
+        opacity: 0.7;
     }
     .modal-league-link:hover {
         text-decoration: underline;
     }
     .modal-datetime {
+        font-size: 1rem;
         margin-top: 8px;
     }
     .modal-topmatch {
@@ -1223,9 +1234,21 @@
     .noShow {
         font-style: italic;
     }
+    .dayLinks {
+        margin-top: -2px;
+    }
+    .dayLinks .linkAfter:first-child {
+        margin-left: 0;
+    }
     .linkAfter {
         margin-left: 0.5rem;
         text-decoration: none;
+        color: light-dark(#0066cc, #4da6ff);
+        font-size: 0.7rem;
+        font-weight: normal;
+    }
+    .linkAfter:hover {
+        text-decoration: underline;
     }
 </style>
 
