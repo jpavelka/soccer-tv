@@ -73,8 +73,11 @@
             <span style=margin-right:5px;>Filter interest</span>
             <ToggleButton onClickFunc={filterInterestFunc} initValue={$filterInterest} />
             {#if $filterInterest}
-                <input type="range" min="0" max="100" step="5" bind:value={$minInterest}
-                       style="margin-left:8px;vertical-align:middle;" aria-label="Minimum interest" />
+                <span style="display:inline-flex;flex-direction:column;align-items:center;margin-left:8px;">
+                    <span>Min interest score</span>
+                    <input type="range" min="0" max="100" step="5" bind:value={$minInterest}
+                           style="vertical-align:middle;" aria-label="Min interest score" />
+                </span>
                 <span style="margin-left:6px;min-width:1.5em;">{$minInterest}</span>
             {/if}
         </span>
