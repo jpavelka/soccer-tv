@@ -34,6 +34,8 @@ export const bcstCounts = derived(bcstCountsByDay, (byDay) => {
 export const filterBcsts = persisted('filterBcsts', false);
 export const goodStatuses = persisted('goodStatuses', ['in', 'pre']);
 export const sortMode = persisted('sortMode', 'league');
+export const filterInterest = persisted('filterInterest', false);
+export const minInterest = persisted('minInterest', 40); // threshold; tunable
 export const windowInfo = writable({
     screenWidth: 0,
     gameContentWidth: 0

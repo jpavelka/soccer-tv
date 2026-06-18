@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goodBcsts, bcstCountsByDay, windowInfo, accordionShow } from "$lib/stores";
+    import { goodBcsts, bcstCountsByDay, windowInfo, accordionShow, filterInterest, minInterest } from "$lib/stores";
     import { canonicalBcst } from "$lib/broadcasters";
     import Accordion from "./Accordion.svelte";
     import Modal from "./Modal.svelte";
@@ -54,6 +54,12 @@
             .sort((a: any, b: any) => (b.event.interest ?? 0) - (a.event.interest ?? 0))
     );
     $effect(() => {
+        // Read these synchronously so the effect tracks them as dependencies and
+        // re-runs when the slider moves — reads inside the async .then() below are
+        // not tracked by Svelte.
+        const interestOn = $filterInterest;
+        const interestMin = Number($minInterest);
+        const selectedBcsts = $goodBcsts;
         Promise.all([dayData, broadcasts, leagueOrder, teamRanks]).then(([d, bcstData, leagueRank, ranks]) => {
             const wstGames = bcstData?.games ?? [];
             teamRankMap = ranks ?? {};
@@ -81,7 +87,7 @@
                     // ESPN broadcasts (already canonical from +page.ts)
                     for (const bcst of event.broadcasts || []) {
                         eventBcsts.add(bcst.name);
-                        if (!filterBroadcasts || $goodBcsts.includes(bcst.name)) {
+                        if (!filterBroadcasts || selectedBcsts.includes(bcst.name)) {
                             if (!event.bcstsToShow.includes(bcst.name)) event.bcstsToShow.push(bcst.name)
                         }
                     }
@@ -90,13 +96,15 @@
                     const wstGame = findLstvGame(event, wstGames);
                     event.lstv_matched = !!wstGame;
                     event.topmatch = wstGame?.topmatch ?? false;
-                    event.interest = interestScore(event, league, leagueIndex, leagueRank, ranks ?? {});
+                    const scored = interestScore(event, league, leagueIndex, leagueRank, ranks ?? {});
+                    event.interest = scored.total;
+                    event.interestParts = scored.parts;
                     if (wstGame) {
                         for (const raw of wstGame.broadcasts) {
                             const bcst = canonicalBcst(raw);
                             eventBcsts.add(bcst);
                             if (!event.bcstsToShow.includes(bcst)) {
-                                if (!filterBroadcasts || $goodBcsts.includes(bcst)) {
+                                if (!filterBroadcasts || selectedBcsts.includes(bcst)) {
                                     event.bcstsToShow.push(bcst);
                                 }
                             }
@@ -111,9 +119,11 @@
                     event.bcstStr = event.bcstsToShow.join('/');
                     if (!filterBroadcasts || event.bcstsToShow.length > 0) {
                         if (goodStatuses.includes(event.status)) {
-                            numToShow += 1;
-                            league.numToShow += 1;
-                            event.show = true;
+                            if (!interestOn || (event.interest ?? 0) >= interestMin) {
+                                numToShow += 1;
+                                league.numToShow += 1;
+                                event.show = true;
+                            }
                         }
                     }
                 }
@@ -150,6 +160,15 @@
     let selectedEvent = $state<any>(null);
     let selectedLeague = $state<any>(null);
     let showInfoModal = $state(false);
+    // Interest-score breakdown modal (opened by clicking a game's score badge).
+    let scoreEvent = $state<any>(null);
+    let scoreLeague = $state<any>(null);
+    let showScoreModal = $state(false);
+    function showScore(event: any, league: any) {
+        scoreEvent = event;
+        scoreLeague = league;
+        showScoreModal = true;
+    }
     let venueAddress = $state<string | null>(null);
     // For in-progress / finished games: goals-cards-subs timeline and team stats,
     // both read off the adapted event (see +page.ts) — no per-game fetch.
@@ -447,7 +466,7 @@
     // ranking-based competitiveness (how evenly matched), stage stakes, and ESPN
     // coverage prominence. (The livesoccertv topmatch flag no longer feeds the
     // score — it survives only as the ⭐ UI marker.) Weights are easy to tune.
-    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>, ranks: Record<string, { strength: number }>): number {
+    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>, ranks: Record<string, { strength: number }>): { total: number; parts: { label: string; value: number; detail?: string }[] } {
         const hasMap = leagueRank && Object.keys(leagueRank).length > 0;
         // Fall back to the per-day index only if the whole map failed to load.
         const rank = hasMap ? (leagueRank[league.slug] ?? LEAGUE_MISSING_RANK) : leagueIndex;
@@ -455,10 +474,18 @@
         const teamStrength = teamStrengthBonus(event, ranks);
         const competitive = competitiveness(event, ranks) * 15;
         const stage = stageBonus(event, league);
-        let prominence = 0;
-        if (event.onWatch) prominence += 5;
-        if ((event.broadcasts ?? []).some((b: any) => b.isNational)) prominence += 3;
-        return leagueBase + teamStrength + competitive + stage + prominence;
+        const onWatch = event.onWatch ? 5 : 0;
+        const national = (event.broadcasts ?? []).some((b: any) => b.isNational) ? 3 : 0;
+        const prominence = onWatch + national;
+        // Per-component breakdown shown in the score modal; mirrors the sum below.
+        const parts = [
+            { label: 'League / competition', value: leagueBase, detail: league.name },
+            { label: 'Team strength', value: teamStrength },
+            { label: 'Competitiveness', value: competitive },
+            { label: 'Stage', value: stage, detail: eventStage(event, league) ?? undefined },
+            { label: 'Coverage', value: prominence, detail: [onWatch ? 'on watchlist' : '', national ? 'national broadcast' : ''].filter(Boolean).join(' · ') || undefined },
+        ];
+        return { total: leagueBase + teamStrength + competitive + stage + prominence, parts };
     }
 </script>
 
@@ -489,7 +516,7 @@
                     .replace(' AM', 'am').replace(' PM', 'pm')
             ) : event.summary
         }</span>
-        <span class={`interest-score${event.topmatch ? ' interest-score-top' : ''}`} title={event.topmatch ? 'interest score · livesoccertv top match' : 'interest score'}>{Math.round(event.interest ?? 0)}</span>
+        <button type="button" class={`interest-score${event.topmatch ? ' interest-score-top' : ''}`} onclick={() => showScore(event, league)} title={event.topmatch ? 'interest score · livesoccertv top match — click for breakdown' : 'interest score — click for breakdown'}>{Math.round(event.interest ?? 0)}</button>
         <span class="broadcast">{event.bcstStr}</span>
         {#if event.lstv_matched}
             <a
@@ -740,6 +767,36 @@
 </Modal>
 {/if}
 
+{#if showScoreModal && scoreEvent}
+<Modal bind:showModal={showScoreModal}>
+    <div slot="header" class="modal-header">
+        <div class="modal-meta">{scoreLeague.name}</div>
+        <div class="score-modal-title">{scoreEvent.competitors[0].name} vs {scoreEvent.competitors[1].name}</div>
+        <div class="score-modal-total">Interest score: <strong>{Math.round(scoreEvent.interest ?? 0)}</strong></div>
+    </div>
+    <div class="modal-body">
+        <div class="score-breakdown">
+            {#each scoreEvent.interestParts ?? [] as part}
+                <div class="score-part" class:score-part-zero={Math.round(part.value) === 0}>
+                    <span class="score-part-label">
+                        {part.label}
+                        {#if part.detail}<span class="score-part-detail">{part.detail}</span>{/if}
+                    </span>
+                    <span class="score-part-value">+{Math.round(part.value)}</span>
+                </div>
+            {/each}
+            <div class="score-part score-part-total">
+                <span class="score-part-label">Total</span>
+                <span class="score-part-value">{Math.round(scoreEvent.interest ?? 0)}</span>
+            </div>
+        </div>
+    </div>
+    <div slot="footer" class="modal-footer">
+        <button onclick={() => showScoreModal = false}>Close</button>
+    </div>
+</Modal>
+{/if}
+
 <style>
     .titleText {
         font-size: 2.1rem;
@@ -845,6 +902,56 @@
         background: rgba(128, 128, 128, 0.2);
         opacity: 0.8;
         flex-shrink: 0;
+        /* It's a <button> now (opens the breakdown modal) — strip the defaults. */
+        border: none;
+        font-family: inherit;
+        color: inherit;
+        cursor: pointer;
+    }
+    .interest-score:hover {
+        opacity: 1;
+    }
+    .score-modal-title {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin: 4px 0;
+    }
+    .score-modal-total {
+        opacity: 0.85;
+    }
+    .score-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 240px;
+    }
+    .score-part {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 16px;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    }
+    .score-part-zero {
+        opacity: 0.5;
+    }
+    .score-part-detail {
+        margin-left: 6px;
+        font-size: 0.8rem;
+        opacity: 0.7;
+    }
+    .score-part-value {
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .score-part-total {
+        border-bottom: none;
+        border-top: 2px solid rgba(128, 128, 128, 0.4);
+        margin-top: 4px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        opacity: 1;
     }
     /* Top matches (livesoccertv topmatch) get a gold interest-score badge. */
     .interest-score-top {

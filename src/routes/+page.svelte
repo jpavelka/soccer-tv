@@ -1,5 +1,5 @@
 <script>
-    import { goodStatuses, filterBcsts, bcstCounts, windowInfo, sortMode } from "$lib/stores";
+    import { goodStatuses, filterBcsts, bcstCounts, windowInfo, sortMode, filterInterest, minInterest } from "$lib/stores";
     import { onMount } from "svelte";
     import BcstSelect from "./BcstSelect.svelte";
     import DayGames from "./DayGames.svelte";
@@ -25,6 +25,10 @@
     /** @param {boolean} currentValue */
     const filterBroadcastsFunc = (currentValue) => {
         filterBcsts.set(currentValue);
+    }
+    /** @param {boolean} currentValue */
+    const filterInterestFunc = (currentValue) => {
+        filterInterest.set(currentValue);
     }
     let loaded = false;
     onMount(() => {
@@ -62,9 +66,18 @@
             <span style=margin-right:5px;>Filter broadcasts</span>
             <ToggleButton onClickFunc={filterBroadcastsFunc} initValue={$filterBcsts} />
         </span>
-        <button onclick={() => {
+        <button style="margin-right:10px;" onclick={() => {
             showBcstModal = true
         }}>Select Broadcasts</button>
+        <span style=display:inline-flex;align-items:center;margin-right:10px;margin-bottom:10px;>
+            <span style=margin-right:5px;>Filter interest</span>
+            <ToggleButton onClickFunc={filterInterestFunc} initValue={$filterInterest} />
+            {#if $filterInterest}
+                <input type="range" min="0" max="100" step="5" bind:value={$minInterest}
+                       style="margin-left:8px;vertical-align:middle;" aria-label="Minimum interest" />
+                <span style="margin-left:6px;min-width:1.5em;">{$minInterest}</span>
+            {/if}
+        </span>
     </div>
 
     <Modal bind:showModal={showBcstModal}>
