@@ -8,6 +8,7 @@
 
     export let data;
 
+    /** @param {boolean} currentValue */
     const showCompletedFunc = (currentValue) => {
         if (currentValue) {
             goodStatuses.update(gs => {
@@ -21,20 +22,20 @@
             })
         }
     }
+    /** @param {boolean} currentValue */
     const filterBroadcastsFunc = (currentValue) => {
         filterBcsts.set(currentValue);
     }
     let loaded = false;
     onMount(() => {
-        windowInfo.set({
-            screenWidth: window.visualViewport.width
-        })
-        window.visualViewport.addEventListener('resize', () => {
-            windowInfo.update((wi) => {
-                wi.screenWidth = window.visualViewport.width;
-                return wi
-            })
-        });
+        const vv = window.visualViewport;
+        if (vv) {
+            // update (not set) so the gameContentWidth bound below survives
+            windowInfo.update((wi) => ({ ...wi, screenWidth: vv.width }));
+            vv.addEventListener('resize', () => {
+                windowInfo.update((wi) => ({ ...wi, screenWidth: vv.width }));
+            });
+        }
         loaded = true;
     })
     let showBcstModal = false;

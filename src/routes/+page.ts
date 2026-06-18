@@ -2,7 +2,7 @@ import type { PageLoad } from './$types';
 import { base } from '$app/paths';
 import { canonicalBcst } from '$lib/broadcasters';
 
-const getDateGames = (dt) => {
+const getDateGames = (dt: string) => {
 	// The /all scoreboard carries the venue address, goals/cards timeline, and
 	// per-team stats inline (unlike the lean header endpoint), so the match modal
 	// needs no per-game summary fetch. Its events are a flat list in the standard
@@ -12,7 +12,7 @@ const getDateGames = (dt) => {
 	return fetch(url).then(res => res.json());
 }
 
-const dateNDaysFromNow = (n) => {
+const dateNDaysFromNow = (n: number) => {
 	const tzoffset = (new Date()).getTimezoneOffset() * 60000;
 	return new Date(new Date(Date.now() - tzoffset).setDate(new Date().getDate() + n)).toISOString().slice(0, 10);
 }
@@ -33,9 +33,13 @@ const leagueIdOf = (uid: string | undefined): string | null => {
 	return m ? m[1] : null;
 };
 
-// /all gives no per-game stage label; `season.slug` is the only signal, but it's
-// usually just the league-season name ("2025-26-english-premier-league"). Only
-// treat it as a stage when it carries a knockout token, then prettify it.
+// /all gives no clean per-game stage label, so two complementary signals are
+// blended (see `stageOf`):
+//   - `season.slug` carries knockout rounds ("round-of-32", "promotion-finals"),
+//     but flattens group play to just "group-stage".
+//   - `competition.altGameNote` carries the group ("FIFA World Cup, Group A"),
+//     but for knockouts is just the competition name ("FIFA World Cup").
+// Both are usually just the league-season name for ordinary league play.
 const STAGE_RE = /round-of-\d+|quarter-?final|semi-?final|knockout|playoff|(^|-)finals?(-|$)/;
 const deriveStage = (slug?: string): string | null => {
 	if (!slug) return null;
@@ -45,6 +49,26 @@ const deriveStage = (slug?: string): string | null => {
 		.replace(/\b\w/g, (c) => c.toUpperCase())
 		.replace(/\bOf\b/g, 'of');
 };
+
+// altGameNote is "<competition>, <stage>", where <stage> can itself be prefixed
+// with a redundant "<year> <competition> - " ("Copa Chile, 2026 Copa Chile -
+// Group A"). Keep only the part after the last " - " of the post-comma stage.
+// No comma means there's no sub-stage (just the competition name) -> null, so
+// the slug stays authoritative for knockout rounds.
+const stageFromNote = (note?: string): string | null => {
+	if (!note) return null;
+	const i = note.indexOf(',');
+	if (i < 0) return null;
+	let s = note.slice(i + 1).trim();
+	const j = s.lastIndexOf(' - ');
+	if (j >= 0) s = s.slice(j + 3).trim();
+	return s || null;
+};
+
+// Prefer the slug's knockout round when present (authoritative), else the group
+// from altGameNote. The two are effectively mutually exclusive in practice.
+const stageOf = (e: any, comp: any): string | null =>
+	deriveStage(e.season?.slug) ?? stageFromNote(comp.altGameNote);
 
 const toMoneyLine = (v: any): number | undefined => {
 	if (v == null) return undefined;
@@ -107,7 +131,7 @@ const adaptEvent = (e: any) => {
 			broadcasts.push({ name, isNational: g.market?.type === 'National' });
 		}
 	}
-	const stage = deriveStage(e.season?.slug);
+	const stage = stageOf(e, comp);
 	const link = (e.links ?? []).find((l: any) => l.rel?.includes('desktop'))?.href ?? e.links?.[0]?.href;
 	return {
 		id: e.id,

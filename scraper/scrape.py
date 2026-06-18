@@ -143,7 +143,13 @@ def main():
     seen = set()
     all_games = []
 
-    for i in range(8):
+    # The app displays the viewer's *local* today..+6 and fetches ESPN for -1..+7
+    # to absorb timezone skew (see +page.ts). We mirror that here: this runs on
+    # UTC, but for viewers behind UTC (the Americas) the local "today" is often
+    # UTC-yesterday, so scrape one extra previous day too. Matching is by
+    # timestamp_ms, so the date a game is filed under doesn't matter — only that
+    # its timestamp is in the scraped set; overlap is deduped by (ts, teams).
+    for i in range(-1, 8):
         date_str = (today + datetime.timedelta(days=i)).isoformat()
         print(f"  {date_str}...", file=sys.stderr)
         try:
@@ -156,7 +162,7 @@ def main():
             print(f"    {len(games)} games", file=sys.stderr)
         except Exception as e:
             print(f"    error: {e}", file=sys.stderr)
-        if i < 6:
+        if i < 7:
             time.sleep(1)
 
     output = {

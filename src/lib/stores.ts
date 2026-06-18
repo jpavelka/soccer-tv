@@ -38,4 +38,4 @@ export const windowInfo = writable({
     screenWidth: 0,
     gameContentWidth: 0
 })
-export const accordionShow = writable({});
+export const accordionShow = writable<Record<string, boolean>>({});

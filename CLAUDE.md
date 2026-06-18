@@ -28,7 +28,7 @@ https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=soccer&dates=YYYYM
 
 ### Broadcast supplementation
 
-ESPN's broadcast data is incomplete (often missing Univision/TUDN and some NBC/CBS games). `scraper/scrape.py` fetches 7 days of schedules from livesoccertv.com and outputs `static/broadcasts.json`. The scraper runs every 8 hours via `.github/workflows/scrape-broadcasts.yml`, which also builds and deploys the site itself.
+ESPN's broadcast data is incomplete (often missing Univision/TUDN and some NBC/CBS games). `scraper/scrape.py` fetches 9 days of schedules from livesoccertv.com (UTC today-1 through today+7, mirroring `+page.ts`'s ESPN window so it covers the viewer's *local* today even when that lags UTC) and outputs `static/broadcasts.json`. The scraper runs every 8 hours via `.github/workflows/scrape-broadcasts.yml`, which also builds and deploys the site itself.
 
 Matching in `DayGames.svelte` uses the `timestamp_ms` field (Unix ms from livesoccertv's `dv` attribute, accurate to the minute) plus at least one team name substring overlap. This is more reliable than name-only matching since multiple games can kick off at the same time.
 
