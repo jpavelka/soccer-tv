@@ -40,11 +40,18 @@ def scrape_day(date_str: str) -> list:
         if not title:
             continue
 
-        # "Team A vs Team B" — livesoccertv uses plain "vs"
-        parts = title.get_text(strip=True).split(" vs ")
+        # "Team A vs Team B" — livesoccertv uses plain "vs". Once a game kicks off
+        # it swaps the "vs" for a live score ("Portugal <score>1 - 1</score> Congo
+        # DR"), which would break the split and silently drop every in-play/finished
+        # game (the prominent matches that get live-score coverage). Restore the
+        # separator first so started games still parse.
+        score = title.find("score")
+        if score:
+            score.replace_with(" vs ")
+        parts = [p.strip() for p in title.get_text().split(" vs ") if p.strip()]
         if len(parts) != 2:
             continue
-        teams = [p.strip() for p in parts]
+        teams = parts
 
         ts_span = row.find("span", class_="ts")
         if not ts_span or not ts_span.get("dv"):
