@@ -23,8 +23,9 @@ No test suite is configured. Type checking via `npm run check` is the primary co
 
 The ESPN endpoint used:
 ```
-https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=soccer&dates=YYYYMMDD&limit=999
+https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=YYYYMMDD&limit=999&d=<ISO-timestamp>
 ```
+The `/all` scoreboard returns a flat `events[]` list (standard site-API shape, with `competitions[].competitors[]`) and carries the venue address, goals/cards timeline, and inline per-team stats — so the match modal needs no separate per-game `summary?event=` fetch. `adaptEvent` in `+page.ts` normalizes each event back to the leaner `scoreboard/header` shape the rest of the app reads. The trailing `d=` is a cache-busting timestamp. (Note: inline `competitors[].statistics` is reliably populated for live games but frequently empty for finished lower-tier games; the `summary?event=` endpoint retains full stats postgame if ever needed.)
 
 ### Broadcast supplementation
 

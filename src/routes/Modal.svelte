@@ -1,6 +1,16 @@
 <script>
     export let showModal = false;
+    // Optional: called when the modal is dismissed via the backdrop or Escape
+    // (not via a footer button). Lets a stacked modal also close the ones beneath
+    // it, so a backdrop click clears the whole stack rather than one layer.
+    /** @type {(() => void) | null} */
+    export let onDismiss = null;
     const padding = 20;
+
+    function dismiss() {
+        showModal = false;
+        if (onDismiss) onDismiss();
+    }
 
     // Mobile Safari mis-anchors `position: fixed` to the document origin (the
     // modal ends up at the top of the page, off-screen once you've scrolled),
@@ -55,7 +65,7 @@
 
     /** @param {KeyboardEvent} e */
     function onOverlayKeydown(e) {
-        if (e.key === 'Escape') showModal = false;
+        if (e.key === 'Escape') dismiss();
     }
 </script>
 
@@ -66,7 +76,7 @@
         role="button"
         tabindex="-1"
         aria-label="Close modal"
-        on:click|self={() => (showModal = false)}
+        on:click|self={() => dismiss()}
         on:keydown={onOverlayKeydown}
     >
         <div class="modal-content" style={`padding:${padding}px`}>

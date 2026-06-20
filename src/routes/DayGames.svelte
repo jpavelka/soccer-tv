@@ -3,6 +3,8 @@
     import { canonicalBcst } from "$lib/broadcasters";
     import Accordion from "./Accordion.svelte";
     import Modal from "./Modal.svelte";
+    import { fetchStandings, type Standings } from "$lib/standings";
+    import { tick } from "svelte";
 
     let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, sortMode } = $props();
 
@@ -169,6 +171,65 @@
         scoreLeague = league;
         showScoreModal = true;
     }
+    // Competition standings modal (opened by a league's 📊 trigger). Fetched
+    // on demand and cached per session; null means no table (knockout cups).
+    let standingsLeague = $state<any>(null);
+    let standingsData = $state<Standings | null>(null);
+    let standingsLoading = $state(false);
+    let showStandingsModal = $state(false);
+    // When opened from a game modal, the two team ids whose group to scroll to
+    // and whose rows to highlight; null when opened from a league header.
+    let standingsFocusIds = $state<Set<string> | null>(null);
+    // True when opened from a game modal (so the footer reads "Back", and a
+    // backdrop dismiss also closes the game modal underneath).
+    let standingsFromGame = $state(false);
+    let groupEls: HTMLElement[] = [];
+    async function showStandings(league: any, focusEvent: any = null) {
+        standingsLeague = league;
+        standingsData = null;
+        standingsLoading = true;
+        standingsFromGame = !!focusEvent;
+        standingsFocusIds = focusEvent
+            ? new Set<string>(focusEvent.competitors.map((c: any) => String(c.id)))
+            : null;
+        showStandingsModal = true;
+        const d = await fetchStandings(league.slug);
+        // Guard against a slower fetch landing after the user opened another league.
+        if (standingsLeague?.slug !== league.slug) return;
+        standingsData = d;
+        standingsLoading = false;
+        // If launched from a game, scroll its group into view (skip if it's the
+        // first group — already at the top).
+        if (d && standingsFocusIds) {
+            const idx = d.groups.findIndex((g) => g.entries.some((e) => standingsFocusIds!.has(e.teamId)));
+            if (idx > 0) {
+                await tick();
+                scrollGroupIntoView(groupEls[idx]);
+            }
+        }
+    }
+    // Scroll *only* the modal's internal scroll container to bring a group to its
+    // top — not the page. (scrollIntoView would also scroll the document, moving
+    // the whole page behind the modal.)
+    function scrollGroupIntoView(el: HTMLElement | undefined) {
+        if (!el) return;
+        let c = el.parentElement;
+        while (c && !(c.scrollHeight > c.clientHeight && /(auto|scroll)/.test(getComputedStyle(c).overflowY)))
+            c = c.parentElement;
+        if (!c) return;
+        const top = el.getBoundingClientRect().top - c.getBoundingClientRect().top + c.scrollTop - 8;
+        c.scrollTo({ top, behavior: 'smooth' });
+    }
+    // Unique qualification colors/labels across all groups, in first-seen order
+    // (top teams first), for the legend below the tables.
+    let standingsLegend = $derived.by(() => {
+        const seen = new Map<string, string>();
+        for (const g of standingsData?.groups ?? [])
+            for (const e of g.entries)
+                if (e.note && !seen.has(e.note.description))
+                    seen.set(e.note.description, e.note.color);
+        return [...seen].map(([description, color]) => ({ description, color }));
+    });
     let venueAddress = $state<string | null>(null);
     // For in-progress / finished games: goals-cards-subs timeline and team stats,
     // both read off the adapted event (see +page.ts) — no per-game fetch.
@@ -577,7 +638,7 @@
                 {#each list as { event, league }, i}
                     <div class="timeGameGroup">
                         {#if i === 0 || list[i - 1].league.name !== league.name}
-                            <div class="leagueName" class:narrowLeague={narrowScreen}><span>{league.name}</span></div>
+                            <div class="leagueName" class:narrowLeague={narrowScreen}><span>{league.name}</span>{@render standingsBtn(league)}</div>
                         {/if}
                         {@render gameEntry(event, league)}
                     </div>
@@ -590,6 +651,7 @@
                             headerStyle='font-weight:bold;font-size:1.6rem;cursor:pointer;'
                             bind:showContent={$accordionShow[dt + '-' + league.name]}
                         >
+                            <span slot="inlineAfter">{@render standingsBtn(league)}</span>
                             {#each league.events as event}
                                 {#if event.show}
                                     {@render gameEntry(event, league)}
@@ -632,7 +694,7 @@
 {#if showInfoModal && selectedEvent}
 <Modal bind:showModal={showInfoModal}>
     <div slot="header" class="modal-header">
-        <div class="modal-meta">{selectedLeague.name} <a class="modal-league-link" href={`https://www.espn.com/soccer/league/_/name/${selectedLeague.slug}`} target="_blank">ESPN ↗</a> <a class="modal-league-link" href={`https://www.google.com/search?q=${encodeURIComponent(selectedLeague.name)}`} target="_blank">Google ↗</a></div>
+        <div class="modal-meta">{selectedLeague.name} {@render standingsBtn(selectedLeague, selectedEvent)} <a class="modal-league-link" href={`https://www.espn.com/soccer/league/_/name/${selectedLeague.slug}`} target="_blank">ESPN ↗</a> <a class="modal-league-link" href={`https://www.google.com/search?q=${encodeURIComponent(selectedLeague.name)}`} target="_blank">Google ↗</a></div>
         {#if eventStage(selectedEvent, selectedLeague) || eventNote(selectedEvent)}
             <div class="modal-stage">{[eventStage(selectedEvent, selectedLeague), eventNote(selectedEvent)].filter(Boolean).join(' · ')}</div>
         {/if}
@@ -793,6 +855,87 @@
     </div>
     <div slot="footer" class="modal-footer">
         <button onclick={() => showScoreModal = false}>Close</button>
+    </div>
+</Modal>
+{/if}
+
+{#snippet standingsBtn(league: any, focusEvent: any = null)}
+    <button
+        type="button"
+        class="standings-btn"
+        title="Standings"
+        aria-label="Show {league.name} standings"
+        onclick={(e) => { e.stopPropagation(); showStandings(league, focusEvent); }}
+    >📊</button>
+{/snippet}
+
+{#if showStandingsModal && standingsLeague}
+<Modal bind:showModal={showStandingsModal} onDismiss={() => { showInfoModal = false; showScoreModal = false; }}>
+    <div slot="header" class="modal-header">
+        <div class="modal-meta">{standingsLeague.name} <a class="modal-league-link" href={`https://www.espn.com/soccer/league/_/name/${standingsLeague.slug}/standings`} target="_blank">ESPN ↗</a> <a class="modal-league-link" href={`https://www.google.com/search?q=${encodeURIComponent(standingsLeague.name + ' standings')}`} target="_blank">Google ↗</a></div>
+    </div>
+    <div class="modal-body">
+        {#if standingsLoading}
+            <div class="standings-msg">Loading standings…</div>
+        {:else if !standingsData}
+            <div class="standings-msg">No standings available for this competition.</div>
+        {:else}
+            {#each standingsData.groups as group, gi}
+                <div class="standings-group" bind:this={groupEls[gi]}>
+                {#if standingsData.groups.length > 1 || group.name !== standingsLeague.name}
+                    <div class="standings-group-name">{group.name}</div>
+                {/if}
+                <table class="standings-table" class:standings-narrow={narrowScreen}>
+                    <thead>
+                        <tr>
+                            <th class="st-rank">#</th>
+                            <th class="st-team">Team</th>
+                            <th>P</th>
+                            <th>W</th>
+                            <th>D</th>
+                            <th>L</th>
+                            {#if !narrowScreen}<th>GF</th><th>GA</th>{/if}
+                            <th>GD</th>
+                            <th class="st-pts">Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each group.entries as row}
+                            <tr class:st-focus-row={standingsFocusIds?.has(row.teamId)}>
+                                <td class="st-rank">
+                                    {#if row.note}<span class="st-flag" style={`background:${row.note.color}`} title={row.note.description}></span>{/if}
+                                    {row.rank}
+                                </td>
+                                <td class="st-team">
+                                    <div class="st-team-inner">
+                                        <img class="st-logo" src={(mode === 'dark' ? row.logoDark : row.logo) ?? row.logo} alt=""/>
+                                        <span class="st-name">{narrowScreen ? row.abbrev : row.name}</span>
+                                    </div>
+                                </td>
+                                <td>{row.played}</td>
+                                <td>{row.wins}</td>
+                                <td>{row.draws}</td>
+                                <td>{row.losses}</td>
+                                {#if !narrowScreen}<td>{row.gf}</td><td>{row.ga}</td>{/if}
+                                <td>{row.gd}</td>
+                                <td class="st-pts">{row.points}</td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                </div>
+            {/each}
+            {#if standingsLegend.length}
+                <div class="standings-legend">
+                    {#each standingsLegend as item}
+                        <span class="legend-item"><span class="legend-swatch" style={`background:${item.color}`}></span>{item.description}</span>
+                    {/each}
+                </div>
+            {/if}
+        {/if}
+    </div>
+    <div slot="footer" class="modal-footer">
+        <button style="margin-left:auto" onclick={() => showStandingsModal = false}>{standingsFromGame ? 'Back' : 'Close'}</button>
     </div>
 </Modal>
 {/if}
@@ -1356,6 +1499,140 @@
     }
     .linkAfter:hover {
         text-decoration: underline;
+    }
+    /* 📊 trigger shown next to any league/competition name. */
+    .standings-btn {
+        background: none;
+        border: none;
+        padding: 0 2px;
+        margin-left: 5px;
+        font-size: 0.85em;
+        line-height: 1;
+        cursor: pointer;
+        opacity: 0.55;
+        flex-shrink: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .standings-btn:hover {
+        opacity: 1;
+    }
+    .standings-msg {
+        opacity: 0.7;
+        padding: 8px 0;
+    }
+    .standings-group {
+        scroll-margin-top: 8px;
+    }
+    .standings-group-name {
+        font-weight: bold;
+        font-size: 1.05rem;
+        margin: 0 0 4px;
+        opacity: 0.85;
+    }
+    .st-focus-row td {
+        background: rgba(128, 128, 128, 0.18);
+    }
+    .st-focus-row .st-name {
+        font-weight: bold;
+    }
+    /* Fixed layout + identical column widths so every group's table lines up,
+       regardless of team-name length. The team column (auto) absorbs the rest. */
+    .standings-table {
+        width: auto;          /* shrink to the fixed column widths, no trailing gap */
+        max-width: 100%;
+        align-self: flex-start;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 0.9rem;
+    }
+    .standings-table th {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        opacity: 0.55;
+        font-weight: bold;
+        text-align: center;
+        padding: 2px 4px;
+    }
+    .standings-table td {
+        text-align: center;
+        padding: 4px;
+        border-top: 1px solid rgba(128, 128, 128, 0.2);
+        white-space: nowrap;
+    }
+    /* Numeric columns: fixed, shared width across all tables. */
+    .standings-table th,
+    .standings-table td {
+        width: 2.4em;
+    }
+    .standings-table th.st-team,
+    .standings-table td.st-team {
+        text-align: left;
+        width: 14em;
+    }
+    .standings-narrow th.st-team,
+    .standings-narrow td.st-team {
+        width: 6em;
+    }
+    .standings-table th.st-rank,
+    .standings-table td.st-rank {
+        position: relative;
+        width: 2.6em;
+        padding-left: 12px;
+    }
+    .standings-table .st-pts {
+        font-weight: bold;
+    }
+    .st-flag {
+        position: absolute;
+        left: 2px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 16px;
+        border-radius: 2px;
+    }
+    .st-team-inner {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+    }
+    .st-logo {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+    .st-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+    }
+    .standings-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px 16px;
+        font-size: 0.8rem;
+        opacity: 0.85;
+        margin-top: 6px;
+    }
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .legend-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        flex-shrink: 0;
+    }
+    .standings-narrow {
+        font-size: 0.82rem;
+    }
+    .standings-narrow td,
+    .standings-narrow th {
+        padding: 3px 2px;
     }
 </style>
 
