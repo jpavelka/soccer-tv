@@ -4,6 +4,7 @@
     import Accordion from "./Accordion.svelte";
     import Modal from "./Modal.svelte";
     import { fetchStandings, type Standings } from "$lib/standings";
+    import { fetchBracket, type Bracket } from "$lib/bracket";
     import { tick } from "svelte";
 
     let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, sortMode } = $props();
@@ -177,49 +178,98 @@
     let standingsData = $state<Standings | null>(null);
     let standingsLoading = $state(false);
     let showStandingsModal = $state(false);
+    // Knockout bracket for the same competition, fetched after standings (it needs
+    // the season window from the standings response). null = no knockout rounds.
+    let bracketData = $state<Bracket | null>(null);
+    let bracketLoading = $state(false);
+    // Active view when the competition has both a table and a bracket.
+    let standingsTab = $state<'table' | 'bracket'>('table');
     // When opened from a game modal, the two team ids whose group to scroll to
     // and whose rows to highlight; null when opened from a league header.
     let standingsFocusIds = $state<Set<string> | null>(null);
+    // The focused game's id, to highlight/scroll to its match in the bracket.
+    let standingsFocusMatchId = $state<string | null>(null);
     // True when opened from a game modal (so the footer reads "Back", and a
     // backdrop dismiss also closes the game modal underneath).
     let standingsFromGame = $state(false);
     let groupEls: HTMLElement[] = [];
+    let matchEls: Record<string, HTMLElement> = {};
     async function showStandings(league: any, focusEvent: any = null) {
         standingsLeague = league;
         standingsData = null;
         standingsLoading = true;
+        bracketData = null;
+        bracketLoading = false;
         standingsFromGame = !!focusEvent;
         standingsFocusIds = focusEvent
             ? new Set<string>(focusEvent.competitors.map((c: any) => String(c.id)))
             : null;
+        standingsFocusMatchId = focusEvent?.id ?? null;
+        // A knockout game opens straight to the bracket; otherwise the table.
+        const koGame = !!focusEvent && /round of|quarter|semi|\bfinal|knockout|playoff/i.test(focusEvent.group?.name ?? '');
+        standingsTab = koGame ? 'bracket' : 'table';
         showStandingsModal = true;
+
         const d = await fetchStandings(league.slug);
         // Guard against a slower fetch landing after the user opened another league.
         if (standingsLeague?.slug !== league.slug) return;
         standingsData = d;
         standingsLoading = false;
-        // If launched from a game, scroll its group into view (skip if it's the
-        // first group — already at the top).
-        if (d && standingsFocusIds) {
-            const idx = d.groups.findIndex((g) => g.entries.some((e) => standingsFocusIds!.has(e.teamId)));
-            if (idx > 0) {
-                await tick();
-                scrollGroupIntoView(groupEls[idx]);
-            }
+
+        // Bracket fetch needs the season date window from the standings response.
+        if (d?.season) {
+            bracketLoading = true;
+            const b = await fetchBracket(league.slug, d.season.startDate, d.season.endDate);
+            if (standingsLeague?.slug !== league.slug) return;
+            bracketData = b;
+            bracketLoading = false;
+        }
+
+        // Settle the active tab against what actually loaded.
+        const hasTable = !!d?.groups.length;
+        const hasBracket = !!bracketData?.rounds.length;
+        if (standingsTab === 'bracket' && !hasBracket) standingsTab = 'table';
+        else if (standingsTab === 'table' && !hasTable && hasBracket) standingsTab = 'bracket';
+
+        // Scroll the focused group/match into view.
+        await tick();
+        if (standingsTab === 'table' && standingsFocusIds) {
+            const idx = d!.groups.findIndex((g) => g.entries.some((e) => standingsFocusIds!.has(e.teamId)));
+            if (idx > 0) scrollModalElementIntoView(groupEls[idx]);
+        } else if (standingsTab === 'bracket' && standingsFocusMatchId) {
+            scrollModalElementIntoView(matchEls[standingsFocusMatchId]);
         }
     }
-    // Scroll *only* the modal's internal scroll container to bring a group to its
-    // top — not the page. (scrollIntoView would also scroll the document, moving
-    // the whole page behind the modal.)
-    function scrollGroupIntoView(el: HTMLElement | undefined) {
+    // Scroll the modal's own scroll containers (vertical body and/or the bracket's
+    // horizontal scroller) to reveal an element — never the page. (scrollIntoView
+    // would also scroll the document, moving the whole page behind the modal.)
+    function scrollModalElementIntoView(el: HTMLElement | undefined) {
         if (!el) return;
         let c = el.parentElement;
-        while (c && !(c.scrollHeight > c.clientHeight && /(auto|scroll)/.test(getComputedStyle(c).overflowY)))
+        while (c && c !== document.body) {
+            const cs = getComputedStyle(c);
+            const sy = c.scrollHeight > c.clientHeight && /(auto|scroll)/.test(cs.overflowY);
+            const sx = c.scrollWidth > c.clientWidth && /(auto|scroll)/.test(cs.overflowX);
+            if (sx || sy) {
+                const r = el.getBoundingClientRect();
+                const rc = c.getBoundingClientRect();
+                c.scrollTo({
+                    top: sy ? r.top - rc.top + c.scrollTop - 8 : c.scrollTop,
+                    left: sx ? r.left - rc.left + c.scrollLeft - 8 : c.scrollLeft,
+                    behavior: 'smooth',
+                });
+            }
             c = c.parentElement;
-        if (!c) return;
-        const top = el.getBoundingClientRect().top - c.getBoundingClientRect().top + c.scrollTop - 8;
-        c.scrollTo({ top, behavior: 'smooth' });
+        }
     }
+    // Concise kickoff label for an upcoming bracket match, e.g. "Jul 4, 3:00pm".
+    const fmtMatchDate = (iso: string) => {
+        const d = new Date(iso);
+        const day = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+            .replace(' AM', 'am').replace(' PM', 'pm');
+        return `${day}, ${time}`;
+    };
     // Unique qualification colors/labels across all groups, in first-seen order
     // (top teams first), for the legend below the tables.
     let standingsLegend = $derived.by(() => {
@@ -229,6 +279,18 @@
                 if (e.note && !seen.has(e.note.description))
                     seen.set(e.note.description, e.note.color);
         return [...seen].map(([description, color]) => ({ description, color }));
+    });
+    let anyClinched = $derived(
+        (standingsData?.groups ?? []).some((g) => g.entries.some((e) => e.clinched)),
+    );
+    // Teams with a points deduction, surfaced as a footnote under the table since
+    // the deducted total in the Pts column otherwise looks like a math error.
+    let standingsDeductions = $derived.by(() => {
+        const out: { name: string; deduction: number }[] = [];
+        for (const g of standingsData?.groups ?? [])
+            for (const e of g.entries)
+                if (e.deduction) out.push({ name: e.name, deduction: e.deduction });
+        return out;
     });
     let venueAddress = $state<string | null>(null);
     // For in-progress / finished games: goals-cards-subs timeline and team stats,
@@ -876,61 +938,26 @@
     </div>
     <div class="modal-body">
         {#if standingsLoading}
-            <div class="standings-msg">Loading standings…</div>
-        {:else if !standingsData}
-            <div class="standings-msg">No standings available for this competition.</div>
+            <div class="standings-msg">Loading…</div>
         {:else}
-            {#each standingsData.groups as group, gi}
-                <div class="standings-group" bind:this={groupEls[gi]}>
-                {#if standingsData.groups.length > 1 || group.name !== standingsLeague.name}
-                    <div class="standings-group-name">{group.name}</div>
-                {/if}
-                <table class="standings-table" class:standings-narrow={narrowScreen}>
-                    <thead>
-                        <tr>
-                            <th class="st-rank">#</th>
-                            <th class="st-team">Team</th>
-                            <th>P</th>
-                            <th>W</th>
-                            <th>D</th>
-                            <th>L</th>
-                            {#if !narrowScreen}<th>GF</th><th>GA</th>{/if}
-                            <th>GD</th>
-                            <th class="st-pts">Pts</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each group.entries as row}
-                            <tr class:st-focus-row={standingsFocusIds?.has(row.teamId)}>
-                                <td class="st-rank">
-                                    {#if row.note}<span class="st-flag" style={`background:${row.note.color}`} title={row.note.description}></span>{/if}
-                                    {row.rank}
-                                </td>
-                                <td class="st-team">
-                                    <div class="st-team-inner">
-                                        <img class="st-logo" src={(mode === 'dark' ? row.logoDark : row.logo) ?? row.logo} alt=""/>
-                                        <span class="st-name">{narrowScreen ? row.abbrev : row.name}</span>
-                                    </div>
-                                </td>
-                                <td>{row.played}</td>
-                                <td>{row.wins}</td>
-                                <td>{row.draws}</td>
-                                <td>{row.losses}</td>
-                                {#if !narrowScreen}<td>{row.gf}</td><td>{row.ga}</td>{/if}
-                                <td>{row.gd}</td>
-                                <td class="st-pts">{row.points}</td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+            {@const hasTable = !!standingsData?.groups.length}
+            {@const hasBracket = !!bracketData?.rounds.length}
+            {#if hasTable && hasBracket}
+                <div class="seg-toggle">
+                    <button class:seg-active={standingsTab === 'table'} onclick={() => standingsTab = 'table'}>Table</button>
+                    <button class:seg-active={standingsTab === 'bracket'} onclick={() => standingsTab = 'bracket'}>Bracket</button>
                 </div>
-            {/each}
-            {#if standingsLegend.length}
-                <div class="standings-legend">
-                    {#each standingsLegend as item}
-                        <span class="legend-item"><span class="legend-swatch" style={`background:${item.color}`}></span>{item.description}</span>
-                    {/each}
-                </div>
+            {/if}
+            {#if standingsTab === 'bracket' && hasBracket}
+                {@render bracketView()}
+            {:else if hasTable}
+                {@render tableView()}
+            {:else if bracketLoading}
+                <div class="standings-msg">Loading bracket…</div>
+            {:else if hasBracket}
+                {@render bracketView()}
+            {:else}
+                <div class="standings-msg">No standings or bracket available for this competition.</div>
             {/if}
         {/if}
     </div>
@@ -939,6 +966,105 @@
     </div>
 </Modal>
 {/if}
+
+{#snippet tableView()}
+    {#each standingsData?.groups ?? [] as group, gi}
+        <div class="standings-group" bind:this={groupEls[gi]}>
+        {#if (standingsData?.groups.length ?? 0) > 1 || group.name !== standingsLeague.name}
+            <div class="standings-group-name">{group.name}</div>
+        {/if}
+        <table class="standings-table" class:standings-narrow={narrowScreen}>
+            <thead>
+                <tr>
+                    <th class="st-rank">#</th>
+                    <th class="st-team">Team</th>
+                    <th>P</th>
+                    <th>W</th>
+                    <th>D</th>
+                    <th>L</th>
+                    {#if !narrowScreen}<th>GF</th><th>GA</th>{/if}
+                    <th>GD</th>
+                    <th class="st-pts">Pts</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each group.entries as row}
+                    <tr class:st-focus-row={standingsFocusIds?.has(row.teamId)}>
+                        <td class="st-rank">
+                            {#if row.note}<span class="st-flag" style={`background:${row.note.color}`} title={row.note.description}></span>{/if}
+                            {row.rank}
+                        </td>
+                        <td class="st-team">
+                            <div class="st-team-inner">
+                                <img class="st-logo" src={(mode === 'dark' ? row.logoDark : row.logo) ?? row.logo} alt=""/>
+                                <span class="st-name">{narrowScreen ? row.abbrev : row.name}</span>
+                                {#if row.clinched}<span class="st-clinch" title="Clinched advancement">✓</span>{/if}
+                            </div>
+                        </td>
+                        <td>{row.played}</td>
+                        <td>{row.wins}</td>
+                        <td>{row.draws}</td>
+                        <td>{row.losses}</td>
+                        {#if !narrowScreen}<td>{row.gf}</td><td>{row.ga}</td>{/if}
+                        <td>{row.gd}</td>
+                        <td class="st-pts">{row.points}{#if row.deduction}<sup class="st-ded" title={`Includes ${row.deduction}-point deduction`}>*</sup>{/if}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+        </div>
+    {/each}
+    {#if standingsLegend.length || anyClinched}
+        <div class="standings-legend">
+            {#each standingsLegend as item}
+                <span class="legend-item"><span class="legend-swatch" style={`background:${item.color}`}></span>{item.description}</span>
+            {/each}
+            {#if anyClinched}
+                <span class="legend-item"><span class="st-clinch">✓</span>Clinched advancement</span>
+            {/if}
+        </div>
+    {/if}
+    {#if standingsDeductions.length}
+        <div class="standings-footnote">
+            {#each standingsDeductions as d}
+                <div><span class="st-ded">*</span> {d.name}: {d.deduction}-point deduction</div>
+            {/each}
+        </div>
+    {/if}
+{/snippet}
+
+{#snippet bracketTeam(t: any, showScore: boolean)}
+    <div class="bk-team" class:bk-winner={t.winner}>
+        {#if t.logo}
+            <img class="bk-logo" src={mode === 'dark' ? t.logoDark : t.logo} alt=""/>
+        {:else}
+            <span class="bk-logo bk-logo-empty"></span>
+        {/if}
+        <span class="bk-name" class:bk-ph={t.placeholder}>{t.name}</span>
+        {#if showScore}<span class="bk-score">{t.score}</span>{/if}
+    </div>
+{/snippet}
+
+{#snippet bracketView()}
+    <div class="bracket">
+        {#each bracketData?.rounds ?? [] as round}
+            <div class="bracket-round">
+                <div class="bracket-round-name">{round.name}</div>
+                {#each round.matches as m}
+                    {@const showScore = m.state !== 'pre'}
+                    <div class="bracket-match" class:bracket-focus={standingsFocusMatchId === m.id} class:bracket-live={m.state === 'in'} bind:this={matchEls[m.id]}>
+                        {@render bracketTeam(m.home, showScore)}
+                        {@render bracketTeam(m.away, showScore)}
+                        <div class="bracket-when">{m.state === 'pre' ? fmtMatchDate(m.date) : m.summary}</div>
+                        {#if m.location}
+                            <div class="bracket-venue" title={m.venue ? `${m.venue} · ${m.location}` : m.location}>{m.location}</div>
+                        {/if}
+                    </div>
+                {/each}
+            </div>
+        {/each}
+    </div>
+{/snippet}
 
 <style>
     .titleText {
@@ -1520,6 +1646,119 @@
         opacity: 0.7;
         padding: 8px 0;
     }
+    /* Table / Bracket segmented toggle. */
+    .seg-toggle {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 4px;
+    }
+    .seg-toggle button {
+        flex: 1;
+        padding: 5px 10px;
+        font: inherit;
+        font-size: 0.9rem;
+        cursor: pointer;
+        border: 1px solid rgba(128, 128, 128, 0.35);
+        border-radius: 6px;
+        background: none;
+        color: inherit;
+        opacity: 0.7;
+    }
+    .seg-toggle button.seg-active {
+        background: rgba(128, 128, 128, 0.2);
+        opacity: 1;
+        font-weight: bold;
+    }
+    /* Bracket: horizontally-scrolling columns, one per knockout round. */
+    .bracket {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+        align-items: flex-start;
+    }
+    .bracket-round {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 0 0 auto;
+        min-width: 150px;
+    }
+    .bracket-round-name {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        opacity: 0.55;
+        position: sticky;
+        top: 0;
+        background: light-dark(white, #444444);
+        padding: 2px 0;
+        z-index: 1;
+    }
+    .bracket-match {
+        border: 1px solid rgba(128, 128, 128, 0.3);
+        border-radius: 6px;
+        padding: 5px 7px;
+        background: rgba(128, 128, 128, 0.06);
+    }
+    .bracket-match.bracket-focus {
+        border-color: light-dark(#0066cc, #4da6ff);
+        box-shadow: 0 0 0 1px light-dark(#0066cc, #4da6ff);
+    }
+    .bracket-live {
+        border-left: 3px solid #d33;
+    }
+    .bk-team {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 0;
+    }
+    .bk-team + .bk-team {
+        border-top: 1px solid rgba(128, 128, 128, 0.15);
+    }
+    .bk-winner {
+        font-weight: bold;
+    }
+    .bk-logo {
+        width: 18px;
+        height: 18px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+    .bk-logo-empty {
+        opacity: 0;
+    }
+    .bk-name {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.85rem;
+    }
+    .bk-ph {
+        opacity: 0.6;
+        font-style: italic;
+        font-weight: normal;
+    }
+    .bk-score {
+        font-variant-numeric: tabular-nums;
+        font-size: 0.85rem;
+    }
+    .bracket-when {
+        font-size: 0.68rem;
+        opacity: 0.6;
+        margin-top: 3px;
+        white-space: nowrap;
+    }
+    .bracket-venue {
+        font-size: 0.66rem;
+        opacity: 0.55;
+        margin-top: 1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
     .standings-group {
         scroll-margin-top: 8px;
     }
@@ -1607,6 +1846,20 @@
         overflow: hidden;
         text-overflow: ellipsis;
         min-width: 0;
+    }
+    .st-clinch {
+        flex-shrink: 0;
+        color: #1a9e5f;
+        font-weight: bold;
+    }
+    .st-ded {
+        color: #d23;
+        font-weight: bold;
+    }
+    .standings-footnote {
+        font-size: 0.78rem;
+        opacity: 0.85;
+        margin-top: 6px;
     }
     .standings-legend {
         display: flex;
