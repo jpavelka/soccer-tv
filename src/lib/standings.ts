@@ -13,6 +13,7 @@ export type StandingsRow = {
 	abbrev: string;
 	logo: string | null;
 	logoDark: string | null;
+	link: string | null; // ESPN club page ("clubhouse"), straight from the team's own links
 	rank: number;
 	note: { description: string; color: string } | null;
 	points: string;
@@ -57,6 +58,7 @@ const adaptStandings = (raw: any): Standings | null => {
 		const entries: StandingsRow[] = (child.standings?.entries ?? []).map((e: any) => {
 			const t = e.team ?? {};
 			const logo = t.logos?.[0]?.href ?? null;
+			const link = t.links?.find((l: any) => l.rel?.includes('clubhouse'))?.href ?? null;
 			const note = e.note ? { description: e.note.description, color: e.note.color } : null;
 			return {
 				teamId: String(t.id ?? ''),
@@ -64,6 +66,7 @@ const adaptStandings = (raw: any): Standings | null => {
 				abbrev: t.abbreviation ?? t.shortDisplayName ?? '',
 				logo,
 				logoDark: darkLogo(logo),
+				link,
 				rank: Number(statBy(e, 'rank')) || (e.note?.rank ?? 0),
 				note,
 				points: statBy(e, 'points'),

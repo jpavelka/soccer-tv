@@ -1003,7 +1003,11 @@
                         <td class="st-team">
                             <div class="st-team-inner">
                                 <img class="st-logo" src={(mode === 'dark' ? row.logoDark : row.logo) ?? row.logo} alt=""/>
-                                <span class="st-name">{narrowScreen ? row.abbrev : row.name}</span>
+                                {#if row.link}
+                                    <a class="st-name st-name-link" href={row.link} target="_blank">{narrowScreen ? row.abbrev : row.name}</a>
+                                {:else}
+                                    <span class="st-name">{narrowScreen ? row.abbrev : row.name}</span>
+                                {/if}
                                 {#if row.clinched}<span class="st-clinch" title="Clinched advancement">✓</span>{/if}
                             </div>
                         </td>
@@ -1859,6 +1863,13 @@
         overflow: hidden;
         text-overflow: ellipsis;
         min-width: 0;
+    }
+    .st-name-link {
+        color: inherit;
+        text-decoration: none;
+    }
+    .st-name-link:hover {
+        text-decoration: underline;
     }
     .st-clinch {
         flex-shrink: 0;
