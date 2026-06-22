@@ -48,6 +48,7 @@ const REGISTRY: BroadcasterDef[] = [
     { canonical: 'DAZN', aliases: ['DAZN', 'DAZN USA'] },
     { canonical: 'fuboTV', aliases: ['fuboTV', 'Fubo'] },
     { canonical: 'MSG', aliases: ['MSG'] },
+    { canonical: 'Prime Video', aliases: ['Prime Video', 'Amazon Prime Video']},
 
     // Noise — low-tier / amateur streaming surfaces.
     { canonical: 'SportsEngine Play', aliases: ['SportsEngine Play'], hidden: true },

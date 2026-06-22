@@ -120,6 +120,12 @@
                     }
 
                     event.bcstStr = event.bcstsToShow.join('/');
+                    // De-emphasize networks the user hasn't picked. When no
+                    // networks are selected, nothing is dimmed (all are "good").
+                    event.bcstParts = event.bcstsToShow.map((name: string) => ({
+                        name,
+                        good: selectedBcsts.length === 0 || selectedBcsts.includes(name),
+                    }));
                     if (!filterBroadcasts || event.bcstsToShow.length > 0) {
                         if (goodStatuses.includes(event.status)) {
                             if (!interestOn || (event.interest ?? 0) >= interestMin) {
@@ -640,7 +646,7 @@
             ) : event.summary
         }</span>
         <button type="button" class={`interest-score${event.topmatch ? ' interest-score-top' : ''}`} onclick={() => showScore(event, league)} title={event.topmatch ? 'interest score · livesoccertv top match — click for breakdown' : 'interest score — click for breakdown'}>{Math.round(event.interest ?? 0)}</button>
-        <span class="broadcast">{event.bcstStr}</span>
+        <span class="broadcast">{#each event.bcstParts ?? [] as part, i}{#if i > 0}<span class="bcst-sep">/</span>{/if}<span class={part.good ? '' : 'bcst-dim'}>{part.name}</span>{/each}</span>
         {#if event.lstv_matched}
             <a
                 class="lstv-dot"
@@ -1161,6 +1167,13 @@
     .broadcast {
         margin-left: 10px;
         white-space: nowrap;
+    }
+    .broadcast .bcst-dim {
+        opacity: 0.4;
+    }
+    .broadcast .bcst-sep {
+        opacity: 0.4;
+        margin: 0 1px;
     }
     .interest-score {
         margin-left: 10px;
