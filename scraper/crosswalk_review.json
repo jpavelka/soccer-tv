@@ -1,8 +1,23 @@
 {
-  "generated_at": "2026-06-18T10:55:38.661534+00:00",
+  "generated_at": "2026-06-22T12:35:34.316677+00:00",
   "mode": "incremental",
   "new_leagues": [],
-  "new_teams": [],
+  "new_teams": [
+    {
+      "espn_id": "5786",
+      "espn_name": "KV Kortrijk",
+      "gfr_api_football_id": 734,
+      "gfr_team_name": "Kortrijk",
+      "match": "token"
+    },
+    {
+      "espn_id": "13450",
+      "espn_name": "Waasland-Beveren",
+      "gfr_api_football_id": 738,
+      "gfr_team_name": "SK Beveren",
+      "match": "token"
+    }
+  ],
   "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [],
@@ -586,6 +601,22 @@
       "best_score": 0.56
     },
     {
+      "espn_id": "253",
+      "espn_name": "Inverness Caledonian Thistle",
+      "country": "Scotland",
+      "gender": "men",
+      "espn_league_slug": "sco.2",
+      "best_score": 0.465
+    },
+    {
+      "espn_id": "405",
+      "espn_name": "Stenhousemuir",
+      "country": "Scotland",
+      "gender": "men",
+      "espn_league_slug": "sco.2",
+      "best_score": 0.364
+    },
+    {
       "espn_id": "403",
       "espn_name": "Alloa Athletic",
       "country": "Scotland",
@@ -600,14 +631,6 @@
       "gender": "men",
       "espn_league_slug": "sco.2.promotion.relegation",
       "best_score": 0.538
-    },
-    {
-      "espn_id": "405",
-      "espn_name": "Stenhousemuir",
-      "country": "Scotland",
-      "gender": "men",
-      "espn_league_slug": "sco.2.promotion.relegation",
-      "best_score": 0.364
     },
     {
       "espn_id": "3052",
@@ -745,12 +768,28 @@
   ],
   "league_disagreements": [
     {
+      "espn_id": "5786",
+      "espn_name": "KV Kortrijk",
+      "espn_league_slug": "bel.1",
+      "expected_gfr_league": "Pro League",
+      "actual_gfr_league": "Challenger Pro League",
+      "gfr_team_name": "Kortrijk"
+    },
+    {
       "espn_id": "22269",
       "espn_name": "Lommel SK",
-      "espn_league_slug": "bel.promotion.relegation",
+      "espn_league_slug": "bel.1",
       "expected_gfr_league": "Pro League",
       "actual_gfr_league": "Challenger Pro League",
       "gfr_team_name": "Lommel"
+    },
+    {
+      "espn_id": "13450",
+      "espn_name": "Waasland-Beveren",
+      "espn_league_slug": "bel.1",
+      "expected_gfr_league": "Pro League",
+      "actual_gfr_league": "Challenger Pro League",
+      "gfr_team_name": "SK Beveren"
     },
     {
       "espn_id": "3458",
@@ -825,6 +864,30 @@
       "gfr_team_name": "AGF"
     },
     {
+      "espn_id": "388",
+      "espn_name": "Coventry City",
+      "espn_league_slug": "eng.1",
+      "expected_gfr_league": "Premier League",
+      "actual_gfr_league": "Championship",
+      "gfr_team_name": "Coventry City"
+    },
+    {
+      "espn_id": "306",
+      "espn_name": "Hull City",
+      "espn_league_slug": "eng.1",
+      "expected_gfr_league": "Premier League",
+      "actual_gfr_league": "Championship",
+      "gfr_team_name": "Hull City"
+    },
+    {
+      "espn_id": "373",
+      "espn_name": "Ipswich Town",
+      "espn_league_slug": "eng.1",
+      "expected_gfr_league": "Premier League",
+      "actual_gfr_league": "Championship",
+      "gfr_team_name": "Ipswich Town"
+    },
+    {
       "espn_id": "2697",
       "espn_name": "Le Mans",
       "espn_league_slug": "fra.1",
@@ -879,6 +942,22 @@
       "expected_gfr_league": "Serie A",
       "actual_gfr_league": "Serie B",
       "gfr_team_name": "Venezia"
+    },
+    {
+      "espn_id": "267",
+      "espn_name": "St Johnstone",
+      "espn_league_slug": "sco.1",
+      "expected_gfr_league": "Premiership",
+      "actual_gfr_league": "Championship",
+      "gfr_team_name": "St. Johnstone"
+    },
+    {
+      "espn_id": "259",
+      "espn_name": "Livingston",
+      "espn_league_slug": "sco.2",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "Premiership",
+      "gfr_team_name": "Livingston"
     }
   ]
 }
