@@ -43,12 +43,14 @@ const REGISTRY: BroadcasterDef[] = [
     { canonical: 'CBSSN', aliases: ['CBS Sports Network', 'CBSSN'] },
     { canonical: 'CBS Sports Golazo', aliases: ['CBS Sports Golazo', 'Golazo Network'] },
     { canonical: 'Paramount+', aliases: ['Paramount+', 'Paramount Plus'] },
+    // { canonical: 'TNT', aliases: ['TNT', 'TNT USA']},
 
     // Streaming / other.
     { canonical: 'DAZN', aliases: ['DAZN', 'DAZN USA'] },
     { canonical: 'fuboTV', aliases: ['fuboTV', 'Fubo'] },
     { canonical: 'MSG', aliases: ['MSG'] },
     { canonical: 'Prime Video', aliases: ['Prime Video', 'Amazon Prime Video']},
+    // { canonical: 'TUDN', aliases: ['TUDN', 'TUDN USA']},
 
     // Noise — low-tier / amateur streaming surfaces.
     { canonical: 'SportsEngine Play', aliases: ['SportsEngine Play'], hidden: true },
