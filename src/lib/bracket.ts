@@ -14,6 +14,7 @@ export type BracketTeam = {
 	abbrev: string;
 	logo: string | null;
 	logoDark: string | null;
+	link: string | null; // ESPN team page ("clubhouse"); null for undecided placeholder slots
 	score: string;
 	winner: boolean;
 	placeholder: boolean;
@@ -55,11 +56,13 @@ const darkLogo = (url?: string | null) => (url ? url.replace('/500/', '/500-dark
 const adaptTeam = (c: any): BracketTeam => {
 	const t = c.team ?? {};
 	const logo = t.logo || null; // placeholders carry an empty logo string
+	const link = t.links?.find((l: any) => l.rel?.includes('clubhouse'))?.href ?? null;
 	return {
 		name: t.displayName ?? t.shortDisplayName ?? t.name ?? 'TBD',
 		abbrev: t.abbreviation ?? t.shortDisplayName ?? '',
 		logo,
 		logoDark: darkLogo(logo),
+		link,
 		score: c.score ?? '',
 		winner: !!c.winner,
 		placeholder: !logo,

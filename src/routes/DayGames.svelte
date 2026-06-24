@@ -590,6 +590,16 @@
     // slug): treat as long-tail so they floor to 0 rather than inheriting a small
     // per-day index.
     const LEAGUE_MISSING_RANK = 100;
+    // Drive the gradient badge fill with a two-segment ramp: gray (≤40) → yellow
+    // (70) → green (100+). --t1 fades cold→mid over 40–70, --t2 fades mid→hot
+    // over 70–100; the CSS nests two color-mixes so the midpoint is yellow.
+    function interestRamp(score: number | undefined): string {
+        const s = score ?? 0;
+        const t1 = Math.max(0, Math.min(1, (s - 40) / 30));
+        const t2 = Math.max(0, Math.min(1, (s - 70) / 30));
+        return `--t1:${t1};--t2:${t2}`;
+    }
+
     // Per-game interest score (higher = more compelling). Combines a league base
     // (from ESPN's master prominence list), a GFR/FIFA team-strength bonus, a
     // ranking-based competitiveness (how evenly matched), stage stakes, and ESPN
@@ -645,7 +655,7 @@
                     .replace(' AM', 'am').replace(' PM', 'pm')
             ) : event.summary
         }</span>
-        <button type="button" class={`interest-score${event.topmatch ? ' interest-score-top' : ''}`} onclick={() => showScore(event, league)} title={event.topmatch ? 'interest score · livesoccertv top match — click for breakdown' : 'interest score — click for breakdown'}>{Math.round(event.interest ?? 0)}</button>
+        <button type="button" class={`interest-score${event.topmatch ? ' interest-score-top' : ''}`} style={interestRamp(event.interest)} onclick={() => showScore(event, league)} title={event.topmatch ? 'interest score · livesoccertv top match — click for breakdown' : 'interest score — click for breakdown'}>{Math.round(event.interest ?? 0)}</button>
         <span class="broadcast">{#each event.bcstParts ?? [] as part, i}{#if i > 0}<span class="bcst-sep">/</span>{/if}<span class={part.good ? '' : 'bcst-dim'}>{part.name}</span>{/each}</span>
         {#if event.lstv_matched}
             <a
@@ -1050,7 +1060,11 @@
         {:else}
             <span class="bk-logo bk-logo-empty"></span>
         {/if}
-        <span class="bk-name" class:bk-ph={t.placeholder}>{t.name}</span>
+        {#if t.link}
+            <a class="bk-name bk-name-link" href={t.link} target="_blank">{t.name}</a>
+        {:else}
+            <span class="bk-name" class:bk-ph={t.placeholder}>{t.name}</span>
+        {/if}
         {#if showScore}<span class="bk-score">{t.score}</span>{/if}
     </div>
 {/snippet}
@@ -1180,13 +1194,21 @@
         margin: 0 1px;
     }
     .interest-score {
+        position: relative;   /* anchors the top-match ★ marker */
         margin-left: 10px;
         padding: 1px 6px;
         border-radius: 4px;
         font-size: 0.75rem;
         font-weight: 600;
-        background: rgba(128, 128, 128, 0.2);
-        opacity: 0.8;
+        /* Gradient fill: gray → yellow → green, driven by --t1 (cold→mid) and
+           --t2 (mid→hot). Nesting the mixes puts the yellow midpoint at t1=1. */
+        --cold: light-dark(#e8eef5, #2b333f);
+        --mid: light-dark(#f2d544, #c9a227);
+        --hot: light-dark(#2dc942, #2e8b40);
+        background: color-mix(in oklab,
+            color-mix(in oklab, var(--cold), var(--mid) calc(var(--t1, 0) * 100%)),
+            var(--hot) calc(var(--t2, 0) * 100%));
+        opacity: 1;
         flex-shrink: 0;
         /* It's a <button> now (opens the breakdown modal) — strip the defaults. */
         border: none;
@@ -1195,7 +1217,7 @@
         cursor: pointer;
     }
     .interest-score:hover {
-        opacity: 1;
+        filter: brightness(1.1);
     }
     .score-modal-title {
         font-weight: bold;
@@ -1239,11 +1261,16 @@
         font-size: 1.1rem;
         opacity: 1;
     }
-    /* Top matches (livesoccertv topmatch) get a gold interest-score badge. */
-    .interest-score-top {
-        background: light-dark(#ffd24d, #b8860b);
-        color: light-dark(#000, #fff);
-        opacity: 1;
+    /* Top matches (livesoccertv topmatch) keep the score gradient fill and get a
+       small corner ★ — a shape marker, so it stays legible over any fill color. */
+    .interest-score-top::after {
+        content: "★";
+        position: absolute;
+        top: -6px;
+        right: -5px;
+        font-size: 0.6rem;
+        color: light-dark(#eab308, #ffd24d);
+        text-shadow: 0 0 2px light-dark(#fff, #000);
     }
     .timeGameGroup {
         margin-top: 3px;
@@ -1752,6 +1779,13 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: 0.85rem;
+    }
+    .bk-name-link {
+        color: inherit;
+        text-decoration: none;
+    }
+    .bk-name-link:hover {
+        text-decoration: underline;
     }
     .bk-ph {
         opacity: 0.6;
