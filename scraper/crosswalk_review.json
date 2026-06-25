@@ -1,26 +1,20 @@
 {
-  "generated_at": "2026-06-22T12:35:34.316677+00:00",
+  "generated_at": "2026-06-25T09:53:54.621146+00:00",
   "mode": "incremental",
   "new_leagues": [],
-  "new_teams": [
-    {
-      "espn_id": "5786",
-      "espn_name": "KV Kortrijk",
-      "gfr_api_football_id": 734,
-      "gfr_team_name": "Kortrijk",
-      "match": "token"
-    },
-    {
-      "espn_id": "13450",
-      "espn_name": "Waasland-Beveren",
-      "gfr_api_football_id": 738,
-      "gfr_team_name": "SK Beveren",
-      "match": "token"
-    }
-  ],
+  "new_teams": [],
   "new_nationals": [],
   "fuzzy_leagues": [],
-  "fuzzy_teams": [],
+  "fuzzy_teams": [
+    {
+      "espn_id": "21927",
+      "espn_name": "Rodina Moscow",
+      "gfr_api_football_id": 1088,
+      "gfr_team_name": "Dinamo Moscow",
+      "country": "Russia",
+      "score": 0.846
+    }
+  ],
   "unmatched_leagues": [
     {
       "espn_slug": "eng.w.promotion.relegation",
@@ -583,6 +577,14 @@
       "gender": "men",
       "espn_league_slug": "per.1",
       "best_score": 0.632
+    },
+    {
+      "espn_id": "21539",
+      "espn_name": "Fakel Voronezh",
+      "country": "Russia",
+      "gender": "men",
+      "espn_league_slug": "rus.1",
+      "best_score": 0.444
     },
     {
       "espn_id": "20704",
