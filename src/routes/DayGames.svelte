@@ -155,14 +155,19 @@
     if (!Object.keys($accordionShow).includes(dt)) {
         $accordionShow[dt] = true;
     }
-    const bodyBgNums = window
-        ? window.getComputedStyle(document.body, null).getPropertyValue('background-color').match(/\d+/g)?.map(Number) ?? null
-        : null;
-    let mode = bodyBgNums && Math.max(...bodyBgNums) > 150 ? 'light' : 'dark';
-    // Page background as hex, used to detect bars that would blend into it.
-    const bgHex = bodyBgNums
-        ? bodyBgNums.slice(0, 3).map((n) => n.toString(16).padStart(2, '0')).join('')
-        : mode === 'light' ? 'ffffff' : '000000';
+    // Light/dark follows the OS preference: the app declares `color-scheme: light
+    // dark` and paints the body with light-dark(#fafafa, #212121) — there's no
+    // in-app toggle. Read the preference directly rather than sniffing the
+    // rendered body background. In production the bundled stylesheet can still be
+    // unapplied when this runs, so getComputedStyle reports the default
+    // transparent background and mis-detects dark mode — which then drops the
+    // border on bars that are actually near the (light) background.
+    const prefersDark = typeof window !== 'undefined'
+        && !!window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    let mode = prefersDark ? 'dark' : 'light';
+    // Page background as hex (mirrors the light-dark() values in +page.svelte),
+    // used to detect bars that would blend into it.
+    const bgHex = mode === 'dark' ? '212121' : 'fafafa';
     // Border color for bars that are too close to the background.
     const barBorder = mode === 'light' ? 'rgba(0,0,0,0.35)' : 'rgba(255,255,255,0.45)';
 
