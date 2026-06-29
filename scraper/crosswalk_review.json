@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-25T09:53:54.621146+00:00",
+  "generated_at": "2026-06-29T11:33:12.074598+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -195,6 +195,14 @@
       "best_score": 0.606
     },
     {
+      "espn_id": "21540",
+      "espn_name": "Austria Lustenau",
+      "country": "Austria",
+      "gender": "men",
+      "espn_league_slug": "aut.1",
+      "best_score": 0.714
+    },
+    {
       "espn_id": "6051",
       "espn_name": "Real Potos\u00ed",
       "country": "Bolivia",
@@ -329,6 +337,22 @@
       "gender": "men",
       "espn_league_slug": "eng.4",
       "best_score": 0.69
+    },
+    {
+      "espn_id": "303",
+      "espn_name": "Rochdale",
+      "country": "England",
+      "gender": "men",
+      "espn_league_slug": "eng.4",
+      "best_score": 0.533
+    },
+    {
+      "espn_id": "315",
+      "espn_name": "York City",
+      "country": "England",
+      "gender": "men",
+      "espn_league_slug": "eng.4",
+      "best_score": 0.737
     },
     {
       "espn_id": "7869",
@@ -888,6 +912,142 @@
       "expected_gfr_league": "Premier League",
       "actual_gfr_league": "Championship",
       "gfr_team_name": "Ipswich Town"
+    },
+    {
+      "espn_id": "358",
+      "espn_name": "Bolton Wanderers",
+      "espn_league_slug": "eng.2",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Bolton Wanderers"
+    },
+    {
+      "espn_id": "379",
+      "espn_name": "Burnley",
+      "espn_league_slug": "eng.2",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "Premier League",
+      "gfr_team_name": "Burnley"
+    },
+    {
+      "espn_id": "347",
+      "espn_name": "Cardiff City",
+      "espn_league_slug": "eng.2",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Cardiff City"
+    },
+    {
+      "espn_id": "314",
+      "espn_name": "Lincoln City",
+      "espn_league_slug": "eng.2",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Lincoln City"
+    },
+    {
+      "espn_id": "371",
+      "espn_name": "West Ham United",
+      "espn_league_slug": "eng.2",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "Premier League",
+      "gfr_team_name": "West Ham"
+    },
+    {
+      "espn_id": "380",
+      "espn_name": "Wolverhampton Wanderers",
+      "espn_league_slug": "eng.2",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "Premier League",
+      "gfr_team_name": "Wolves"
+    },
+    {
+      "espn_id": "3129",
+      "espn_name": "Bromley",
+      "espn_league_slug": "eng.3",
+      "expected_gfr_league": "League One",
+      "actual_gfr_league": "League Two",
+      "gfr_team_name": "Bromley"
+    },
+    {
+      "espn_id": "351",
+      "espn_name": "Cambridge United",
+      "espn_league_slug": "eng.3",
+      "expected_gfr_league": "League One",
+      "actual_gfr_league": "League Two",
+      "gfr_team_name": "Cambridge United"
+    },
+    {
+      "espn_id": "375",
+      "espn_name": "Leicester City",
+      "espn_league_slug": "eng.3",
+      "expected_gfr_league": "League One",
+      "actual_gfr_league": "Championship",
+      "gfr_team_name": "Leicester City"
+    },
+    {
+      "espn_id": "390",
+      "espn_name": "Milton Keynes Dons",
+      "espn_league_slug": "eng.3",
+      "expected_gfr_league": "League One",
+      "actual_gfr_league": "League Two",
+      "gfr_team_name": "MK Dons"
+    },
+    {
+      "espn_id": "340",
+      "espn_name": "Notts County",
+      "espn_league_slug": "eng.3",
+      "expected_gfr_league": "League One",
+      "actual_gfr_league": "League Two",
+      "gfr_team_name": "Notts County"
+    },
+    {
+      "espn_id": "311",
+      "espn_name": "Oxford United",
+      "espn_league_slug": "eng.3",
+      "expected_gfr_league": "League One",
+      "actual_gfr_league": "Championship",
+      "gfr_team_name": "Oxford United"
+    },
+    {
+      "espn_id": "399",
+      "espn_name": "Sheffield Wednesday",
+      "espn_league_slug": "eng.3",
+      "expected_gfr_league": "League One",
+      "actual_gfr_league": "Championship",
+      "gfr_team_name": "Sheffield Wednesday"
+    },
+    {
+      "espn_id": "324",
+      "espn_name": "Exeter City",
+      "espn_league_slug": "eng.4",
+      "expected_gfr_league": "League Two",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Exeter City"
+    },
+    {
+      "espn_id": "353",
+      "espn_name": "Northampton Town",
+      "espn_league_slug": "eng.4",
+      "expected_gfr_league": "League Two",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Northampton Town"
+    },
+    {
+      "espn_id": "348",
+      "espn_name": "Port Vale",
+      "espn_league_slug": "eng.4",
+      "expected_gfr_league": "League Two",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Port Vale"
+    },
+    {
+      "espn_id": "402",
+      "espn_name": "Rotherham United",
+      "espn_league_slug": "eng.4",
+      "expected_gfr_league": "League Two",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Rotherham United"
     },
     {
       "espn_id": "2697",
