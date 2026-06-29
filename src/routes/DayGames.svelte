@@ -4,7 +4,7 @@
     import Accordion from "./Accordion.svelte";
     import Modal from "./Modal.svelte";
     import { fetchStandings, type Standings } from "$lib/standings";
-    import { fetchBracket, type Bracket } from "$lib/bracket";
+    import { fetchBracket, layoutBracket, type Bracket, type BracketTreeLayout } from "$lib/bracket";
     import { tick } from "svelte";
 
     let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, sortMode } = $props();
@@ -15,6 +15,9 @@
     // normalized). Populated from the resolved map in the main effect below.
     let teamRankMap = $state<Record<string, { rank: number; intl: boolean; strength: number; points: number; url: string; grade?: string | null }>>({});
     const rankOf = (c: any) => teamRankMap[String(c?.id)] ?? null;
+    // Resolved livesoccertv games, stashed from the main effect so bracket games
+    // (which skip the day-list merge) can still pick up their supplemental TV.
+    let lstvGames = $state<any[]>([]);
 
     const nameMatch = (a: string, b: string) => {
         const al = a.toLowerCase(), bl = b.toLowerCase();
@@ -65,6 +68,7 @@
         const selectedBcsts = $goodBcsts;
         Promise.all([dayData, broadcasts, leagueOrder, teamRanks]).then(([d, bcstData, leagueRank, ranks]) => {
             const wstGames = bcstData?.games ?? [];
+            lstvGames = wstGames;
             teamRankMap = ranks ?? {};
             // /all yields leagues in event order, so re-sort by ESPN's prominence
             // rank (the header endpoint used to return them pre-ordered). Falls back
@@ -174,6 +178,9 @@
     let selectedEvent = $state<any>(null);
     let selectedLeague = $state<any>(null);
     let showInfoModal = $state(false);
+    // True when the game modal was opened from a bracket card (footer reads
+    // "Back" and returns to the still-open standings/bracket modal underneath).
+    let infoFromStandings = $state(false);
     // Interest-score breakdown modal (opened by clicking a game's score badge).
     let scoreEvent = $state<any>(null);
     let scoreLeague = $state<any>(null);
@@ -193,6 +200,9 @@
     // the season window from the standings response). null = no knockout rounds.
     let bracketData = $state<Bracket | null>(null);
     let bracketLoading = $state(false);
+    // Tree layout (col/row per match + feeder edges) when the bracket has feeder
+    // links; null falls back to the plain date-ordered columns.
+    let bracketTree = $derived(bracketData ? layoutBracket(bracketData) : null);
     // Active view when the competition has both a table and a bracket.
     let standingsTab = $state<'table' | 'bracket'>('table');
     // When opened from a game modal, the two team ids whose group to scroll to
@@ -206,6 +216,14 @@
     let groupEls: HTMLElement[] = [];
     let matchEls: Record<string, HTMLElement> = {};
     async function showStandings(league: any, focusEvent: any = null) {
+        // If this game modal was opened from the standings/bracket modal (still
+        // open underneath), the link back just returns to it — close the game
+        // modal to bring it to the front, rather than re-opening it behind.
+        if (infoFromStandings && showStandingsModal) {
+            showInfoModal = false;
+            infoFromStandings = false;
+            return;
+        }
         standingsLeague = league;
         standingsData = null;
         standingsLoading = true;
@@ -235,6 +253,12 @@
             bracketData = b;
             bracketLoading = false;
         }
+
+        // Once knockout play is under way, a plain (league-header) open lands on the
+        // bracket rather than the table. A knockout game already opens to the bracket;
+        // a group game keeps its table focus.
+        const koStarted = !!bracketData?.rounds.some((r) => r.matches.some((m) => m.state !== 'pre'));
+        if (!focusEvent && koStarted) standingsTab = 'bracket';
 
         // Settle the active tab against what actually loaded.
         const hasTable = !!d?.groups.length;
@@ -272,6 +296,54 @@
             }
             c = c.parentElement;
         }
+    }
+    // Open a bracket card's match modal (over the still-open standings modal, so
+    // its footer reads "Back"). Uses the standings competition as the league.
+    // Bracket events skip the day-list merge loop, so compose their TV string
+    // (ESPN's canonical broadcasts + livesoccertv supplementation) here, the same
+    // way that loop does, plus livesoccertv's top-match flag.
+    async function openBracketGame(m: any) {
+        const ev = m.event;
+        const names: string[] = [];
+        for (const b of ev.broadcasts || []) if (!names.includes(b.name)) names.push(b.name);
+        const lstv = findLstvGame(ev, lstvGames);
+        if (lstv) {
+            for (const raw of lstv.broadcasts) {
+                const c = canonicalBcst(raw);
+                if (!names.includes(c)) names.push(c);
+            }
+            ev.topmatch = ev.topmatch || !!lstv.topmatch;
+        }
+        ev.bcstStr = names.join('/');
+        // If a game modal is already mounted, it's pinned behind the standings
+        // modal we're inside (modals stack by mount order). Unmount it first so it
+        // re-stacks on top when reopened with this game.
+        if (showInfoModal) {
+            showInfoModal = false;
+            await tick();
+        }
+        showInfo(ev, standingsLeague, true);
+    }
+    function onBracketCardKey(e: KeyboardEvent, m: any) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openBracketGame(m);
+        }
+    }
+    // Bracket-tree geometry (px). cellW/H size a match card; the strides add the
+    // gaps that connectors run through; headerH reserves the round-name row.
+    const BT = { cellW: 156, cellH: 74, colGap: 30, rowGap: 12, headerH: 24 };
+    const btColStride = BT.cellW + BT.colGap;
+    const btRowUnit = BT.cellH + BT.rowGap;
+    const btCellTop = (t: BracketTreeLayout, id: string) => BT.headerH + (t.row[id] ?? 0) * btRowUnit;
+    // Elbow connector from a feeder card's right-center to its consumer's left-center.
+    function btEdgePath(t: BracketTreeLayout, e: { from: string; to: string }): string {
+        const fromX = t.col[e.from] * btColStride + BT.cellW;
+        const fromY = btCellTop(t, e.from) + BT.cellH / 2;
+        const toX = t.col[e.to] * btColStride;
+        const toY = btCellTop(t, e.to) + BT.cellH / 2;
+        const midX = (fromX + toX) / 2;
+        return `M${fromX},${fromY} H${midX} V${toY} H${toX}`;
     }
     // Concise kickoff label for an upcoming bracket match, e.g. "Jul 4, 3:00pm".
     const fmtMatchDate = (iso: string) => {
@@ -323,9 +395,10 @@
     // container width to get the bar track width.
     const PROW_LABEL_OFFSET = 66;
 
-    function showInfo(event: any, league: any) {
+    function showInfo(event: any, league: any, fromStandings = false) {
         selectedEvent = event;
         selectedLeague = league;
+        infoFromStandings = fromStandings;
         openTips = new Set();
         showInfoModal = true;
         // The /all scoreboard supplies the venue address, the goals/cards timeline,
@@ -907,7 +980,7 @@
             {/if}
             <a href={`https://www.google.com/search?q=${selectedEvent.competitors[0].name} vs ${selectedEvent.competitors[1].name} ${selectedLeague.name}`} target="_blank">Google ↗</a>
         </div>
-        <button onclick={() => showInfoModal = false}>Close</button>
+        <button onclick={() => { showInfoModal = false; infoFromStandings = false; }}>{infoFromStandings ? 'Back' : 'Close'}</button>
     </div>
 </Modal>
 {/if}
@@ -1065,23 +1138,60 @@
         {:else}
             <span class="bk-logo bk-logo-empty"></span>
         {/if}
-        {#if t.link}
-            <a class="bk-name bk-name-link" href={t.link} target="_blank">{t.name}</a>
-        {:else}
-            <span class="bk-name" class:bk-ph={t.placeholder}>{t.name}</span>
-        {/if}
+        <span class="bk-name" class:bk-ph={t.placeholder}>{t.name}</span>
         {#if showScore}<span class="bk-score">{t.score}</span>{/if}
     </div>
 {/snippet}
 
 {#snippet bracketView()}
+    {#if bracketTree}
+        {@render bracketTreeView(bracketTree)}
+    {:else}
+        {@render bracketColumns()}
+    {/if}
+{/snippet}
+
+<!-- Classic single-elimination tree: matches positioned by feeder edges, with
+     SVG connectors from each feeder to the match it feeds. -->
+{#snippet bracketTreeView(tree: BracketTreeLayout)}
+    {@const cols = bracketData?.rounds.length ?? 0}
+    {@const w = cols * btColStride - BT.colGap}
+    {@const h = BT.headerH + tree.rowSpan * btRowUnit}
+    <div class="bracket-tree-scroll">
+        <div class="bracket-tree" style="width:{w}px; height:{h}px">
+            <svg class="bracket-edges" width={w} height={h}>
+                {#each tree.edges as e}
+                    <path d={btEdgePath(tree, e)} />
+                {/each}
+            </svg>
+            {#each bracketData?.rounds ?? [] as round, ci}
+                <div class="bracket-round-name btree-header" style="left:{ci * btColStride}px; width:{BT.cellW}px">{round.name}</div>
+                {#each round.matches as m}
+                    {@const showScore = m.state !== 'pre'}
+                    <div class="bracket-match btree-cell bracket-card" class:bracket-focus={standingsFocusMatchId === m.id} class:bracket-live={m.state === 'in'} bind:this={matchEls[m.id]}
+                         style="left:{ci * btColStride}px; top:{btCellTop(tree, m.id)}px; width:{BT.cellW}px; height:{BT.cellH}px"
+                         title={m.location ? (m.venue ? `${m.venue} · ${m.location}` : m.location) : null}
+                         role="button" tabindex="0" onclick={() => openBracketGame(m)} onkeydown={(e) => onBracketCardKey(e, m)}>
+                        {@render bracketTeam(m.home, showScore)}
+                        {@render bracketTeam(m.away, showScore)}
+                        <div class="bracket-when">{m.state === 'pre' ? fmtMatchDate(m.date) : m.summary}</div>
+                    </div>
+                {/each}
+            {/each}
+        </div>
+    </div>
+{/snippet}
+
+<!-- Fallback when a tournament has no feeder edges: plain date-ordered columns. -->
+{#snippet bracketColumns()}
     <div class="bracket">
         {#each bracketData?.rounds ?? [] as round}
             <div class="bracket-round">
                 <div class="bracket-round-name">{round.name}</div>
                 {#each round.matches as m}
                     {@const showScore = m.state !== 'pre'}
-                    <div class="bracket-match" class:bracket-focus={standingsFocusMatchId === m.id} class:bracket-live={m.state === 'in'} bind:this={matchEls[m.id]}>
+                    <div class="bracket-match bracket-card" class:bracket-focus={standingsFocusMatchId === m.id} class:bracket-live={m.state === 'in'} bind:this={matchEls[m.id]}
+                         role="button" tabindex="0" onclick={() => openBracketGame(m)} onkeydown={(e) => onBracketCardKey(e, m)}>
                         {@render bracketTeam(m.home, showScore)}
                         {@render bracketTeam(m.away, showScore)}
                         <div class="bracket-when">{m.state === 'pre' ? fmtMatchDate(m.date) : m.summary}</div>
@@ -1754,8 +1864,53 @@
         border-color: light-dark(#0066cc, #4da6ff);
         box-shadow: 0 0 0 1px light-dark(#0066cc, #4da6ff);
     }
+    /* Whole card opens the match modal. */
+    .bracket-card {
+        cursor: pointer;
+    }
+    .bracket-card:hover {
+        border-color: light-dark(#888, #aaa);
+    }
+    .bracket-card:focus-visible {
+        outline: 2px solid light-dark(#0066cc, #4da6ff);
+        outline-offset: 1px;
+    }
     .bracket-live {
         border-left: 3px solid #d33;
+    }
+    /* Bracket tree: absolutely-positioned cards on an SVG connector layer.
+       Geometry (left/top/width/height) is set inline from the computed layout. */
+    .bracket-tree-scroll {
+        overflow-x: auto;
+        padding-bottom: 6px;
+    }
+    .bracket-tree {
+        position: relative;
+    }
+    .bracket-edges {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        overflow: visible;
+    }
+    .bracket-edges path {
+        fill: none;
+        stroke: rgba(128, 128, 128, 0.5);
+        stroke-width: 1.5;
+    }
+    .btree-header {
+        position: absolute;
+        /* override the column view's sticky positioning */
+        top: 0;
+    }
+    .btree-cell {
+        position: absolute;
+        box-sizing: border-box;
+        overflow: hidden;
+        /* opaque (not the column view's translucent grey) so connector lines
+           stop at the card edge; slightly off the modal bg to read as a card */
+        background: light-dark(#f4f4f4, #4d4d4d);
     }
     .bk-team {
         display: flex;
@@ -1784,13 +1939,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         font-size: 0.85rem;
-    }
-    .bk-name-link {
-        color: inherit;
-        text-decoration: none;
-    }
-    .bk-name-link:hover {
-        text-decoration: underline;
     }
     .bk-ph {
         opacity: 0.6;
