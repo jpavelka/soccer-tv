@@ -355,9 +355,16 @@
     // Bracket-tree geometry (px). cellW/H size a match card; the strides add the
     // gaps that connectors run through; headerH reserves the round-name row.
     // railW is the width an earlier round shrinks to once it's scrolled past.
-    const BT = { cellW: 156, cellH: 74, colGap: 30, rowGap: 12, headerH: 19, railW: 22 };
+    // railW must stay GREATER than btCollapseLead (below): the post-collapse scroll
+    // position is railW − lead, and if that goes negative it clamps to 0 and the
+    // hard-left safeguard re-expands the round (the "snap-back"). Wide rails keep it +.
+    const BT = { cellW: 156, cellH: 74, colGap: 30, rowGap: 12, headerH: 19, railW: 60 };
     const btColStride = BT.cellW + BT.colGap;
     const btRowUnit = BT.cellH + BT.rowGap;
+    // How early a leading round collapses to a rail: this much is added to the virtual
+    // scroll position, so a round rails up once ~half its card has scrolled off the left
+    // (rather than waiting until it's fully gone). Must stay below BT.railW (see above).
+    const btCollapseLead = (BT.colGap + BT.cellW / 2) / 2;
     const btCellTop = (id: string) => (btRows?.row[id] ?? 0) * btRowUnit;
     // Left edge / card width of column `ci` under the current collapse state.
     const colLeft = (ci: number) =>
@@ -381,9 +388,12 @@
         // first round (otherwise the hysteresis below strands it collapsed).
         const atLeft = btScroller.scrollLeft <= 1;
         const vScroll = btScroller.scrollLeft + nCollapsed * drift;
-        let target = atLeft ? 0 : Math.floor(vScroll / btColStride);
+        // Bias the collapse decision earlier (see btCollapseLead); the compensation
+        // below still uses the true vScroll, so nothing on screen jumps.
+        const vEff = vScroll + btCollapseLead;
+        let target = atLeft ? 0 : Math.floor(vEff / btColStride);
         // Hysteresis: don't re-expand the round we just passed until clearly back over it.
-        if (!atLeft && target === nCollapsed - 1 && vScroll > nCollapsed * btColStride - 40) target = nCollapsed;
+        if (!atLeft && target === nCollapsed - 1 && vEff > nCollapsed * btColStride - 40) target = nCollapsed;
         target = Math.max(0, Math.min(btMaxCollapse, target));
         if (target === nCollapsed) return;
         nCollapsed = target;
