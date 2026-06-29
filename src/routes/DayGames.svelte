@@ -4,7 +4,7 @@
     import Accordion from "./Accordion.svelte";
     import Modal from "./Modal.svelte";
     import { fetchStandings, type Standings } from "$lib/standings";
-    import { fetchBracket, layoutBracket, type Bracket, type BracketTreeLayout } from "$lib/bracket";
+    import { fetchBracket, layoutBracket, rowsForAnchor, type Bracket, type BracketTreeLayout } from "$lib/bracket";
     import { tick } from "svelte";
 
     let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, sortMode } = $props();
@@ -203,6 +203,26 @@
     // Tree layout (col/row per match + feeder edges) when the bracket has feeder
     // links; null falls back to the plain date-ordered columns.
     let bracketTree = $derived(bracketData ? layoutBracket(bracketData) : null);
+    // Wide brackets collapse the rounds you've scrolled past into thin rails on the
+    // left; the leftmost still-expanded round (= nCollapsed) becomes the vertical
+    // "anchor" the remaining rounds compact onto.
+    let nCollapsed = $state(0);
+    let btScrollLeft = $state(0); // mirrors the scroller's scrollLeft so the sticky header bar can track it
+    let btScroller: HTMLElement | undefined;
+    let btAdjusting = false; // suppress the scroll handler during our own scrollLeft fix
+    // Vertical positions re-anchored on the leftmost expanded round, so scrolling
+    // toward the final stacks the visible rounds together instead of spreading them.
+    let btRows = $derived(bracketTree ? rowsForAnchor(bracketTree, nCollapsed) : null);
+    // Only collapse leading rounds big enough to spread the tree out (>4 matches);
+    // a round of 4 or fewer is already compact, so anchoring on it buys nothing.
+    let btMaxCollapse = $derived.by(() => {
+        let n = 0;
+        for (const r of bracketData?.rounds ?? []) {
+            if (r.matches.length > 4) n++;
+            else break;
+        }
+        return n;
+    });
     // Active view when the competition has both a table and a bracket.
     let standingsTab = $state<'table' | 'bracket'>('table');
     // When opened from a game modal, the two team ids whose group to scroll to
@@ -234,6 +254,8 @@
             ? new Set<string>(focusEvent.competitors.map((c: any) => String(c.id)))
             : null;
         standingsFocusMatchId = focusEvent?.id ?? null;
+        nCollapsed = 0; // start every bracket fully expanded
+        btScrollLeft = 0;
         // A knockout game opens straight to the bracket; otherwise the table.
         const koGame = !!focusEvent && /round of|quarter|semi|\bfinal|knockout|playoff/i.test(focusEvent.group?.name ?? '');
         standingsTab = koGame ? 'bracket' : 'table';
@@ -332,16 +354,65 @@
     }
     // Bracket-tree geometry (px). cellW/H size a match card; the strides add the
     // gaps that connectors run through; headerH reserves the round-name row.
-    const BT = { cellW: 156, cellH: 74, colGap: 30, rowGap: 12, headerH: 24 };
+    // railW is the width an earlier round shrinks to once it's scrolled past.
+    const BT = { cellW: 156, cellH: 74, colGap: 30, rowGap: 12, headerH: 19, railW: 22 };
     const btColStride = BT.cellW + BT.colGap;
     const btRowUnit = BT.cellH + BT.rowGap;
-    const btCellTop = (t: BracketTreeLayout, id: string) => BT.headerH + (t.row[id] ?? 0) * btRowUnit;
+    const btCellTop = (id: string) => (btRows?.row[id] ?? 0) * btRowUnit;
+    // Left edge / card width of column `ci` under the current collapse state.
+    const colLeft = (ci: number) =>
+        ci < nCollapsed ? ci * BT.railW : nCollapsed * BT.railW + (ci - nCollapsed) * btColStride;
+    const colCardW = (ci: number) => (ci < nCollapsed ? BT.railW : BT.cellW);
+    // Total drawn width for `cols` rounds at the current collapse state.
+    const btTreeWidth = (cols: number) => (cols ? colLeft(cols - 1) + colCardW(cols - 1) : 0);
+    // Re-collapse / re-expand leading rounds as the user scrolls. We track a "virtual"
+    // scroll position in the fully-expanded layout (invariant under relayout), pick how
+    // many columns that puts off-screen, then compensate scrollLeft so nothing on screen
+    // jumps. The virtual position is a fixed point of this map, so it can't oscillate.
+    async function onBracketScroll() {
+        if (!btScroller) return;
+        btScrollLeft = btScroller.scrollLeft; // keep the sticky header bar aligned (always, even mid-adjust)
+        if (btAdjusting) return;
+        const cols = bracketData?.rounds.length ?? 0;
+        if (!cols) return;
+        const drift = btColStride - BT.railW; // px each collapse removes to the left
+        // Collapsing shifts scrollLeft left, so the hard-left edge maps to a non-zero
+        // virtual position — special-case it so scrolling fully left always restores the
+        // first round (otherwise the hysteresis below strands it collapsed).
+        const atLeft = btScroller.scrollLeft <= 1;
+        const vScroll = btScroller.scrollLeft + nCollapsed * drift;
+        let target = atLeft ? 0 : Math.floor(vScroll / btColStride);
+        // Hysteresis: don't re-expand the round we just passed until clearly back over it.
+        if (!atLeft && target === nCollapsed - 1 && vScroll > nCollapsed * btColStride - 40) target = nCollapsed;
+        target = Math.max(0, Math.min(btMaxCollapse, target));
+        if (target === nCollapsed) return;
+        nCollapsed = target;
+        const newLeft = atLeft ? 0 : vScroll - nCollapsed * drift;
+        btAdjusting = true;
+        await tick(); // let the new widths render before correcting scrollLeft
+        if (btScroller) btScroller.scrollLeft = newLeft;
+        btAdjusting = false;
+    }
+    // Clicking a rail brings that round back into view as the leftmost expanded column.
+    async function expandRound(ci: number) {
+        nCollapsed = ci;
+        btAdjusting = true;
+        await tick();
+        if (btScroller) btScroller.scrollLeft = ci * BT.railW;
+        btAdjusting = false;
+    }
+    function onRailKey(e: KeyboardEvent, ci: number) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            expandRound(ci);
+        }
+    }
     // Elbow connector from a feeder card's right-center to its consumer's left-center.
     function btEdgePath(t: BracketTreeLayout, e: { from: string; to: string }): string {
-        const fromX = t.col[e.from] * btColStride + BT.cellW;
-        const fromY = btCellTop(t, e.from) + BT.cellH / 2;
-        const toX = t.col[e.to] * btColStride;
-        const toY = btCellTop(t, e.to) + BT.cellH / 2;
+        const fromX = colLeft(t.col[e.from]) + colCardW(t.col[e.from]);
+        const fromY = btCellTop(e.from) + BT.cellH / 2;
+        const toX = colLeft(t.col[e.to]);
+        const toY = btCellTop(e.to) + BT.cellH / 2;
         const midX = (fromX + toX) / 2;
         return `M${fromX},${fromY} H${midX} V${toY} H${toX}`;
     }
@@ -1138,7 +1209,11 @@
         {:else}
             <span class="bk-logo bk-logo-empty"></span>
         {/if}
-        <span class="bk-name" class:bk-ph={t.placeholder}>{t.name}</span>
+        <!-- When we know the exact feeder game (a connector points to it), the verbose
+             "Round of 32 5 Winner" is redundant, so just show "TBD". Placeholders we
+             can't resolve by context (group finishers, feeder-less tournaments) keep
+             their descriptive name. -->
+        <span class="bk-name" class:bk-ph={t.placeholder}>{t.feedsFrom?.matchId ? 'TBD' : t.name}</span>
         {#if showScore}<span class="bk-score">{t.score}</span>{/if}
     </div>
 {/snippet}
@@ -1155,29 +1230,55 @@
      SVG connectors from each feeder to the match it feeds. -->
 {#snippet bracketTreeView(tree: BracketTreeLayout)}
     {@const cols = bracketData?.rounds.length ?? 0}
-    {@const w = cols * btColStride - BT.colGap}
-    {@const h = BT.headerH + tree.rowSpan * btRowUnit}
-    <div class="bracket-tree-scroll">
-        <div class="bracket-tree" style="width:{w}px; height:{h}px">
-            <svg class="bracket-edges" width={w} height={h}>
-                {#each tree.edges as e}
-                    <path d={btEdgePath(tree, e)} />
+    {@const w = btTreeWidth(cols)}
+    {@const rows = btRows ?? tree}
+    <!-- Height of the lowest card's bottom, so parked matches (3rd-place sits below
+         the tree at a fractional row) are fully contained — otherwise they overflow
+         and the scroller sprouts a spurious second vertical scrollbar. -->
+    {@const h = Math.max(0, ...Object.values(rows.row)) * btRowUnit + BT.cellH}
+    <div class="bracket-tree-wrap">
+        <!-- Round names stay pinned to the top of the modal while you scroll down the
+             bracket, and slide horizontally to track the bracket's own scroll. -->
+        <div class="btree-header-bar" style="height:{BT.headerH}px">
+            <div class="btree-header-track" style="width:{w}px; transform:translateX({-btScrollLeft}px)">
+                {#each bracketData?.rounds ?? [] as round, ci}
+                    {#if ci >= nCollapsed}
+                        <div class="bracket-round-name btree-header" style="left:{colLeft(ci)}px; width:{BT.cellW}px">{round.name}</div>
+                    {/if}
                 {/each}
-            </svg>
-            {#each bracketData?.rounds ?? [] as round, ci}
-                <div class="bracket-round-name btree-header" style="left:{ci * btColStride}px; width:{BT.cellW}px">{round.name}</div>
-                {#each round.matches as m}
-                    {@const showScore = m.state !== 'pre'}
-                    <div class="bracket-match btree-cell bracket-card" class:bracket-focus={standingsFocusMatchId === m.id} class:bracket-live={m.state === 'in'} bind:this={matchEls[m.id]}
-                         style="left:{ci * btColStride}px; top:{btCellTop(tree, m.id)}px; width:{BT.cellW}px; height:{BT.cellH}px"
-                         title={m.location ? (m.venue ? `${m.venue} · ${m.location}` : m.location) : null}
-                         role="button" tabindex="0" onclick={() => openBracketGame(m)} onkeydown={(e) => onBracketCardKey(e, m)}>
-                        {@render bracketTeam(m.home, showScore)}
-                        {@render bracketTeam(m.away, showScore)}
-                        <div class="bracket-when">{m.state === 'pre' ? fmtMatchDate(m.date) : m.summary}</div>
-                    </div>
+            </div>
+        </div>
+        <div class="bracket-tree-scroll" bind:this={btScroller} onscroll={onBracketScroll}>
+            <div class="bracket-tree" style="width:{w}px; height:{h}px">
+                <svg class="bracket-edges" width={w} height={h}>
+                    <!-- Only edges between expanded rounds; rails draw no connectors. -->
+                    {#each tree.edges.filter((e) => tree.col[e.from] >= nCollapsed) as e}
+                        <path d={btEdgePath(tree, e)} />
+                    {/each}
+                </svg>
+                {#each bracketData?.rounds ?? [] as round, ci}
+                    {#if ci < nCollapsed}
+                        <!-- Scrolled past: a thin rail; click to bring this round back. -->
+                        <div class="btree-rail" style="left:{colLeft(ci)}px; width:{BT.railW}px; top:0; height:{h}px"
+                             title="Show {round.name}" role="button" tabindex="0"
+                             onclick={() => expandRound(ci)} onkeydown={(e) => onRailKey(e, ci)}>
+                            <span class="btree-rail-label">{round.name}</span>
+                        </div>
+                    {:else}
+                        {#each round.matches as m}
+                            {@const showScore = m.state !== 'pre'}
+                            <div class="bracket-match btree-cell bracket-card" class:bracket-focus={standingsFocusMatchId === m.id} class:bracket-live={m.state === 'in'} bind:this={matchEls[m.id]}
+                                 style="left:{colLeft(ci)}px; top:{btCellTop(m.id)}px; width:{BT.cellW}px; height:{BT.cellH}px"
+                                 title={m.location ? (m.venue ? `${m.venue} · ${m.location}` : m.location) : null}
+                                 role="button" tabindex="0" onclick={() => openBracketGame(m)} onkeydown={(e) => onBracketCardKey(e, m)}>
+                                {@render bracketTeam(m.home, showScore)}
+                                {@render bracketTeam(m.away, showScore)}
+                                <div class="bracket-when">{m.state === 'pre' ? fmtMatchDate(m.date) : m.summary}</div>
+                            </div>
+                        {/each}
+                    {/if}
                 {/each}
-            {/each}
+            </div>
         </div>
     </div>
 {/snippet}
@@ -1880,8 +1981,31 @@
     }
     /* Bracket tree: absolutely-positioned cards on an SVG connector layer.
        Geometry (left/top/width/height) is set inline from the computed layout. */
+    .bracket-tree-wrap {
+        position: relative;
+    }
+    /* Round-name strip that pins to the top of the modal's vertical scroll (sticky
+       against Modal's `.body`) while the columns scroll under it. The inner track is
+       translated horizontally to mirror the bracket's own horizontal scroll. */
+    .btree-header-bar {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        overflow: hidden;
+        background: light-dark(white, #444444);
+        border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+        margin-bottom: 6px;
+    }
+    .btree-header-track {
+        position: relative;
+        height: 100%;
+    }
     .bracket-tree-scroll {
         overflow-x: auto;
+        /* Horizontal-only: the modal body owns vertical scrolling (the sticky header
+           pins against it). Without this, `overflow-x: auto` makes `overflow-y`
+           compute to `auto`, adding a second, competing vertical scrollbar. */
+        overflow-y: hidden;
         padding-bottom: 6px;
     }
     .bracket-tree {
@@ -1911,6 +2035,39 @@
         /* opaque (not the column view's translucent grey) so connector lines
            stop at the card edge; slightly off the modal bg to read as a card */
         background: light-dark(#f4f4f4, #4d4d4d);
+    }
+    /* Collapsed round: a thin clickable rail showing the round name down its length. */
+    .btree-rail {
+        position: absolute;
+        box-sizing: border-box;
+        border: 1px solid rgba(128, 128, 128, 0.3);
+        border-radius: 6px;
+        background: light-dark(#ececec, #454545);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        z-index: 2; /* over the connector lines that pass behind it */
+    }
+    .btree-rail:hover {
+        background: light-dark(#e0e0e0, #555);
+    }
+    .btree-rail:focus-visible {
+        outline: 2px solid light-dark(#0066cc, #4da6ff);
+        outline-offset: 1px;
+    }
+    .btree-rail-label {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        font-size: 0.7rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        opacity: 0.6;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-height: 100%;
     }
     .bk-team {
         display: flex;

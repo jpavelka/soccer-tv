@@ -300,12 +300,49 @@ export function layoutBracket(b: Bracket): BracketTreeLayout | null {
 	if (nextLeaf === 0) return null;
 
 	// Park any matches the tree didn't reach (e.g. 3rd-place, whose feeders are
-	// shared with the final's branch) below the bracket, without connectors.
-	let rowSpan = nextLeaf;
+	// shared with the final's branch) in line with the lowest tree card, in their own
+	// (late) column — adds no height and stays clear of the other games.
+	const parkRow = nextLeaf - 1;
 	for (const id of byId.keys()) {
 		if (id in row) continue;
-		row[id] = rowSpan + 0.5;
-		rowSpan += 1;
+		row[id] = parkRow;
 	}
-	return { col, row, rowSpan, edges };
+	return { col, row, rowSpan: nextLeaf, edges };
+}
+
+// Re-derive vertical positions with `anchorCol` as the leaf round instead of the
+// first round. The default layout spreads later rounds across the whole first-round
+// height (the two semifinals end up ~8 rows apart); anchoring on a later round
+// stacks *its* matches adjacently and centers everything after it between them, so a
+// focused round and its descendants fit on screen together. anchorCol<=0 is the
+// original layout. Earlier (collapsed) rounds get no row — they render as rails.
+export function rowsForAnchor(
+	t: BracketTreeLayout,
+	anchorCol: number,
+): { row: Record<string, number>; rowSpan: number } {
+	if (anchorCol <= 0) return { row: t.row, rowSpan: t.rowSpan };
+	const feeders: Record<string, string[]> = {};
+	for (const e of t.edges) (feeders[e.to] ??= []).push(e.from);
+	const byCol: Record<number, string[]> = {};
+	for (const id in t.col) (byCol[t.col[id]] ??= []).push(id);
+	// Keep each column ordered top-to-bottom as the original layout had it.
+	const ordered = (c: number) => (byCol[c] ?? []).slice().sort((a, b) => (t.row[a] ?? 0) - (t.row[b] ?? 0));
+	const maxCol = Math.max(0, ...Object.keys(byCol).map(Number));
+
+	const row: Record<string, number> = {};
+	let nextLeaf = 0;
+	for (const id of ordered(anchorCol)) row[id] = nextLeaf++; // anchor round = leaves
+	for (let c = anchorCol + 1; c <= maxCol; c++) {
+		for (const id of ordered(c)) {
+			const fs = (feeders[id] ?? []).filter((f) => f in row);
+			if (fs.length) row[id] = fs.reduce((s, f) => s + row[f], 0) / fs.length;
+		}
+	}
+	// Park anchor-or-later matches with no feeders in view (e.g. 3rd-place) in line
+	// with the lowest tree card, so they add no height and stay out of the way.
+	const parkRow = nextLeaf - 1;
+	for (let c = anchorCol; c <= maxCol; c++)
+		for (const id of byCol[c] ?? [])
+			if (!(id in row)) row[id] = parkRow;
+	return { row, rowSpan: nextLeaf };
 }

@@ -39,14 +39,14 @@
 
         /** @param {Event} e */
         const blockScroll = (e) => {
-            // Let gestures inside a scrollable part of the modal through;
-            // cancel everything else so the background can't scroll.
+            // Let gestures inside a scrollable part of the modal through — in *either*
+            // axis (e.g. the knockout bracket scrolls only horizontally); cancel
+            // everything else so the background can't scroll.
             let el = e.target instanceof HTMLElement ? e.target : null;
             while (el && el !== node) {
-                if (el.scrollHeight > el.clientHeight) {
-                    const overflowY = getComputedStyle(el).overflowY;
-                    if (overflowY === 'auto' || overflowY === 'scroll') return;
-                }
+                const cs = getComputedStyle(el);
+                if (el.scrollHeight > el.clientHeight && /(auto|scroll)/.test(cs.overflowY)) return;
+                if (el.scrollWidth > el.clientWidth && /(auto|scroll)/.test(cs.overflowX)) return;
                 el = el.parentElement;
             }
             e.preventDefault();
