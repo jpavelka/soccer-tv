@@ -210,6 +210,8 @@
     let btScrollLeft = $state(0); // mirrors the scroller's scrollLeft so the sticky header bar can track it
     let btScroller: HTMLElement | undefined;
     let btAdjusting = false; // suppress the scroll handler during our own scrollLeft fix
+    let btDragging = $state(false);
+    let btDragOrigin: { x: number; scrollLeft: number } | null = null;
     // Vertical positions re-anchored on the leftmost expanded round, so scrolling
     // toward the final stacks the visible rounds together instead of spreading them.
     let btRows = $derived(bracketTree ? rowsForAnchor(bracketTree, nCollapsed) : null);
@@ -275,7 +277,7 @@
             bracketLoading = true;
             const b = await fetchBracket(league.slug, d.season.startDate, d.season.endDate);
             if (standingsLeague?.slug !== league.slug) return;
-            bracketData = b;
+            bracketData = b ? mergeBracket3rdPlace(b) : null;
             bracketLoading = false;
         }
 
@@ -324,6 +326,27 @@
             c = c.parentElement;
         }
     }
+    // Merge the 3rd-place round into the Final round so they share a column.
+    // The final round is renamed "Final/3rd-Place" and its matches array gains the
+    // 3rd-place match. The tree layout parks it at the bottom of the final column
+    // since it has no resolved feeders, matching the user's desired placement.
+    function mergeBracket3rdPlace(b: Bracket): Bracket {
+        const thirdIdx = b.rounds.findIndex((r) => /3rd.?place|third.?place/i.test(r.slug));
+        const finalIdx = b.rounds.findIndex((r) => r.slug === 'final');
+        if (thirdIdx < 0 || finalIdx < 0) return b;
+        const thirdRound = b.rounds[thirdIdx];
+        return {
+            ...b,
+            rounds: b.rounds
+                .filter((_, i) => i !== thirdIdx)
+                .map((r) =>
+                    r.slug === 'final'
+                        ? { ...r, name: 'Final/3rd-Place', matches: [...r.matches, ...thirdRound.matches] }
+                        : r,
+                ),
+        };
+    }
+
     // Open a bracket card's match modal (over the still-open standings modal, so
     // its footer reads "Back"). Uses the standings competition as the league.
     // Bracket events skip the day-list merge loop, so compose their TV string
@@ -431,7 +454,7 @@
         const step = (now: number) => {
             btAnimT = Math.min(1, (now - start) / 240);
             if (btAnimT < 1) btRaf = requestAnimationFrame(step);
-            else { btPose = {}; btAdjusting = false; }
+            else { btPose = {}; }
         };
         btRaf = requestAnimationFrame(step);
     }
@@ -466,6 +489,7 @@
         btAdjusting = true;
         await tick(); // let the new widths render before correcting scrollLeft
         if (btScroller) { btScroller.scrollLeft = toSL; btScrollLeft = toSL; }
+        btAdjusting = false;
         startBracketAnim(oldNC, target, fromSL, toSL);
     }
     // Clicking a rail brings that round back into view as the leftmost expanded column.
@@ -478,6 +502,7 @@
         btAdjusting = true;
         await tick();
         if (btScroller) { btScroller.scrollLeft = toSL; btScrollLeft = toSL; }
+        btAdjusting = false;
         startBracketAnim(oldNC, ci, fromSL, toSL);
     }
     function onRailKey(e: KeyboardEvent, ci: number) {
@@ -485,6 +510,40 @@
             e.preventDefault();
             expandRound(ci);
         }
+    }
+    function onBracketMouseDown(e: MouseEvent) {
+        if (e.button !== 0 || !btScroller) return;
+        const target = e.target as HTMLElement;
+        if (target.closest('.bracket-card') || target.closest('.btree-rail')) return;
+        // Find the nearest ancestor that scrolls vertically (the modal body).
+        let vScroller: HTMLElement | null = btScroller.parentElement;
+        while (vScroller && vScroller !== document.body) {
+            const cs = getComputedStyle(vScroller);
+            if (vScroller.scrollHeight > vScroller.clientHeight && /(auto|scroll)/.test(cs.overflowY)) break;
+            vScroller = vScroller.parentElement;
+        }
+        if (vScroller === document.body) vScroller = null;
+        btDragOrigin = { x: e.clientX, scrollLeft: btScroller.scrollLeft };
+        const startY = e.clientY;
+        const startScrollTop = vScroller?.scrollTop ?? 0;
+        const onMove = (ev: MouseEvent) => {
+            if (!btDragOrigin || !btScroller) return;
+            const dx = ev.clientX - btDragOrigin.x;
+            const dy = ev.clientY - startY;
+            if (!btDragging && Math.hypot(dx, dy) > 4) btDragging = true;
+            if (btDragging) {
+                btScroller.scrollLeft = btDragOrigin.scrollLeft - dx;
+                if (vScroller) vScroller.scrollTop = startScrollTop - dy;
+            }
+        };
+        const onUp = () => {
+            btDragOrigin = null;
+            btDragging = false;
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
     }
     // Elbow connector from a feeder card's right-center to its consumer's left-center.
     function btEdgePath(t: BracketTreeLayout, e: { from: string; to: string }): string {
@@ -1330,7 +1389,8 @@
                 {/each}
             </div>
         </div>
-        <div class="bracket-tree-scroll" bind:this={btScroller} onscroll={onBracketScroll}>
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div class="bracket-tree-scroll" bind:this={btScroller} onscroll={onBracketScroll} onmousedown={onBracketMouseDown} class:bt-dragging={btDragging}>
             <div class="bracket-tree" style="width:{w}px; height:{h}px">
                 <svg class="bracket-edges" width={w} height={h}>
                     <!-- Only edges between expanded rounds; rails draw no connectors. -->
@@ -2100,6 +2160,11 @@
            compute to `auto`, adding a second, competing vertical scrollbar. */
         overflow-y: hidden;
         padding-bottom: 6px;
+        cursor: grab;
+    }
+    .bracket-tree-scroll.bt-dragging {
+        cursor: grabbing;
+        user-select: none;
     }
     .bracket-tree {
         position: relative;
