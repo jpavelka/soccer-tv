@@ -51,6 +51,7 @@ const REGISTRY: BroadcasterDef[] = [
     { canonical: 'MSG', aliases: ['MSG'] },
     { canonical: 'Prime Video', aliases: ['Prime Video', 'Amazon Prime Video']},
     { canonical: 'TUDN', aliases: ['TUDN', 'TUDN USA']},
+    { canonical: 'ION', aliases: ['ION', 'ion']},
 
     // Noise — low-tier / amateur streaming surfaces.
     { canonical: 'SportsEngine Play', aliases: ['SportsEngine Play'], hidden: true },

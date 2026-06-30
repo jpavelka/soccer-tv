@@ -6,7 +6,7 @@
 
     // Universe = everything seen this week, plus anything already selected (so a
     // picked channel with no current games still shows up, checked).
-    $: universe = [...new Set([...Object.keys(counts), ...$goodBcsts])].sort();
+    $: universe = [...new Set([...Object.keys(counts), ...$goodBcsts])].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
     const toggle = (bcst: string, checked: boolean) => {
         if (checked) {
