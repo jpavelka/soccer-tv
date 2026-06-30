@@ -77,6 +77,8 @@ const adaptCompetitor = (c: any) => {
 		id: c.id ?? t.id,
 		homeAway: c.homeAway,
 		score: c.score,
+		// Penalty-shootout tally (set only on games decided by a shootout).
+		shootoutScore: c.shootoutScore,
 		winner: c.winner,
 		name: t.shortDisplayName ?? t.displayName ?? t.name,
 		abbreviation: t.abbreviation,

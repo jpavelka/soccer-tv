@@ -256,6 +256,9 @@
         standingsFocusMatchId = focusEvent?.id ?? null;
         nCollapsed = 0; // start every bracket fully expanded
         btScrollLeft = 0;
+        cancelAnimationFrame(btRaf);
+        btPose = {};
+        btAnimT = 1;
         // A knockout game opens straight to the bracket; otherwise the table.
         const koGame = !!focusEvent && /round of|quarter|semi|\bfinal|knockout|playoff/i.test(focusEvent.group?.name ?? '');
         standingsTab = koGame ? 'bracket' : 'table';
@@ -294,13 +297,15 @@
             const idx = d!.groups.findIndex((g) => g.entries.some((e) => standingsFocusIds!.has(e.teamId)));
             if (idx > 0) scrollModalElementIntoView(groupEls[idx]);
         } else if (standingsTab === 'bracket' && standingsFocusMatchId) {
-            scrollModalElementIntoView(matchEls[standingsFocusMatchId]);
+            // Clear the sticky round-name header (headerH + its margin/border) so the
+            // focused card isn't tucked underneath it.
+            scrollModalElementIntoView(matchEls[standingsFocusMatchId], BT.headerH + 15);
         }
     }
     // Scroll the modal's own scroll containers (vertical body and/or the bracket's
     // horizontal scroller) to reveal an element — never the page. (scrollIntoView
     // would also scroll the document, moving the whole page behind the modal.)
-    function scrollModalElementIntoView(el: HTMLElement | undefined) {
+    function scrollModalElementIntoView(el: HTMLElement | undefined, topInset = 8) {
         if (!el) return;
         let c = el.parentElement;
         while (c && c !== document.body) {
@@ -311,7 +316,7 @@
                 const r = el.getBoundingClientRect();
                 const rc = c.getBoundingClientRect();
                 c.scrollTo({
-                    top: sy ? r.top - rc.top + c.scrollTop - 8 : c.scrollTop,
+                    top: sy ? r.top - rc.top + c.scrollTop - topInset : c.scrollTop,
                     left: sx ? r.left - rc.left + c.scrollLeft - 8 : c.scrollLeft,
                     behavior: 'smooth',
                 });
@@ -366,12 +371,70 @@
     // (rather than waiting until it's fully gone). Must stay below BT.railW (see above).
     const btCollapseLead = (BT.colGap + BT.cellW / 2) / 2;
     const btCellTop = (id: string) => (btRows?.row[id] ?? 0) * btRowUnit;
-    // Left edge / card width of column `ci` under the current collapse state.
-    const colLeft = (ci: number) =>
-        ci < nCollapsed ? ci * BT.railW : nCollapsed * BT.railW + (ci - nCollapsed) * btColStride;
+    // Left edge / card width of column `ci` for a given collapse count.
+    const colLeftFor = (ci: number, nc: number) =>
+        ci < nc ? ci * BT.railW : nc * BT.railW + (ci - nc) * btColStride;
+    const colLeft = (ci: number) => colLeftFor(ci, nCollapsed);
     const colCardW = (ci: number) => (ci < nCollapsed ? BT.railW : BT.cellW);
     // Total drawn width for `cols` rounds at the current collapse state.
     const btTreeWidth = (cols: number) => (cols ? colLeft(cols - 1) + colCardW(cols - 1) : 0);
+
+    // --- Card-movement animation -------------------------------------------
+    // When a round collapses/expands, the rounds that *stay* expanded glide to their new
+    // positions while the collapsing/expanding round itself just snaps. We snap scrollLeft
+    // to its final value immediately (keeps the scroll trigger stable and never fights
+    // momentum scrolling) and tween only the rendered card positions — the from-x carries
+    // the scrollLeft delta so cards still start exactly where they appeared. Cards AND the
+    // SVG connectors read the same tweened positions, so the lines stay attached.
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+    let btAnimT = $state(1); // 1 = settled (no animation in progress)
+    let btAnimH = $state(0); // tallest layout spanned during the animation (so nothing clips)
+    let btPose = $state<Record<string, { x0: number; y0: number; x1: number; y1: number }>>({});
+    let btRaf = 0;
+    const btEaseT = $derived(easeInOut(btAnimT));
+    const btCardX = (id: string, ci: number) => {
+        const p = btPose[id];
+        return btAnimT < 1 && p ? lerp(p.x0, p.x1, btEaseT) : colLeft(ci);
+    };
+    const btCardY = (id: string) => {
+        const p = btPose[id];
+        return btAnimT < 1 && p ? lerp(p.y0, p.y1, btEaseT) : btCellTop(id);
+    };
+    function startBracketAnim(oldNC: number, newNC: number, fromSL: number, toSL: number) {
+        cancelAnimationFrame(btRaf);
+        const reduce = typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!bracketTree || reduce) { btPose = {}; btAnimT = 1; btAdjusting = false; return; }
+        const dxl = toSL - fromSL; // scroll snapped by this; from-x absorbs it so cards don't jolt
+        const fromRows = rowsForAnchor(bracketTree, oldNC);
+        const toRows = rowsForAnchor(bracketTree, newNC);
+        const both = Math.max(oldNC, newNC); // only rounds expanded in both states glide
+        const pose: Record<string, { x0: number; y0: number; x1: number; y1: number }> = {};
+        let maxBottom = 0;
+        (bracketData?.rounds ?? []).forEach((r, ci) => {
+            if (ci < both) return;
+            for (const m of r.matches) {
+                const e = {
+                    x0: colLeftFor(ci, oldNC) + dxl,
+                    y0: (fromRows.row[m.id] ?? 0) * btRowUnit,
+                    x1: colLeftFor(ci, newNC),
+                    y1: (toRows.row[m.id] ?? 0) * btRowUnit,
+                };
+                pose[m.id] = e;
+                maxBottom = Math.max(maxBottom, e.y0, e.y1);
+            }
+        });
+        btPose = pose;
+        btAnimH = maxBottom + BT.cellH;
+        btAnimT = 0;
+        const start = performance.now();
+        const step = (now: number) => {
+            btAnimT = Math.min(1, (now - start) / 240);
+            if (btAnimT < 1) btRaf = requestAnimationFrame(step);
+            else { btPose = {}; btAdjusting = false; }
+        };
+        btRaf = requestAnimationFrame(step);
+    }
     // Re-collapse / re-expand leading rounds as the user scrolls. We track a "virtual"
     // scroll position in the fully-expanded layout (invariant under relayout), pick how
     // many columns that puts off-screen, then compensate scrollLeft so nothing on screen
@@ -396,20 +459,26 @@
         if (!atLeft && target === nCollapsed - 1 && vEff > nCollapsed * btColStride - 40) target = nCollapsed;
         target = Math.max(0, Math.min(btMaxCollapse, target));
         if (target === nCollapsed) return;
+        const oldNC = nCollapsed;
+        const fromSL = btScroller.scrollLeft;
         nCollapsed = target;
-        const newLeft = atLeft ? 0 : vScroll - nCollapsed * drift;
+        const toSL = atLeft ? 0 : vScroll - nCollapsed * drift;
         btAdjusting = true;
         await tick(); // let the new widths render before correcting scrollLeft
-        if (btScroller) btScroller.scrollLeft = newLeft;
-        btAdjusting = false;
+        if (btScroller) { btScroller.scrollLeft = toSL; btScrollLeft = toSL; }
+        startBracketAnim(oldNC, target, fromSL, toSL);
     }
     // Clicking a rail brings that round back into view as the leftmost expanded column.
     async function expandRound(ci: number) {
+        if (!btScroller || ci === nCollapsed) return;
+        const oldNC = nCollapsed;
+        const fromSL = btScroller.scrollLeft;
         nCollapsed = ci;
+        const toSL = ci * BT.railW;
         btAdjusting = true;
         await tick();
-        if (btScroller) btScroller.scrollLeft = ci * BT.railW;
-        btAdjusting = false;
+        if (btScroller) { btScroller.scrollLeft = toSL; btScrollLeft = toSL; }
+        startBracketAnim(oldNC, ci, fromSL, toSL);
     }
     function onRailKey(e: KeyboardEvent, ci: number) {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -419,10 +488,10 @@
     }
     // Elbow connector from a feeder card's right-center to its consumer's left-center.
     function btEdgePath(t: BracketTreeLayout, e: { from: string; to: string }): string {
-        const fromX = colLeft(t.col[e.from]) + colCardW(t.col[e.from]);
-        const fromY = btCellTop(e.from) + BT.cellH / 2;
-        const toX = colLeft(t.col[e.to]);
-        const toY = btCellTop(e.to) + BT.cellH / 2;
+        const fromX = btCardX(e.from, t.col[e.from]) + colCardW(t.col[e.from]);
+        const fromY = btCardY(e.from) + BT.cellH / 2;
+        const toX = btCardX(e.to, t.col[e.to]);
+        const toY = btCardY(e.to) + BT.cellH / 2;
         const midX = (fromX + toX) / 2;
         return `M${fromX},${fromY} H${midX} V${toY} H${toX}`;
     }
@@ -794,7 +863,7 @@
         <button class="matchup" onclick={() => showInfo(event, league)} title="More info">
             <span class={`teamGroup teamGroup0${narrowScreen ? ' teamGroupNarrow' : ''}`}>
                 <span class={`teamRank${r0?.intl ? ' teamRankIntl' : ''}`} title={r0 ? (r0.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r0 ? (r0.intl ? `${r0.rank}` : (r0.grade ?? '')) : ''}</span>
-                <span class="teamName">{event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}</span>
+                <span class={`teamName${event.status === 'post' && event.competitors[0].winner ? ' teamNameWin' : ''}`}>{event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}</span>
             </span>
             <img class=teamLogo alt="" src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
             <span class={`betweenTeams${event.status === 'in' ? ' betweenTeamsLive' : ''}`}>{
@@ -804,7 +873,7 @@
             }</span>
             <img class=teamLogo alt="" src={event.competitors[1].logo}/>
             <span class={`teamGroup teamGroup1${narrowScreen ? ' teamGroupNarrow' : ''}`}>
-                <span class="teamName">{event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}</span>
+                <span class={`teamName${event.status === 'post' && event.competitors[1].winner ? ' teamNameWin' : ''}`}>{event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}</span>
                 <span class={`teamRank${r1?.intl ? ' teamRankIntl' : ''}`} title={r1 ? (r1.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r1 ? (r1.intl ? `${r1.rank}` : (r1.grade ?? '')) : ''}</span>
             </span>
         </button>
@@ -923,7 +992,7 @@
             {/if}
         </div>
         {#if selectedEvent.status !== 'pre'}
-            <span class="modal-score">{comp.score}</span>
+            <span class="modal-score">{comp.score}{#if comp.shootoutScore != null}<span class="modal-pk" title="penalty shootout">({comp.shootoutScore})</span>{/if}</span>
         {/if}
     </div>
 {/snippet}
@@ -1245,7 +1314,10 @@
     <!-- Height of the lowest card's bottom, so parked matches (3rd-place sits below
          the tree at a fractional row) are fully contained — otherwise they overflow
          and the scroller sprouts a spurious second vertical scrollbar. -->
-    {@const h = Math.max(0, ...Object.values(rows.row)) * btRowUnit + BT.cellH}
+    {@const baseH = Math.max(0, ...Object.values(rows.row)) * btRowUnit + BT.cellH}
+    <!-- While cards tween, keep the canvas as tall as the taller of the two layouts
+         so nothing clips as rows compact/spread. -->
+    {@const h = btAnimT < 1 ? Math.max(baseH, btAnimH) : baseH}
     <div class="bracket-tree-wrap">
         <!-- Round names stay pinned to the top of the modal while you scroll down the
              bracket, and slide horizontally to track the bracket's own scroll. -->
@@ -1278,7 +1350,7 @@
                         {#each round.matches as m}
                             {@const showScore = m.state !== 'pre'}
                             <div class="bracket-match btree-cell bracket-card" class:bracket-focus={standingsFocusMatchId === m.id} class:bracket-live={m.state === 'in'} bind:this={matchEls[m.id]}
-                                 style="left:{colLeft(ci)}px; top:{btCellTop(m.id)}px; width:{BT.cellW}px; height:{BT.cellH}px"
+                                 style="left:{btCardX(m.id, ci)}px; top:{btCardY(m.id)}px; width:{BT.cellW}px; height:{BT.cellH}px"
                                  title={m.location ? (m.venue ? `${m.venue} · ${m.location}` : m.location) : null}
                                  role="button" tabindex="0" onclick={() => openBracketGame(m)} onkeydown={(e) => onBracketCardKey(e, m)}>
                                 {@render bracketTeam(m.home, showScore)}
@@ -1359,6 +1431,10 @@
         white-space: nowrap;
         min-width: 0;       /* allow the name to shrink → it (not the rank) ellipsizes */
         flex: 0 1 auto;
+    }
+    /* Finished game: the winning side's name is bolded. */
+    .teamNameWin {
+        font-weight: bold;
     }
     /* TEMP: rank label beside each team name. Club ranks (blue) vs FIFA national
        ranks (green) use different colors since the two scales aren't comparable. */
@@ -1634,6 +1710,13 @@
     .modal-score {
         font-size: 1.4rem;
         font-weight: bold;
+    }
+    /* Penalty-shootout tally shown beside the regulation score, e.g. 1 (4). */
+    .modal-pk {
+        font-size: 1.1rem;
+        font-weight: normal;
+        opacity: 0.7;
+        margin-left: 2px;
     }
     .venue-address {
         opacity: 0.7;
@@ -2052,7 +2135,7 @@
         box-sizing: border-box;
         border: 1px solid rgba(128, 128, 128, 0.3);
         border-radius: 6px;
-        background: light-dark(#ececec, #454545);
+        background: light-dark(#ececec, #5a5a5a);
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -2061,7 +2144,7 @@
         z-index: 2; /* over the connector lines that pass behind it */
     }
     .btree-rail:hover {
-        background: light-dark(#e0e0e0, #555);
+        background: light-dark(#e0e0e0, #6a6a6a);
     }
     .btree-rail:focus-visible {
         outline: 2px solid light-dark(#0066cc, #4da6ff);
