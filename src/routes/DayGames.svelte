@@ -341,7 +341,7 @@
                 .filter((_, i) => i !== thirdIdx)
                 .map((r) =>
                     r.slug === 'final'
-                        ? { ...r, name: 'Final/3rd-Place', matches: [...r.matches, ...thirdRound.matches] }
+                        ? { ...r, name: 'Final / 3rd Place', matches: [...r.matches, ...thirdRound.matches] }
                         : r,
                 ),
         };
