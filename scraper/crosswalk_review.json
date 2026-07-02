@@ -1,8 +1,23 @@
 {
-  "generated_at": "2026-06-29T11:33:12.074598+00:00",
+  "generated_at": "2026-07-02T09:44:30.467885+00:00",
   "mode": "incremental",
   "new_leagues": [],
-  "new_teams": [],
+  "new_teams": [
+    {
+      "espn_id": "21378",
+      "espn_name": "Alav\u00e9s",
+      "gfr_api_football_id": null,
+      "gfr_team_name": "Alaves",
+      "match": "exact"
+    },
+    {
+      "espn_id": "21374",
+      "espn_name": "Valencia",
+      "gfr_api_football_id": null,
+      "gfr_team_name": "Valencia",
+      "match": "exact"
+    }
+  ],
   "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
@@ -41,24 +56,6 @@
       "gender": "men"
     },
     {
-      "espn_slug": "ned.3",
-      "espn_name": "Dutch Tweede Divisie",
-      "country": "Netherlands",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "ir1.1.promotion.relegation",
-      "espn_name": "Irish Premier Division Promotion/Relegation Playoffs",
-      "country": "Northern Ireland",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "irl.1",
-      "espn_name": "Irish Premier Division",
-      "country": "Northern Ireland",
-      "gender": "men"
-    },
-    {
       "espn_slug": "arg.copa_de_la_superliga",
       "espn_name": "Argentine Copa de la Superliga",
       "country": "Argentina",
@@ -80,18 +77,6 @@
       "espn_slug": "arg.3",
       "espn_name": "Argentine Primera B",
       "country": "Argentina",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "arg.4",
-      "espn_name": "Argentine Primera C",
-      "country": "Argentina",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "bra.3",
-      "espn_name": "Brazilian Serie C",
-      "country": "Brazil",
       "gender": "men"
     },
     {
@@ -131,12 +116,6 @@
       "gender": "men"
     },
     {
-      "espn_slug": "col.2",
-      "espn_name": "Colombian Primera B",
-      "country": "Colombia",
-      "gender": "men"
-    },
-    {
       "espn_slug": "bol.ply.rel",
       "espn_name": "Bolivian Liga Profesional Promotion/Relegation Playoffs",
       "country": "Bolivia",
@@ -152,24 +131,6 @@
       "espn_slug": "slv.1",
       "espn_name": "Salvadoran Primera Division",
       "country": "El Salvador",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "rsa.1.promotion.relegation",
-      "espn_name": "South African Premiership Promotion/Relegation Playoffs",
-      "country": "South Africa",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "rsa.2",
-      "espn_name": "South African First Division",
-      "country": "South Africa",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "nga.1",
-      "espn_name": "Nigerian Professional League",
-      "country": "Nigeria",
       "gender": "men"
     },
     {
@@ -353,6 +314,38 @@
       "gender": "men",
       "espn_league_slug": "eng.4",
       "best_score": 0.737
+    },
+    {
+      "espn_id": "11487",
+      "espn_name": "CD Sabadell",
+      "country": "Spain",
+      "gender": "men",
+      "espn_league_slug": "esp.2",
+      "best_score": 0.533
+    },
+    {
+      "espn_id": "7320",
+      "espn_name": "Eldense",
+      "country": "Spain",
+      "gender": "men",
+      "espn_league_slug": "esp.2",
+      "best_score": 0.5
+    },
+    {
+      "espn_id": "131858",
+      "espn_name": "RC Celta Fortuna",
+      "country": "Spain",
+      "gender": "men",
+      "espn_league_slug": "esp.2",
+      "best_score": 0.56
+    },
+    {
+      "espn_id": "245",
+      "espn_name": "Tenerife",
+      "country": "Spain",
+      "gender": "men",
+      "espn_league_slug": "esp.2",
+      "best_score": 0.429
     },
     {
       "espn_id": "7869",
@@ -553,6 +546,14 @@
       "gender": "men",
       "espn_league_slug": "mex.2",
       "best_score": 0.462
+    },
+    {
+      "espn_id": "131428",
+      "espn_name": "De Graafschap",
+      "country": "Netherlands",
+      "gender": "women",
+      "espn_league_slug": "ned.w.1",
+      "best_score": 0.353
     },
     {
       "espn_id": "3278",
@@ -1048,6 +1049,70 @@
       "expected_gfr_league": "League Two",
       "actual_gfr_league": "League One",
       "gfr_team_name": "Rotherham United"
+    },
+    {
+      "espn_id": "90",
+      "espn_name": "Deportivo La Coru\u00f1a",
+      "espn_league_slug": "esp.1",
+      "expected_gfr_league": "LaLiga",
+      "actual_gfr_league": "LaLiga 2",
+      "gfr_team_name": "Deportivo La Coruna"
+    },
+    {
+      "espn_id": "99",
+      "espn_name": "M\u00e1laga",
+      "espn_league_slug": "esp.1",
+      "expected_gfr_league": "LaLiga",
+      "actual_gfr_league": "LaLiga 2",
+      "gfr_team_name": "Malaga"
+    },
+    {
+      "espn_id": "87",
+      "espn_name": "Racing Santander",
+      "espn_league_slug": "esp.1",
+      "expected_gfr_league": "LaLiga",
+      "actual_gfr_league": "LaLiga 2",
+      "gfr_team_name": "Racing Santander"
+    },
+    {
+      "espn_id": "9812",
+      "espn_name": "Girona",
+      "espn_league_slug": "esp.2",
+      "expected_gfr_league": "LaLiga 2",
+      "actual_gfr_league": "LaLiga",
+      "gfr_team_name": "Girona"
+    },
+    {
+      "espn_id": "84",
+      "espn_name": "Mallorca",
+      "espn_league_slug": "esp.2",
+      "expected_gfr_league": "LaLiga 2",
+      "actual_gfr_league": "LaLiga",
+      "gfr_team_name": "Mallorca"
+    },
+    {
+      "espn_id": "92",
+      "espn_name": "Real Oviedo",
+      "espn_league_slug": "esp.2",
+      "expected_gfr_league": "LaLiga 2",
+      "actual_gfr_league": "LaLiga",
+      "gfr_team_name": "Real Oviedo"
+    },
+    {
+      "espn_id": "21378",
+      "espn_name": "Alav\u00e9s",
+      "espn_league_slug": "esp.w.1",
+      "expected_gfr_league": "Liga F",
+      "actual_gfr_league": "Super Ligi",
+      "gfr_team_name": "Cekmekoy"
+    },
+    {
+      "espn_id": "21374",
+      "espn_name": "Valencia",
+      "espn_league_slug": "esp.w.1",
+      "expected_gfr_league": "Liga F",
+      "actual_gfr_league": "Super Ligi",
+      "gfr_team_name": "Cekmekoy"
     },
     {
       "espn_id": "2697",
