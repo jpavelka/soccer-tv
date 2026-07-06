@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-07-02T09:44:30.467885+00:00",
+  "generated_at": "2026-07-06T11:13:30.928069+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [
     {
-      "espn_id": "21378",
-      "espn_name": "Alav\u00e9s",
-      "gfr_api_football_id": null,
-      "gfr_team_name": "Alaves",
+      "espn_id": "21607",
+      "espn_name": "Acad\u00e9mico de Viseu",
+      "gfr_api_football_id": 238,
+      "gfr_team_name": "Academico Viseu",
       "match": "exact"
     },
     {
-      "espn_id": "21374",
-      "espn_name": "Valencia",
-      "gfr_api_football_id": null,
-      "gfr_team_name": "Valencia",
+      "espn_id": "552",
+      "espn_name": "Maritimo",
+      "gfr_api_football_id": 214,
+      "gfr_team_name": "Maritimo",
       "match": "exact"
     }
   ],
@@ -101,12 +101,6 @@
       "espn_slug": "bra.camp.mineiro",
       "espn_name": "Brazilian Campeonato Mineiro",
       "country": "Brazil",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "chi.2",
-      "espn_name": "Segunda Divisi\u00f3n de Chile",
-      "country": "Chile",
       "gender": "men"
     },
     {
@@ -370,6 +364,22 @@
       "gender": "men",
       "espn_league_slug": "fra.2",
       "best_score": 0.429
+    },
+    {
+      "espn_id": "123",
+      "espn_name": "Energie Cottbus",
+      "country": "Germany",
+      "gender": "men",
+      "espn_league_slug": "ger.2",
+      "best_score": 0.348
+    },
+    {
+      "espn_id": "7013",
+      "espn_name": "VfL Osnabruck",
+      "country": "Germany",
+      "gender": "men",
+      "espn_league_slug": "ger.2",
+      "best_score": 0.444
     },
     {
       "espn_id": "3952",
@@ -1147,6 +1157,54 @@
       "gfr_team_name": "Nantes"
     },
     {
+      "espn_id": "3307",
+      "espn_name": "SC Paderborn 07",
+      "espn_league_slug": "ger.1",
+      "expected_gfr_league": "Bundesliga",
+      "actual_gfr_league": "2. Bundesliga",
+      "gfr_team_name": "Paderborn"
+    },
+    {
+      "espn_id": "10388",
+      "espn_name": "SV Elversberg",
+      "espn_league_slug": "ger.1",
+      "expected_gfr_league": "Bundesliga",
+      "actual_gfr_league": "2. Bundesliga",
+      "gfr_team_name": "Elversberg"
+    },
+    {
+      "espn_id": "133",
+      "espn_name": "Schalke 04",
+      "espn_league_slug": "ger.1",
+      "expected_gfr_league": "Bundesliga",
+      "actual_gfr_league": "2. Bundesliga",
+      "gfr_team_name": "Schalke 04"
+    },
+    {
+      "espn_id": "6418",
+      "espn_name": "1. FC Heidenheim 1846",
+      "espn_league_slug": "ger.2",
+      "expected_gfr_league": "2. Bundesliga",
+      "actual_gfr_league": "Bundesliga",
+      "gfr_team_name": "Heidenheim"
+    },
+    {
+      "espn_id": "270",
+      "espn_name": "St. Pauli",
+      "espn_league_slug": "ger.2",
+      "expected_gfr_league": "2. Bundesliga",
+      "actual_gfr_league": "Bundesliga",
+      "gfr_team_name": "St. Pauli"
+    },
+    {
+      "espn_id": "138",
+      "espn_name": "VfL Wolfsburg",
+      "espn_league_slug": "ger.2",
+      "expected_gfr_league": "2. Bundesliga",
+      "actual_gfr_league": "Bundesliga",
+      "gfr_team_name": "Wolfsburg"
+    },
+    {
       "espn_id": "4057",
       "espn_name": "Frosinone",
       "espn_league_slug": "ita.1",
@@ -1169,6 +1227,22 @@
       "expected_gfr_league": "Serie A",
       "actual_gfr_league": "Serie B",
       "gfr_team_name": "Venezia"
+    },
+    {
+      "espn_id": "21607",
+      "espn_name": "Acad\u00e9mico de Viseu",
+      "espn_league_slug": "por.1",
+      "expected_gfr_league": "Liga Portugal",
+      "actual_gfr_league": "Liga Portugal 2",
+      "gfr_team_name": "Academico Viseu"
+    },
+    {
+      "espn_id": "552",
+      "espn_name": "Maritimo",
+      "espn_league_slug": "por.1",
+      "expected_gfr_league": "Liga Portugal",
+      "actual_gfr_league": "Liga Portugal 2",
+      "gfr_team_name": "Maritimo"
     },
     {
       "espn_id": "267",
