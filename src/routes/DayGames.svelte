@@ -7,7 +7,15 @@
     import { fetchBracket, layoutBracket, rowsForAnchor, type Bracket, type BracketTreeLayout } from "$lib/bracket";
     import { tick } from "svelte";
 
-    let { dayData, dt, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, sortMode } = $props();
+    let { dayData, dt, hideIfNoLive = false, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, sortMode } = $props();
+
+    // Yesterday is fetched/bucketed like any other day, but only worth showing
+    // once it's fully out of the display window while a game is still live (a
+    // late kickoff that ran past local midnight) — otherwise it'd resurrect
+    // finished games from the day before every morning. Starts hidden (rather
+    // than flashing "Loading games...") and only reveals once the data proves
+    // there's a live game, irrespective of the user's status/broadcast filters.
+    let hideDay = $state(hideIfNoLive);
 
     // GFR data by ESPN team id ({ rank, intl, strength }). `rank` drives the inline
     // labels below; `strength` (0..1, normalized upstream in +page.ts) feeds the
@@ -146,6 +154,9 @@
                 if (!Object.keys($accordionShow).includes(dt + '-' + ld.name)) {
                     $accordionShow[dt + '-' + ld.name] = true;
                 }
+            }
+            if (hideIfNoLive) {
+                hideDay = !leagueData.some((lg: any) => lg.events.some((e: any) => e.status === 'in'));
             }
             loaded = true;
         })
@@ -975,6 +986,7 @@
     </div>
 {/snippet}
 
+{#if !hideDay}
 <hr>
 <Accordion
     headerText={dtStr}
@@ -1032,6 +1044,7 @@
     {/if}
     <div class=spacing></div>
 </Accordion>
+{/if}
 
 {#snippet modalTeam(comp: any)}
     {@const link = teamLink(comp)}

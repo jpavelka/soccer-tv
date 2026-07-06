@@ -101,6 +101,7 @@
                 <DayGames
                     dayData={data.days[dt]}
                     dt={dt}
+                    hideIfNoLive={dt === data.yesterdayDt}
                     goodStatuses={$goodStatuses}
                     filterBroadcasts={$filterBcsts}
                     broadcasts={data.broadcasts}

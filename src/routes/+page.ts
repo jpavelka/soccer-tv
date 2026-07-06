@@ -37,8 +37,12 @@ const leagueIdOf = (uid: string | undefined): string | null => {
 // so the bracket can reuse it to open the same match modal.
 
 export const load: PageLoad = async ({ fetch }) => {
-	// The 7 local days we display.
-	const displayDts: string[] = [];
+	// Yesterday is bucketed and sent down too, but DayGames only renders it while
+	// it still has a live game (e.g. a late-night kickoff that ran past local
+	// midnight) — see `hideIfNoLive` in +page.svelte / DayGames.svelte.
+	const yesterdayDt = dateNDaysFromNow(-1);
+	// The 7 local days we display, plus yesterday (conditionally shown).
+	const displayDts: string[] = [yesterdayDt];
 	for (let i = 0; i <= 6; i++) displayDts.push(dateNDaysFromNow(i));
 
 	// ESPN buckets games by US Eastern date, so a kickoff can land on a different
@@ -186,5 +190,5 @@ export const load: PageLoad = async ({ fetch }) => {
 		return out;
 	}).catch(() => ({}));
 
-	return { days, broadcasts, leagueOrder, teamRanks };
+	return { days, broadcasts, leagueOrder, teamRanks, yesterdayDt };
 };
