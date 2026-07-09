@@ -1,21 +1,14 @@
 {
-  "generated_at": "2026-07-06T11:13:30.928069+00:00",
+  "generated_at": "2026-07-09T10:04:58.154691+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [
     {
-      "espn_id": "21607",
-      "espn_name": "Acad\u00e9mico de Viseu",
-      "gfr_api_football_id": 238,
-      "gfr_team_name": "Academico Viseu",
-      "match": "exact"
-    },
-    {
-      "espn_id": "552",
-      "espn_name": "Maritimo",
-      "gfr_api_football_id": 214,
-      "gfr_team_name": "Maritimo",
-      "match": "exact"
+      "espn_id": "9371",
+      "espn_name": "Cruz Azul Hidalgo",
+      "gfr_api_football_id": 2295,
+      "gfr_team_name": "Cruz Azul",
+      "match": "token"
     }
   ],
   "new_nationals": [],
@@ -31,6 +24,24 @@
     }
   ],
   "unmatched_leagues": [
+    {
+      "espn_slug": "fra.super_cup",
+      "espn_name": "French Trophee des Champions",
+      "country": "France",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "ita.super_cup",
+      "espn_name": "Italian Supercoppa",
+      "country": "Italy",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "ger.super_cup",
+      "espn_name": "German Supercup",
+      "country": "Germany",
+      "gender": "men"
+    },
     {
       "espn_slug": "eng.w.promotion.relegation",
       "espn_name": "English Women's Super League Promotion/Relegation Playoff",
@@ -446,14 +457,6 @@
       "best_score": 0.522
     },
     {
-      "espn_id": "226",
-      "espn_name": "Atlante",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.667
-    },
-    {
       "espn_id": "20724",
       "espn_name": "Canc\u00fan FC",
       "country": "Mexico",
@@ -476,14 +479,6 @@
       "gender": "men",
       "espn_league_slug": "mex.2",
       "best_score": 0.667
-    },
-    {
-      "espn_id": "10126",
-      "espn_name": "Club Deportivo Irapuato",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.343
     },
     {
       "espn_id": "10131",
@@ -510,6 +505,14 @@
       "best_score": 0.429
     },
     {
+      "espn_id": "21534",
+      "espn_name": "Durango",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.5
+    },
+    {
       "espn_id": "10129",
       "espn_name": "Leones Negros",
       "country": "Mexico",
@@ -524,6 +527,14 @@
       "gender": "men",
       "espn_league_slug": "mex.2",
       "best_score": 0.417
+    },
+    {
+      "espn_id": "131881",
+      "espn_name": "Piratas",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.2",
+      "best_score": 0.667
     },
     {
       "espn_id": "20720",
