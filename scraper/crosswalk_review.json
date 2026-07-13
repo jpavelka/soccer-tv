@@ -1,16 +1,8 @@
 {
-  "generated_at": "2026-07-09T10:04:58.154691+00:00",
+  "generated_at": "2026-07-13T09:55:02.695972+00:00",
   "mode": "incremental",
   "new_leagues": [],
-  "new_teams": [
-    {
-      "espn_id": "9371",
-      "espn_name": "Cruz Azul Hidalgo",
-      "gfr_api_football_id": 2295,
-      "gfr_team_name": "Cruz Azul",
-      "match": "token"
-    }
-  ],
+  "new_teams": [],
   "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
@@ -703,6 +695,30 @@
       "gender": "men",
       "espn_league_slug": "swe.1",
       "best_score": 0.429
+    },
+    {
+      "espn_id": "132335",
+      "espn_name": "Amed SFK",
+      "country": "Turkiye",
+      "gender": "men",
+      "espn_league_slug": "tur.1",
+      "best_score": 0.353
+    },
+    {
+      "espn_id": "19267",
+      "espn_name": "Erzurum BB",
+      "country": "Turkiye",
+      "gender": "men",
+      "espn_league_slug": "tur.1",
+      "best_score": 0.308
+    },
+    {
+      "espn_id": "132334",
+      "espn_name": "\u00c7orum FK",
+      "country": "Turkiye",
+      "gender": "men",
+      "espn_league_slug": "tur.1",
+      "best_score": 0.375
     },
     {
       "espn_id": "21403",
