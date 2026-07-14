@@ -1,20 +1,11 @@
 {
-  "generated_at": "2026-07-13T09:55:02.695972+00:00",
+  "generated_at": "2026-07-14T13:21:46.318077+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
   "new_nationals": [],
   "fuzzy_leagues": [],
-  "fuzzy_teams": [
-    {
-      "espn_id": "21927",
-      "espn_name": "Rodina Moscow",
-      "gfr_api_football_id": 1088,
-      "gfr_team_name": "Dinamo Moscow",
-      "country": "Russia",
-      "score": 0.846
-    }
-  ],
+  "fuzzy_teams": [],
   "unmatched_leagues": [
     {
       "espn_slug": "fra.super_cup",
@@ -45,6 +36,12 @@
       "espn_name": "USL League One",
       "country": "USA",
       "gender": "men"
+    },
+    {
+      "espn_slug": "can.w.nsl",
+      "espn_name": "Northern Super League",
+      "country": "Canada",
+      "gender": "women"
     },
     {
       "espn_slug": "por.1.promotion.relegation",
@@ -131,6 +128,12 @@
       "gender": "men"
     },
     {
+      "espn_slug": "ind.2",
+      "espn_name": "Indian I-League",
+      "country": "India",
+      "gender": "men"
+    },
+    {
       "espn_slug": "usa.ncaa.m.1",
       "espn_name": "NCAA Men's Soccer",
       "country": "USA",
@@ -214,6 +217,30 @@
       "country": "Chile",
       "gender": "men",
       "espn_league_slug": "chi.1",
+      "best_score": 0.718
+    },
+    {
+      "espn_id": "131704",
+      "espn_name": "Chongqing Tonglianglong",
+      "country": "China",
+      "gender": "men",
+      "espn_league_slug": "chn.1",
+      "best_score": 0.462
+    },
+    {
+      "espn_id": "131705",
+      "espn_name": "Liaoning Tieren",
+      "country": "China",
+      "gender": "men",
+      "espn_league_slug": "chn.1",
+      "best_score": 0.571
+    },
+    {
+      "espn_id": "22199",
+      "espn_name": "Shenzhen Xinpengcheng",
+      "country": "China",
+      "gender": "men",
+      "espn_league_slug": "chn.1",
       "best_score": 0.718
     },
     {
@@ -385,6 +412,22 @@
       "best_score": 0.444
     },
     {
+      "espn_id": "22069",
+      "espn_name": "Inter Kashi",
+      "country": "India",
+      "gender": "men",
+      "espn_league_slug": "ind.1",
+      "best_score": 0.353
+    },
+    {
+      "espn_id": "131703",
+      "espn_name": "Sporting Club Delhi",
+      "country": "India",
+      "gender": "men",
+      "espn_league_slug": "ind.1",
+      "best_score": 0.4
+    },
+    {
       "espn_id": "3952",
       "espn_name": "Padova",
       "country": "Italy",
@@ -441,12 +484,28 @@
       "best_score": 0.516
     },
     {
-      "espn_id": "17233",
-      "espn_name": "Alebrijes de Oaxaca",
-      "country": "Mexico",
+      "espn_id": "21964",
+      "espn_name": "Al Hazem",
+      "country": "Saudi Arabia",
       "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.522
+      "espn_league_slug": "ksa.1",
+      "best_score": 0.667
+    },
+    {
+      "espn_id": "22023",
+      "espn_name": "Al Najma",
+      "country": "Saudi Arabia",
+      "gender": "men",
+      "espn_league_slug": "ksa.1",
+      "best_score": 0.625
+    },
+    {
+      "espn_id": "130899",
+      "espn_name": "Neom SC",
+      "country": "Saudi Arabia",
+      "gender": "men",
+      "espn_league_slug": "ksa.1",
+      "best_score": 0.222
     },
     {
       "espn_id": "20724",
@@ -559,6 +618,14 @@
       "gender": "men",
       "espn_league_slug": "mex.2",
       "best_score": 0.462
+    },
+    {
+      "espn_id": "226",
+      "espn_name": "Atlante",
+      "country": "Mexico",
+      "gender": "men",
+      "espn_league_slug": "mex.1",
+      "best_score": 0.667
     },
     {
       "espn_id": "131428",
@@ -1184,6 +1251,22 @@
       "gfr_team_name": "Nantes"
     },
     {
+      "espn_id": "131875",
+      "espn_name": "Saint-Malo",
+      "espn_league_slug": "fra.w.1",
+      "expected_gfr_league": "Premi\u00e8re Ligue",
+      "actual_gfr_league": "Super Ligi",
+      "gfr_team_name": "Cekmekoy"
+    },
+    {
+      "espn_id": "131876",
+      "espn_name": "Toulouse",
+      "espn_league_slug": "fra.w.1",
+      "expected_gfr_league": "Premi\u00e8re Ligue",
+      "actual_gfr_league": "Super Ligi",
+      "gfr_team_name": "Cekmekoy"
+    },
+    {
       "espn_id": "3307",
       "espn_name": "SC Paderborn 07",
       "espn_league_slug": "ger.1",
@@ -1254,6 +1337,54 @@
       "expected_gfr_league": "Serie A",
       "actual_gfr_league": "Serie B",
       "gfr_team_name": "Venezia"
+    },
+    {
+      "espn_id": "2726",
+      "espn_name": "ADO Den Haag",
+      "espn_league_slug": "ned.1",
+      "expected_gfr_league": "Eredivisie",
+      "actual_gfr_league": "Eerste Divisie",
+      "gfr_team_name": "ADO Den Haag"
+    },
+    {
+      "espn_id": "3736",
+      "espn_name": "SC Cambuur",
+      "espn_league_slug": "ned.1",
+      "expected_gfr_league": "Eredivisie",
+      "actual_gfr_league": "Eerste Divisie",
+      "gfr_team_name": "Cambuur"
+    },
+    {
+      "espn_id": "156",
+      "espn_name": "Willem II",
+      "espn_league_slug": "ned.1",
+      "expected_gfr_league": "Eredivisie",
+      "actual_gfr_league": "Eerste Divisie",
+      "gfr_team_name": "Willem II"
+    },
+    {
+      "espn_id": "2727",
+      "espn_name": "FC Volendam",
+      "espn_league_slug": "ned.2",
+      "expected_gfr_league": "Eerste Divisie",
+      "actual_gfr_league": "Eredivisie",
+      "gfr_team_name": "Volendam"
+    },
+    {
+      "espn_id": "3708",
+      "espn_name": "Heracles Almelo",
+      "espn_league_slug": "ned.2",
+      "expected_gfr_league": "Eerste Divisie",
+      "actual_gfr_league": "Eredivisie",
+      "gfr_team_name": "Heracles"
+    },
+    {
+      "espn_id": "141",
+      "espn_name": "NAC Breda",
+      "espn_league_slug": "ned.2",
+      "expected_gfr_league": "Eerste Divisie",
+      "actual_gfr_league": "Eredivisie",
+      "gfr_team_name": "NAC Breda"
     },
     {
       "espn_id": "21607",

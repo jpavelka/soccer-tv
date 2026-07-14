@@ -99,6 +99,33 @@ DEFAULT_COUNTRY_ALIASES = {
     "china pr": "china",
 }
 
+# ESPN's core league endpoint returns country: null for some domestic leagues
+# (usa.1/MLS, mex.1, ned.1, ksa.1, ...), which would otherwise silently exclude
+# them — and every team in them — from the crosswalk. Domestic slugs start with
+# the FIFA trigram, so recover the country from it. Spelled the GFR way (the
+# alias table normalizes either spelling). Covers the countries GFR ranks;
+# non-country prefixes (fifa, uefa, club, ...) are absent on purpose — those
+# leagues have no single country and are correctly skipped.
+SLUG_COUNTRY = {
+    "alg": "Algeria", "arg": "Argentina", "aus": "Australia", "aut": "Austria",
+    "aze": "Azerbaijan", "bel": "Belgium", "bih": "Bosnia-Herzegovina",
+    "bol": "Bolivia", "bra": "Brazil", "bul": "Bulgaria", "can": "Canada",
+    "chi": "Chile", "chn": "China", "col": "Colombia", "crc": "Costa Rica",
+    "cro": "Croatia", "cyp": "Cyprus", "cze": "Czechia", "den": "Denmark",
+    "ecu": "Ecuador", "egy": "Egypt", "eng": "England", "esp": "Spain",
+    "fin": "Finland", "fra": "France", "geo": "Georgia", "ger": "Germany",
+    "gre": "Greece", "hon": "Honduras", "hun": "Hungary", "ind": "India",
+    "irn": "Iran", "isl": "Iceland", "isr": "Israel", "ita": "Italy",
+    "jpn": "Japan", "kor": "South Korea", "ksa": "Saudi Arabia", "lva": "Latvia",
+    "mar": "Morocco", "mex": "Mexico", "ned": "Netherlands", "nor": "Norway",
+    "par": "Paraguay", "per": "Peru", "pol": "Poland", "por": "Portugal",
+    "qat": "Qatar", "rou": "Romania", "rsa": "South Africa", "rus": "Russia",
+    "sco": "Scotland", "srb": "Serbia", "sui": "Switzerland", "svk": "Slovakia",
+    "svn": "Slovenia", "swe": "Sweden", "tun": "Tunisia", "tur": "Turkiye",
+    "uae": "UAE", "ukr": "Ukraine", "uru": "Uruguay", "usa": "USA",
+    "ven": "Venezuela",
+}
+
 
 def fetch_json(url: str) -> dict:
     resp = requests.get(url, timeout=30)
@@ -156,13 +183,17 @@ def espn_league_detail(slug: str) -> dict | None:
     except Exception:
         return None
     country = d.get("country")
+    country = country.get("name") if isinstance(country, dict) else country
+    slug = d.get("slug", slug)
+    if not country:
+        country = SLUG_COUNTRY.get(slug.split(".")[0])
     return {
-        "slug": d.get("slug", slug),
+        "slug": slug,
         "id": d.get("id"),
         "name": d.get("name", ""),
         "is_tournament": bool(d.get("isTournament")),
         "gender": {"MALE": "men", "FEMALE": "women"}.get(d.get("gender")),
-        "country": country.get("name") if isinstance(country, dict) else country,
+        "country": country,
     }
 
 
@@ -302,8 +333,13 @@ def main(argv=None) -> int:
     league_map = {} if rebuild else load_map(LEAGUE_MAP_PATH, "leagues", "espn_slug")
     team_map = {} if rebuild else load_map(TEAM_MAP_PATH, "teams", "espn_id")
     blocked = set()
+    league_blocked = set()
     for slug, fid in league_overrides.items():
-        league_map.pop(slug, None) if fid is None else league_map.__setitem__(slug, fid)
+        if fid is None:
+            league_map.pop(slug, None)
+            league_blocked.add(slug)
+        else:
+            league_map[slug] = fid
     for eid, fid in team_overrides.items():
         if fid is None:
             team_map.pop(eid, None)
@@ -319,7 +355,7 @@ def main(argv=None) -> int:
         if el["is_tournament"] or not el["gender"] or not el["country"]:
             continue  # tournaments / unknown gender / multi-country: no country scope
         slug = el["slug"]
-        if slug in league_map:
+        if slug in league_map or slug in league_blocked:
             continue  # settled (persisted or override) — don't re-validate
         gender, ck = el["gender"], country_key(el["country"], country_aliases)
         cands = gfr_league_idx.get((gender, ck), [])

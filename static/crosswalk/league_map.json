@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-13T09:55:02.695972+00:00",
-  "count": 51,
+  "generated_at": "2026-07-14T13:21:46.318077+00:00",
+  "count": 60,
   "leagues": [
     {
       "espn_slug": "arg.1",
@@ -41,6 +41,10 @@
     {
       "espn_slug": "chi.1",
       "gfr_api_football_id": 265
+    },
+    {
+      "espn_slug": "chn.1",
+      "gfr_api_football_id": 169
     },
     {
       "espn_slug": "col.1",
@@ -99,6 +103,10 @@
       "gfr_api_football_id": 62
     },
     {
+      "espn_slug": "fra.w.1",
+      "gfr_api_football_id": 64
+    },
+    {
       "espn_slug": "ger.1",
       "gfr_api_football_id": 78
     },
@@ -109,6 +117,14 @@
     {
       "espn_slug": "gre.1",
       "gfr_api_football_id": 197
+    },
+    {
+      "espn_slug": "hon.1",
+      "gfr_api_football_id": 234
+    },
+    {
+      "espn_slug": "ind.1",
+      "gfr_api_football_id": 323
     },
     {
       "espn_slug": "ita.1",
@@ -123,8 +139,20 @@
       "gfr_api_football_id": 98
     },
     {
-      "espn_slug": "mex.2",
+      "espn_slug": "ksa.1",
+      "gfr_api_football_id": 307
+    },
+    {
+      "espn_slug": "mex.1",
       "gfr_api_football_id": 262
+    },
+    {
+      "espn_slug": "ned.1",
+      "gfr_api_football_id": 88
+    },
+    {
+      "espn_slug": "ned.2",
+      "gfr_api_football_id": 89
     },
     {
       "espn_slug": "ned.w.1",
@@ -191,7 +219,15 @@
       "gfr_api_football_id": 270
     },
     {
+      "espn_slug": "usa.1",
+      "gfr_api_football_id": 253
+    },
+    {
       "espn_slug": "usa.nwsl",
+      "gfr_api_football_id": 254
+    },
+    {
+      "espn_slug": "usa.nwsl.cup",
       "gfr_api_football_id": 254
     },
     {

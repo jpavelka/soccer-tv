@@ -2,12 +2,23 @@
   "_doc": {
     "purpose": "Hand-curated corrections applied by build_crosswalk.py AFTER auto-matching, so re-runs are deterministic and manual fixes are never lost.",
     "country_aliases": "ESPN-spelling -> GFR-spelling, in addition to the defaults baked into the script. Matched case-insensitively.",
-    "leagues": "ESPN league slug -> GFR league api_football_id (force a league pairing).",
+    "leagues": "ESPN league slug -> GFR league api_football_id (force a league pairing), or null to block a wrong auto-match (league has no GFR counterpart).",
     "teams": "ESPN team id (string) -> GFR team api_football_id to force the pairing, or null to block a wrong auto-match and leave the team unmatched.",
     "national": "ESPN national-team id (string) -> FIFA-ranking api_football_id, or null to block. Same shape as teams but maps into the international (FIFA) tables."
   },
   "country_aliases": {},
-  "leagues": {},
+  "leagues": {
+    "chn.1": 169,
+    "fra.w.1": 64,
+    "hon.1": 234,
+    "ind.1": 323,
+    "ksa.1": 307,
+    "mex.1": 262,
+    "mex.2": null,
+    "ned.1": 88,
+    "ned.2": 89,
+    "usa.1": 253
+  },
   "national": {
     "2850": 1508,
     "10525": 5538
@@ -17,7 +28,12 @@
     "122": 192,
     "127": 175,
     "129": 159,
+    "148": 197,
     "169": 94,
+    "186": 1611,
+    "190": 1602,
+    "193": 1615,
+    "219": 2278,
     "262": 254,
     "268": 163,
     "380": 39,
@@ -41,14 +57,18 @@
     "7632": 1062,
     "8118": 396,
     "8354": 955,
+    "9371": null,
     "9867": 1313,
     "11431": 949,
     "11989": 1065,
     "13696": 939,
+    "17606": 1604,
     "18187": 2217,
     "20983": 9585,
     "21380": 2159,
+    "21927": null,
     "21950": 1394,
-    "22271": 6786
+    "22271": 6786,
+    "22536": 21265
   }
 }
