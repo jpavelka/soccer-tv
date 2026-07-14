@@ -83,7 +83,7 @@ export const load: PageLoad = async ({ fetch }) => {
 				let lg = dayMap[dt].get(lid);
 				if (!lg) {
 					const m = meta[lid];
-					lg = { id: lid, slug: m?.slug ?? lid, name: m?.name ?? `League ${lid}`, events: [] };
+					lg = { id: lid, slug: m?.slug ?? lid, name: m?.name ?? `League ${lid}`, gender: m?.gender, events: [] };
 					dayMap[dt].set(lid, lg);
 				}
 				lg.events.push(adaptEvent(event));

@@ -888,6 +888,17 @@
     // slug): treat as long-tail so they floor to 0 rather than inheriting a small
     // per-day index.
     const LEAGUE_MISSING_RANK = 100;
+    // Women's competitions are de-emphasized: their league base is capped at
+    // WOMEN_LEAGUE_CAP rather than dropped entirely, so a women's game never leads
+    // on league prominence alone but can still surface via team strength /
+    // competitiveness / stage. Per-slug exceptions pin the marquee women's
+    // competitions to a fixed base above the cap. (Gender comes from ESPN's core
+    // league endpoint, baked into league_order.json's `meta` by the scraper.)
+    const WOMEN_LEAGUE_CAP = 15;
+    const WOMEN_LEAGUE_BASE: Record<string, number> = {
+        'fifa.wwc': 40,        // FIFA Women's World Cup
+        'uefa.wchampions': 25, // UEFA Women's Champions League
+    };
     // Drive the gradient badge fill with a two-segment ramp: gray (≤40) → yellow
     // (70) → green (100+). --t1 fades cold→mid over 40–70, --t2 fades mid→hot
     // over 70–100; the CSS nests two color-mixes so the midpoint is yellow.
@@ -907,7 +918,10 @@
         const hasMap = leagueRank && Object.keys(leagueRank).length > 0;
         // Fall back to the per-day index only if the whole map failed to load.
         const rank = hasMap ? (leagueRank[league.slug] ?? LEAGUE_MISSING_RANK) : leagueIndex;
-        const leagueBase = Math.max(0, LEAGUE_TOP - rank * LEAGUE_STEP);
+        let leagueBase = Math.max(0, LEAGUE_TOP - rank * LEAGUE_STEP);
+        if (league.gender === 'women') {
+            leagueBase = WOMEN_LEAGUE_BASE[league.slug] ?? Math.min(leagueBase, WOMEN_LEAGUE_CAP);
+        }
         const teamStrength = teamStrengthBonus(event, ranks);
         const competitive = competitiveness(event, ranks) * 15;
         const stage = stageBonus(event, league);

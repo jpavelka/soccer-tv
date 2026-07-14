@@ -98,16 +98,20 @@ def scrape_leagues() -> list:
 
 
 def resolve_league(slug: str):
-    """Resolve a league slug to its numeric id and display name via the core API.
-    Returns (id, name) or None on any failure (renamed/removed leagues are skipped)."""
+    """Resolve a league slug to its numeric id, display name, and gender via the
+    core API. The core endpoint carries a top-level `gender` ("MALE"/"FEMALE") the
+    /all scoreboard feed lacks, so we bake it into `meta` for the interest score.
+    Returns (id, name, gender) or None on any failure (renamed/removed leagues are
+    skipped). `gender` is "men"/"women"/None."""
     try:
         url = f"https://sports.core.api.espn.com/v2/sports/soccer/leagues/{slug}"
         resp = requests.get(url, headers=HEADERS, timeout=30)
         resp.raise_for_status()
         d = resp.json()
         lid, name = d.get("id"), d.get("name")
+        gender = {"MALE": "men", "FEMALE": "women"}.get(d.get("gender"))
         if lid and name:
-            return str(lid), name
+            return str(lid), name, gender
     except Exception:
         pass
     return None
@@ -133,8 +137,10 @@ def write_league_order():
     with ThreadPoolExecutor(max_workers=16) as ex:
         for slug, res in zip(slugs, ex.map(resolve_league, slugs)):
             if res:
-                lid, name = res
+                lid, name, gender = res
                 meta[lid] = {"slug": slug, "name": name}
+                if gender:
+                    meta[lid]["gender"] = gender
     path = "static/league_order.json"
     with open(path, "w") as f:
         json.dump({
