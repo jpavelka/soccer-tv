@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-14T13:21:46.318077+00:00",
+  "generated_at": "2026-07-16T08:41:58.023842+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -506,118 +506,6 @@
       "gender": "men",
       "espn_league_slug": "ksa.1",
       "best_score": 0.222
-    },
-    {
-      "espn_id": "20724",
-      "espn_name": "Canc\u00fan FC",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.421
-    },
-    {
-      "espn_id": "21533",
-      "espn_name": "Club Atl\u00e9tico La Paz",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.625
-    },
-    {
-      "espn_id": "221",
-      "espn_name": "Club Atl\u00e9tico Morelia",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.667
-    },
-    {
-      "espn_id": "10131",
-      "espn_name": "Club Jaiba Brava",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.353
-    },
-    {
-      "espn_id": "8931",
-      "espn_name": "Correcaminos UAT",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.483
-    },
-    {
-      "espn_id": "3432",
-      "espn_name": "Dorados de Sinaloa",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.429
-    },
-    {
-      "espn_id": "21534",
-      "espn_name": "Durango",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.5
-    },
-    {
-      "espn_id": "10129",
-      "espn_name": "Leones Negros",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.471
-    },
-    {
-      "espn_id": "17514",
-      "espn_name": "Mineros de Zacatecas",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.417
-    },
-    {
-      "espn_id": "131881",
-      "espn_name": "Piratas",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.667
-    },
-    {
-      "espn_id": "20720",
-      "espn_name": "Tapat\u00edo",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.4
-    },
-    {
-      "espn_id": "20721",
-      "espn_name": "Tepatitl\u00e1n FC",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.556
-    },
-    {
-      "espn_id": "20722",
-      "espn_name": "Tlaxcala FC",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.571
-    },
-    {
-      "espn_id": "10124",
-      "espn_name": "Venados FC",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.2",
-      "best_score": 0.462
     },
     {
       "espn_id": "226",
