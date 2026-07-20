@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T08:41:58.023842+00:00",
+  "generated_at": "2026-07-20T09:42:43.580146+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -268,6 +268,14 @@
       "best_score": 0.645
     },
     {
+      "espn_id": "132447",
+      "espn_name": "Escorpiones Bel\u00e9n",
+      "country": "Costa Rica",
+      "gender": "men",
+      "espn_league_slug": "crc.1",
+      "best_score": 0.533
+    },
+    {
       "espn_id": "3585",
       "espn_name": "AC Horsens",
       "country": "Denmark",
@@ -410,6 +418,38 @@
       "gender": "men",
       "espn_league_slug": "ger.2",
       "best_score": 0.444
+    },
+    {
+      "espn_id": "2575",
+      "espn_name": "Iraklis",
+      "country": "Greece",
+      "gender": "men",
+      "espn_league_slug": "gre.1",
+      "best_score": 0.545
+    },
+    {
+      "espn_id": "132429",
+      "espn_name": "Kalamata",
+      "country": "Greece",
+      "gender": "men",
+      "espn_league_slug": "gre.1",
+      "best_score": 0.4
+    },
+    {
+      "espn_id": "132448",
+      "espn_name": "CA Independiente Siguatepeque",
+      "country": "Honduras",
+      "gender": "men",
+      "espn_league_slug": "hon.1",
+      "best_score": 0.303
+    },
+    {
+      "espn_id": "132449",
+      "espn_name": "CD Estrella Roja",
+      "country": "Honduras",
+      "gender": "men",
+      "espn_league_slug": "hon.1",
+      "best_score": 0.333
     },
     {
       "espn_id": "22069",
