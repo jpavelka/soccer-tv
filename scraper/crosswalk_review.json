@@ -1,8 +1,30 @@
 {
-  "generated_at": "2026-07-20T09:42:43.580146+00:00",
+  "generated_at": "2026-07-23T09:09:55.179738+00:00",
   "mode": "incremental",
   "new_leagues": [],
-  "new_teams": [],
+  "new_teams": [
+    {
+      "espn_id": "4050",
+      "espn_name": "Cremonese",
+      "gfr_api_football_id": 520,
+      "gfr_team_name": "Cremonese",
+      "match": "exact"
+    },
+    {
+      "espn_id": "119",
+      "espn_name": "Hellas Verona",
+      "gfr_api_football_id": 504,
+      "gfr_team_name": "Hellas Verona",
+      "match": "exact"
+    },
+    {
+      "espn_id": "3956",
+      "espn_name": "Pisa",
+      "gfr_api_football_id": 801,
+      "gfr_team_name": "Pisa",
+      "match": "exact"
+    }
+  ],
   "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [],
@@ -54,6 +76,18 @@
       "espn_name": "English National League",
       "country": "England",
       "gender": "men"
+    },
+    {
+      "espn_slug": "usa.ncaa.m.1",
+      "espn_name": "NCAA Men's Soccer",
+      "country": "USA",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "usa.ncaa.w.1",
+      "espn_name": "NCAA Women's Soccer",
+      "country": "USA",
+      "gender": "women"
     },
     {
       "espn_slug": "arg.copa_de_la_superliga",
@@ -132,18 +166,6 @@
       "espn_name": "Indian I-League",
       "country": "India",
       "gender": "men"
-    },
-    {
-      "espn_slug": "usa.ncaa.m.1",
-      "espn_name": "NCAA Men's Soccer",
-      "country": "USA",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "usa.ncaa.w.1",
-      "espn_name": "NCAA Women's Soccer",
-      "country": "USA",
-      "gender": "women"
     }
   ],
   "unmatched_teams": [
@@ -468,6 +490,30 @@
       "best_score": 0.4
     },
     {
+      "espn_id": "3345",
+      "espn_name": "Arezzo",
+      "country": "Italy",
+      "gender": "men",
+      "espn_league_slug": "ita.2",
+      "best_score": 0.545
+    },
+    {
+      "espn_id": "3346",
+      "espn_name": "Ascoli",
+      "country": "Italy",
+      "gender": "men",
+      "espn_league_slug": "ita.2",
+      "best_score": 0.667
+    },
+    {
+      "espn_id": "4059",
+      "espn_name": "Benevento",
+      "country": "Italy",
+      "gender": "men",
+      "espn_league_slug": "ita.2",
+      "best_score": 0.471
+    },
+    {
       "espn_id": "3952",
       "espn_name": "Padova",
       "country": "Italy",
@@ -476,20 +522,20 @@
       "best_score": 0.615
     },
     {
-      "espn_id": "3290",
-      "espn_name": "Pescara",
-      "country": "Italy",
-      "gender": "men",
-      "espn_league_slug": "ita.2",
-      "best_score": 0.667
-    },
-    {
       "espn_id": "4055",
       "espn_name": "US Avellino",
       "country": "Italy",
       "gender": "men",
       "espn_league_slug": "ita.2",
       "best_score": 0.462
+    },
+    {
+      "espn_id": "120",
+      "espn_name": "Vicenza",
+      "country": "Italy",
+      "gender": "men",
+      "espn_league_slug": "ita.2",
+      "best_score": 0.714
     },
     {
       "espn_id": "11137",
@@ -1265,6 +1311,30 @@
       "expected_gfr_league": "Serie A",
       "actual_gfr_league": "Serie B",
       "gfr_team_name": "Venezia"
+    },
+    {
+      "espn_id": "4050",
+      "espn_name": "Cremonese",
+      "espn_league_slug": "ita.2",
+      "expected_gfr_league": "Serie B",
+      "actual_gfr_league": "Serie A",
+      "gfr_team_name": "Cremonese"
+    },
+    {
+      "espn_id": "119",
+      "espn_name": "Hellas Verona",
+      "espn_league_slug": "ita.2",
+      "expected_gfr_league": "Serie B",
+      "actual_gfr_league": "Serie A",
+      "gfr_team_name": "Hellas Verona"
+    },
+    {
+      "espn_id": "3956",
+      "espn_name": "Pisa",
+      "espn_league_slug": "ita.2",
+      "expected_gfr_league": "Serie B",
+      "actual_gfr_league": "Serie A",
+      "gfr_team_name": "Pisa"
     },
     {
       "espn_id": "2726",
