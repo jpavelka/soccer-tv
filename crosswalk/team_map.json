@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-20T09:42:43.580146+00:00",
-  "count": 871,
+  "generated_at": "2026-07-23T09:09:55.179738+00:00",
+  "count": 874,
   "teams": [
     {
       "espn_id": "3",
@@ -193,6 +193,10 @@
     {
       "espn_id": "118",
       "gfr_api_football_id": 494
+    },
+    {
+      "espn_id": "119",
+      "gfr_api_football_id": 504
     },
     {
       "espn_id": "121",
@@ -1619,6 +1623,10 @@
       "gfr_api_football_id": 880
     },
     {
+      "espn_id": "3956",
+      "gfr_api_football_id": 801
+    },
+    {
       "espn_id": "3975",
       "gfr_api_football_id": 863
     },
@@ -1637,6 +1645,10 @@
     {
       "espn_id": "4007",
       "gfr_api_football_id": 1579
+    },
+    {
+      "espn_id": "4050",
+      "gfr_api_football_id": 520
     },
     {
       "espn_id": "4056",
