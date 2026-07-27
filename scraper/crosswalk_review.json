@@ -1,33 +1,20 @@
 {
-  "generated_at": "2026-07-23T09:09:55.179738+00:00",
+  "generated_at": "2026-07-27T10:27:05.370821+00:00",
   "mode": "incremental",
   "new_leagues": [],
-  "new_teams": [
-    {
-      "espn_id": "4050",
-      "espn_name": "Cremonese",
-      "gfr_api_football_id": 520,
-      "gfr_team_name": "Cremonese",
-      "match": "exact"
-    },
-    {
-      "espn_id": "119",
-      "espn_name": "Hellas Verona",
-      "gfr_api_football_id": 504,
-      "gfr_team_name": "Hellas Verona",
-      "match": "exact"
-    },
-    {
-      "espn_id": "3956",
-      "espn_name": "Pisa",
-      "gfr_api_football_id": 801,
-      "gfr_team_name": "Pisa",
-      "match": "exact"
-    }
-  ],
+  "new_teams": [],
   "new_nationals": [],
   "fuzzy_leagues": [],
-  "fuzzy_teams": [],
+  "fuzzy_teams": [
+    {
+      "espn_id": "131746",
+      "espn_name": "Al Diriyah",
+      "gfr_api_football_id": 2981,
+      "gfr_team_name": "Al Riyadh",
+      "country": "Saudi Arabia",
+      "score": 0.842
+    }
+  ],
   "unmatched_leagues": [
     {
       "espn_slug": "fra.super_cup",
@@ -69,6 +56,12 @@
       "espn_slug": "por.1.promotion.relegation",
       "espn_name": "Portuguese Primeira Liga Promotion/Relegation Playoffs",
       "country": "Portugal",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "esp.joan_gamper",
+      "espn_name": "Trofeo Joan Gamper",
+      "country": "Spain",
       "gender": "men"
     },
     {
@@ -570,6 +563,14 @@
       "best_score": 0.516
     },
     {
+      "espn_id": "21833",
+      "espn_name": "Abha",
+      "country": "Saudi Arabia",
+      "gender": "men",
+      "espn_league_slug": "ksa.1",
+      "best_score": 0.5
+    },
+    {
       "espn_id": "21964",
       "espn_name": "Al Hazem",
       "country": "Saudi Arabia",
@@ -578,12 +579,12 @@
       "best_score": 0.667
     },
     {
-      "espn_id": "22023",
-      "espn_name": "Al Najma",
+      "espn_id": "21446",
+      "espn_name": "Al-Faisaly",
       "country": "Saudi Arabia",
       "gender": "men",
       "espn_league_slug": "ksa.1",
-      "best_score": 0.625
+      "best_score": 0.667
     },
     {
       "espn_id": "130899",
