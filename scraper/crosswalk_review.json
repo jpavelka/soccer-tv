@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-27T10:27:05.370821+00:00",
+  "generated_at": "2026-07-30T09:15:05.586200+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -657,6 +657,22 @@
       "gender": "men",
       "espn_league_slug": "per.1",
       "best_score": 0.632
+    },
+    {
+      "espn_id": "22350",
+      "espn_name": "Kruger United",
+      "country": "South Africa",
+      "gender": "men",
+      "espn_league_slug": "rsa.1",
+      "best_score": 0.667
+    },
+    {
+      "espn_id": "21990",
+      "espn_name": "Milford FC",
+      "country": "South Africa",
+      "gender": "men",
+      "espn_league_slug": "rsa.1",
+      "best_score": 0.316
     },
     {
       "espn_id": "21539",
