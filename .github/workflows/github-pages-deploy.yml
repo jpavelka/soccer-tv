@@ -41,6 +41,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: build
+          single-commit: true
 
       - name: Flag stale rankings
         if: steps.rankings.outcome == 'failure'

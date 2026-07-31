@@ -30,7 +30,10 @@ jobs:
       - name: Fetch GFR rankings (crosswalk input)
         run: |
           git fetch origin gh-pages
-          git checkout origin/gh-pages -- rankings && mv rankings static/
+          # Extract straight into the worktree (static/rankings/, gitignored) without
+          # touching the index — `git checkout <ref> -- rankings` would stage them and
+          # they'd get swept into the crosswalk commit.
+          git archive origin/gh-pages rankings | tar -x -C static/
 
       - name: Build ESPN-GFR crosswalk
         run: python scraper/build_crosswalk.py
@@ -40,9 +43,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add static/crosswalk scraper/crosswalk_review.json
-          if git diff --staged --quiet; then
-            echo "No crosswalk changes."
-          else
+          # `generated_at` timestamps change every run; commit only when some other
+          # line changes too, so pure-timestamp runs are true no-ops. Capture the
+          # filtered diff rather than piping into `grep -q` — early-exit + SIGPIPE
+          # under `-o pipefail` (the Actions default) makes the `-q` form unreliable.
+          changes=$(git diff --staged -U0 | grep -E '^[+-]' \
+                      | grep -vE '^(\+\+\+|---|[+-][[:space:]]*"generated_at":)' || true)
+          if [ -n "$changes" ]; then
             git commit -m "chore: refresh ESPN-GFR crosswalk"
             git push
+          else
+            echo "No substantive crosswalk changes (only timestamps)."
           fi

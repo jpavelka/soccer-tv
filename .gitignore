@@ -26,6 +26,7 @@ vite.config.ts.timestamp-*
 static/broadcasts.json
 static/league_order.json
 static/rankings/
+/rankings/
 
 # Other
 GEMINI.md
