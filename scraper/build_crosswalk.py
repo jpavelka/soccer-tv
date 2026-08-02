@@ -22,6 +22,9 @@ Design decisions (see CLAUDE.md):
   * The map holds only SETTLED matches (exact/token/tier/override). Fuzzy matches
     stay provisional — reported in the review file but never persisted — until a
     human promotes one to an override. So a low-confidence guess is never frozen.
+  * Team mapping is INJECTIVE: one GFR team backs exactly one ESPN team, so an
+    auto-match onto an already-claimed GFR id is a mis-match by construction and
+    is rejected (reported, never written). Overrides load first and win the claim.
 
 Outputs:
   static/crosswalk/league_map.json  espn_slug    -> gfr league api_football_id
@@ -320,18 +323,27 @@ def main(argv=None) -> int:
     gfr_team_idx = defaultdict(list)
     for gender in ("men", "women"):
         for t in gfr[gender]["teams"]:
+            if t["api_football_id"] is None:
+                continue  # no join key (common in women_team) — unmappable, and
+                # keeping it would let it beat a real candidate to the match
             gfr_team_idx[(gender, country_key(t["country"], country_aliases))].append({
                 **t, "_norm": norm_team(t["team_name"]),
                 "_tokens": set(norm_team(t["team_name"]).split()),
             })
     gfr_team_by_apifid = {t["api_football_id"]: t
-                          for g in ("men", "women") for t in gfr[g]["teams"]}
+                          for g in ("men", "women") for t in gfr[g]["teams"]
+                          if t["api_football_id"] is not None}
 
     # --- load settled maps (espn key -> gfr api_football_id), apply overrides -
     # Overrides are re-applied every run so corrections/forced-matches/blocks
     # always take effect — even for teams not in any roster this run.
     league_map = {} if rebuild else load_map(LEAGUE_MAP_PATH, "leagues", "espn_slug")
     team_map = {} if rebuild else load_map(TEAM_MAP_PATH, "teams", "espn_id")
+    # Drop entries mapped to a null GFR id (written before null-id GFR rows were
+    # excluded from the candidates); they join to nothing, so re-match them.
+    purged_null = sorted(e for e, f in team_map.items() if f is None)
+    for eid in purged_null:
+        del team_map[eid]
     blocked = set()
     league_blocked = set()
     for slug, fid in league_overrides.items():
@@ -392,6 +404,16 @@ def main(argv=None) -> int:
             rosters[slug] = teams
 
     unmatched_teams, fuzzy_teams, disagreements, new_teams = [], [], [], []
+    rejected_collisions, stale_collisions = [], []
+    # The mapping must be injective: one GFR team backs exactly one ESPN team. An
+    # auto-match onto an already-claimed GFR id is therefore a mis-match, not a
+    # match — the real owner is elsewhere. (This is how ESPN's "Paris Saint-Germain"
+    # silently landed on GFR's "Paris FC": GFR spells PSG "PSG", so the only
+    # token-subset candidate left was Paris FC, already claimed by ESPN's Paris FC.)
+    # Overrides are hand-curated and load first, so they always win the claim.
+    claimed = {}
+    for eid, fid in team_map.items():
+        claimed.setdefault(fid, eid)
     seen = set()
     for slug, (gfr_league, gender) in matched_for_teams.items():
         ck = country_key(gfr_league["country"], country_aliases)
@@ -419,7 +441,17 @@ def main(argv=None) -> int:
                         "country": cand["country"], "score": score})
                     continue
                 fid = cand["api_football_id"]
+                owner = claimed.get(fid)
+                if owner is not None and owner != eid:  # not injective — reject
+                    rejected_collisions.append({
+                        "espn_id": eid, "espn_name": espn_name,
+                        "gfr_api_football_id": fid, "gfr_team_name": cand["team_name"],
+                        "country": cand["country"], "gender": gender,
+                        "espn_league_slug": slug, "match": kind,
+                        "claimed_by_espn_id": owner, "resolution": "rejected"})
+                    continue
                 team_map[eid] = fid
+                claimed[fid] = eid
                 new_teams.append({
                     "espn_id": eid, "espn_name": espn_name,
                     "gfr_api_football_id": fid, "gfr_team_name": cand["team_name"],
@@ -434,9 +466,28 @@ def main(argv=None) -> int:
                     "actual_gfr_league": gteam["league_name"],
                     "gfr_team_name": gteam["team_name"]})
 
+    # Duplicates already frozen into the map predate the guard (or come from
+    # conflicting overrides). The guard only refuses NEW writes, so surface these
+    # for a hand-written override rather than silently keeping a wrong join.
+    by_fid = defaultdict(list)
+    for eid, fid in team_map.items():
+        by_fid[fid].append(eid)
+    for fid, eids in by_fid.items():
+        if len(eids) > 1:
+            gteam = gfr_team_by_apifid.get(fid)
+            stale_collisions.append({
+                "espn_ids": sorted(eids, key=int), "gfr_api_football_id": fid,
+                "gfr_team_name": gteam["team_name"] if gteam else None,
+                "resolution": "persisted — needs an override to break the tie"})
+    stale_collisions.sort(key=lambda c: c["gfr_api_football_id"])
+
     print(f"  teams: {len(team_map)} mapped (+{len(new_teams)} new), "
           f"{len(fuzzy_teams)} provisional, {len(unmatched_teams)} unmatched, "
-          f"{len(disagreements)} league-disagreements", file=sys.stderr)
+          f"{len(disagreements)} league-disagreements, "
+          f"{len(rejected_collisions)} collisions rejected, "
+          f"{len(stale_collisions)} persisted collisions"
+          + (f", {len(purged_null)} null-id entries purged" if purged_null else ""),
+          file=sys.stderr)
 
     # --- national teams: ESPN national-team ids -> FIFA ranking api_football_id
     # Harvest senior national teams from the international competitions, then match
@@ -507,6 +558,9 @@ def main(argv=None) -> int:
             "unmatched_teams": unmatched_teams,
             "unmatched_nationals": unmatched_nationals,
             "league_disagreements": disagreements,
+            "team_collisions_rejected": rejected_collisions,
+            "team_collisions_persisted": stale_collisions,
+            "purged_null_id_teams": purged_null,
         }, f, indent=2)
     print(f"  wrote maps and {REVIEW_PATH} "
           f"({'rebuild' if rebuild else 'incremental'})", file=sys.stderr)
