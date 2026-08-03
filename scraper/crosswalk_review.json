@@ -1,8 +1,30 @@
 {
-  "generated_at": "2026-07-30T09:15:05.586200+00:00",
+  "generated_at": "2026-08-03T10:24:41.971508+00:00",
   "mode": "incremental",
   "new_leagues": [],
-  "new_teams": [],
+  "new_teams": [
+    {
+      "espn_id": "19968",
+      "espn_name": "Birmingham City",
+      "gfr_api_football_id": 1845,
+      "gfr_team_name": "Birmingham City",
+      "match": "exact"
+    },
+    {
+      "espn_id": "21035",
+      "espn_name": "Charlton Athletic",
+      "gfr_api_football_id": 15402,
+      "gfr_team_name": "Charlton Athletic",
+      "match": "exact"
+    },
+    {
+      "espn_id": "21037",
+      "espn_name": "Crystal Palace",
+      "gfr_api_football_id": 15409,
+      "gfr_team_name": "Crystal Palace",
+      "match": "exact"
+    }
+  ],
   "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
@@ -16,6 +38,12 @@
     }
   ],
   "unmatched_leagues": [
+    {
+      "espn_slug": "eng.charity",
+      "espn_name": "English FA Community Shield",
+      "country": "England",
+      "gender": "men"
+    },
     {
       "espn_slug": "fra.super_cup",
       "espn_name": "French Trophee des Champions",
@@ -56,6 +84,12 @@
       "espn_slug": "por.1.promotion.relegation",
       "espn_name": "Portuguese Primeira Liga Promotion/Relegation Playoffs",
       "country": "Portugal",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "ned.supercup",
+      "espn_name": "Dutch Johan Cruyff Shield",
+      "country": "Netherlands",
       "gender": "men"
     },
     {
@@ -395,6 +429,22 @@
       "best_score": 0.429
     },
     {
+      "espn_id": "21378",
+      "espn_name": "Alav\u00e9s",
+      "country": "Spain",
+      "gender": "women",
+      "espn_league_slug": "esp.w.1",
+      "best_score": 0.5
+    },
+    {
+      "espn_id": "21374",
+      "espn_name": "Valencia",
+      "country": "Spain",
+      "gender": "women",
+      "espn_league_slug": "esp.w.1",
+      "best_score": 0.5
+    },
+    {
       "espn_id": "7869",
       "espn_name": "Boulogne",
       "country": "France",
@@ -417,6 +467,22 @@
       "gender": "men",
       "espn_league_slug": "fra.2",
       "best_score": 0.429
+    },
+    {
+      "espn_id": "131875",
+      "espn_name": "Saint-Malo",
+      "country": "France",
+      "gender": "women",
+      "espn_league_slug": "fra.w.1",
+      "best_score": 0.522
+    },
+    {
+      "espn_id": "131876",
+      "espn_name": "Toulouse",
+      "country": "France",
+      "gender": "women",
+      "espn_league_slug": "fra.w.1",
+      "best_score": 0.444
     },
     {
       "espn_id": "123",
@@ -1146,6 +1212,30 @@
       "gfr_team_name": "Rotherham United"
     },
     {
+      "espn_id": "19968",
+      "espn_name": "Birmingham City",
+      "espn_league_slug": "eng.w.1",
+      "expected_gfr_league": "WSL",
+      "actual_gfr_league": "WSL 2",
+      "gfr_team_name": "Birmingham City"
+    },
+    {
+      "espn_id": "21035",
+      "espn_name": "Charlton Athletic",
+      "espn_league_slug": "eng.w.1",
+      "expected_gfr_league": "WSL",
+      "actual_gfr_league": "WSL 2",
+      "gfr_team_name": "Charlton Athletic"
+    },
+    {
+      "espn_id": "21037",
+      "espn_name": "Crystal Palace",
+      "espn_league_slug": "eng.w.1",
+      "expected_gfr_league": "WSL",
+      "actual_gfr_league": "WSL 2",
+      "gfr_team_name": "Crystal Palace"
+    },
+    {
       "espn_id": "90",
       "espn_name": "Deportivo La Coru\u00f1a",
       "espn_league_slug": "esp.1",
@@ -1194,22 +1284,6 @@
       "gfr_team_name": "Real Oviedo"
     },
     {
-      "espn_id": "21378",
-      "espn_name": "Alav\u00e9s",
-      "espn_league_slug": "esp.w.1",
-      "expected_gfr_league": "Liga F",
-      "actual_gfr_league": "Super Ligi",
-      "gfr_team_name": "Cekmekoy"
-    },
-    {
-      "espn_id": "21374",
-      "espn_name": "Valencia",
-      "espn_league_slug": "esp.w.1",
-      "expected_gfr_league": "Liga F",
-      "actual_gfr_league": "Super Ligi",
-      "gfr_team_name": "Cekmekoy"
-    },
-    {
       "espn_id": "2697",
       "espn_name": "Le Mans",
       "espn_league_slug": "fra.1",
@@ -1240,22 +1314,6 @@
       "expected_gfr_league": "Ligue 2",
       "actual_gfr_league": "Ligue 1",
       "gfr_team_name": "Nantes"
-    },
-    {
-      "espn_id": "131875",
-      "espn_name": "Saint-Malo",
-      "espn_league_slug": "fra.w.1",
-      "expected_gfr_league": "Premi\u00e8re Ligue",
-      "actual_gfr_league": "Super Ligi",
-      "gfr_team_name": "Cekmekoy"
-    },
-    {
-      "espn_id": "131876",
-      "espn_name": "Toulouse",
-      "espn_league_slug": "fra.w.1",
-      "expected_gfr_league": "Premi\u00e8re Ligue",
-      "actual_gfr_league": "Super Ligi",
-      "gfr_team_name": "Cekmekoy"
     },
     {
       "espn_id": "3307",
@@ -1433,5 +1491,41 @@
       "actual_gfr_league": "Premiership",
       "gfr_team_name": "Livingston"
     }
+  ],
+  "team_collisions_rejected": [],
+  "team_collisions_persisted": [
+    {
+      "espn_ids": [
+        "8",
+        "19685"
+      ],
+      "gfr_api_football_id": 450,
+      "gfr_team_name": "Estudiantes",
+      "resolution": "persisted \u2014 needs an override to break the tie"
+    },
+    {
+      "espn_ids": [
+        "10122",
+        "131655"
+      ],
+      "gfr_api_football_id": 2539,
+      "gfr_team_name": "UTC Cajamarca",
+      "resolution": "persisted \u2014 needs an override to break the tie"
+    },
+    {
+      "espn_ids": [
+        "859",
+        "131790"
+      ],
+      "gfr_api_football_id": 25120,
+      "gfr_team_name": "San Carlos",
+      "resolution": "persisted \u2014 needs an override to break the tie"
+    }
+  ],
+  "purged_null_id_teams": [
+    "131875",
+    "131876",
+    "21374",
+    "21378"
   ]
 }
