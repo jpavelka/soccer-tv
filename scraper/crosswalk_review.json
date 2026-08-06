@@ -1,30 +1,8 @@
 {
-  "generated_at": "2026-08-03T10:24:41.971508+00:00",
+  "generated_at": "2026-08-06T09:23:10.483853+00:00",
   "mode": "incremental",
   "new_leagues": [],
-  "new_teams": [
-    {
-      "espn_id": "19968",
-      "espn_name": "Birmingham City",
-      "gfr_api_football_id": 1845,
-      "gfr_team_name": "Birmingham City",
-      "match": "exact"
-    },
-    {
-      "espn_id": "21035",
-      "espn_name": "Charlton Athletic",
-      "gfr_api_football_id": 15402,
-      "gfr_team_name": "Charlton Athletic",
-      "match": "exact"
-    },
-    {
-      "espn_id": "21037",
-      "espn_name": "Crystal Palace",
-      "gfr_api_football_id": 15409,
-      "gfr_team_name": "Crystal Palace",
-      "match": "exact"
-    }
-  ],
+  "new_teams": [],
   "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
@@ -1522,10 +1500,5 @@
       "resolution": "persisted \u2014 needs an override to break the tie"
     }
   ],
-  "purged_null_id_teams": [
-    "131875",
-    "131876",
-    "21374",
-    "21378"
-  ]
+  "purged_null_id_teams": []
 }
