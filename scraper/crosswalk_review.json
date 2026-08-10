@@ -1,18 +1,415 @@
 {
-  "generated_at": "2026-08-06T09:23:10.483853+00:00",
+  "generated_at": "2026-08-10T08:13:55.552397+00:00",
   "mode": "incremental",
-  "new_leagues": [],
-  "new_teams": [],
+  "new_leagues": [
+    {
+      "espn_slug": "eng.5",
+      "espn_name": "English National League",
+      "country": "England",
+      "gender": "men",
+      "gfr_league_name": "National League",
+      "match": "token"
+    },
+    {
+      "espn_slug": "uru.2",
+      "espn_name": "Segunda Divisi\u00f3n de Uruguay",
+      "country": "Uruguay",
+      "gender": "men",
+      "gfr_league_name": "Segunda Divisi\u00f3n",
+      "match": "token"
+    }
+  ],
+  "new_teams": [
+    {
+      "espn_id": "21540",
+      "espn_name": "Austria Lustenau",
+      "gfr_api_football_id": 1399,
+      "gfr_team_name": "Austria Lustenau",
+      "match": "exact"
+    },
+    {
+      "espn_id": "6051",
+      "espn_name": "Real Potos\u00ed",
+      "gfr_api_football_id": 3708,
+      "gfr_team_name": "Real Potos\u00ed",
+      "match": "exact"
+    },
+    {
+      "espn_id": "8110",
+      "espn_name": "Deportes Concepcion",
+      "gfr_api_football_id": 5635,
+      "gfr_team_name": "Concepci\u00f3n",
+      "match": "token"
+    },
+    {
+      "espn_id": "5362",
+      "espn_name": "Universidad de Concepci\u00f3n",
+      "gfr_api_football_id": 2324,
+      "gfr_team_name": "Universidad de Concepcion",
+      "match": "exact"
+    },
+    {
+      "espn_id": "6101",
+      "espn_name": "C\u00facuta Deportivo",
+      "gfr_api_football_id": 1470,
+      "gfr_team_name": "Cucuta",
+      "match": "token"
+    },
+    {
+      "espn_id": "7445",
+      "espn_name": "Internacional de Bogot\u00e1",
+      "gfr_api_football_id": 1458,
+      "gfr_team_name": "Bogota FC",
+      "match": "token"
+    },
+    {
+      "espn_id": "10309",
+      "espn_name": "Jaguares de C\u00f3rdoba",
+      "gfr_api_football_id": 1133,
+      "gfr_team_name": "Jaguares",
+      "match": "token"
+    },
+    {
+      "espn_id": "132447",
+      "espn_name": "Escorpiones Bel\u00e9n",
+      "gfr_api_football_id": 17377,
+      "gfr_team_name": "Escorpiones Bel\u00e9n",
+      "match": "exact"
+    },
+    {
+      "espn_id": "3585",
+      "espn_name": "AC Horsens",
+      "gfr_api_football_id": 404,
+      "gfr_team_name": "AC Horsens",
+      "match": "exact"
+    },
+    {
+      "espn_id": "7860",
+      "espn_name": "Lyngby Boldklub",
+      "gfr_api_football_id": 625,
+      "gfr_team_name": "Lyngby",
+      "match": "token"
+    },
+    {
+      "espn_id": "11550",
+      "espn_name": "Odense Boldklub",
+      "gfr_api_football_id": 405,
+      "gfr_team_name": "Odense",
+      "match": "token"
+    },
+    {
+      "espn_id": "11124",
+      "espn_name": "Guayaquil City FC",
+      "gfr_api_football_id": 1159,
+      "gfr_team_name": "Guayaquil City FC",
+      "match": "exact"
+    },
+    {
+      "espn_id": "131702",
+      "espn_name": "Leones",
+      "gfr_api_football_id": 19034,
+      "gfr_team_name": "Leones del Norte",
+      "match": "token"
+    },
+    {
+      "espn_id": "303",
+      "espn_name": "Rochdale",
+      "gfr_api_football_id": 1339,
+      "gfr_team_name": "Rochdale",
+      "match": "exact"
+    },
+    {
+      "espn_id": "315",
+      "espn_name": "York City",
+      "gfr_api_football_id": 1828,
+      "gfr_team_name": "York",
+      "match": "token"
+    },
+    {
+      "espn_id": "11487",
+      "espn_name": "CD Sabadell",
+      "gfr_api_football_id": 9593,
+      "gfr_team_name": "Sabadell",
+      "match": "exact"
+    },
+    {
+      "espn_id": "7320",
+      "espn_name": "Eldense",
+      "gfr_api_football_id": 9692,
+      "gfr_team_name": "Eldense",
+      "match": "exact"
+    },
+    {
+      "espn_id": "245",
+      "espn_name": "Tenerife",
+      "gfr_api_football_id": 719,
+      "gfr_team_name": "Tenerife",
+      "match": "exact"
+    },
+    {
+      "espn_id": "7869",
+      "espn_name": "Boulogne",
+      "gfr_api_football_id": 1299,
+      "gfr_team_name": "Boulogne",
+      "match": "exact"
+    },
+    {
+      "espn_id": "3170",
+      "espn_name": "Dijon FCO",
+      "gfr_api_football_id": 89,
+      "gfr_team_name": "Dijon",
+      "match": "token"
+    },
+    {
+      "espn_id": "272",
+      "espn_name": "Sochaux",
+      "gfr_api_football_id": 115,
+      "gfr_team_name": "Sochaux",
+      "match": "exact"
+    },
+    {
+      "espn_id": "123",
+      "espn_name": "Energie Cottbus",
+      "gfr_api_football_id": 1320,
+      "gfr_team_name": "Energie Cottbus",
+      "match": "exact"
+    },
+    {
+      "espn_id": "7013",
+      "espn_name": "VfL Osnabruck",
+      "gfr_api_football_id": 1324,
+      "gfr_team_name": "VfL Osnabr\u00fcck",
+      "match": "exact"
+    },
+    {
+      "espn_id": "2575",
+      "espn_name": "Iraklis",
+      "gfr_api_football_id": 17991,
+      "gfr_team_name": "Iraklis 1908",
+      "match": "exact"
+    },
+    {
+      "espn_id": "132429",
+      "espn_name": "Kalamata",
+      "gfr_api_football_id": 5046,
+      "gfr_team_name": "Kalamata",
+      "match": "exact"
+    },
+    {
+      "espn_id": "7111",
+      "espn_name": "JEF United Ichihara-Chiba",
+      "gfr_api_football_id": 301,
+      "gfr_team_name": "JEF United Chiba",
+      "match": "token"
+    },
+    {
+      "espn_id": "131701",
+      "espn_name": "Mito Hollyhock",
+      "gfr_api_football_id": 305,
+      "gfr_team_name": "Mito Hollyhock",
+      "match": "exact"
+    },
+    {
+      "espn_id": "19001",
+      "espn_name": "V-Varen Nagasaki",
+      "gfr_api_football_id": 285,
+      "gfr_team_name": "V-varen Nagasaki",
+      "match": "exact"
+    },
+    {
+      "espn_id": "21833",
+      "espn_name": "Abha",
+      "gfr_api_football_id": 2951,
+      "gfr_team_name": "Abha",
+      "match": "exact"
+    },
+    {
+      "espn_id": "131746",
+      "espn_name": "Al Diriyah",
+      "gfr_api_football_id": 26738,
+      "gfr_team_name": "Al Diriyah",
+      "match": "exact"
+    },
+    {
+      "espn_id": "21446",
+      "espn_name": "Al-Faisaly",
+      "gfr_api_football_id": 2930,
+      "gfr_team_name": "Al-Faisaly FC",
+      "match": "exact"
+    },
+    {
+      "espn_id": "130899",
+      "espn_name": "Neom SC",
+      "gfr_api_football_id": 10513,
+      "gfr_team_name": "NEOM",
+      "match": "exact"
+    },
+    {
+      "espn_id": "226",
+      "espn_name": "Atlante",
+      "gfr_api_football_id": 2312,
+      "gfr_team_name": "Atlante FC",
+      "match": "exact"
+    },
+    {
+      "espn_id": "3278",
+      "espn_name": "Aalesund",
+      "gfr_api_football_id": 757,
+      "gfr_team_name": "Aalesund",
+      "match": "exact"
+    },
+    {
+      "espn_id": "6750",
+      "espn_name": "IK Start",
+      "gfr_api_football_id": 334,
+      "gfr_team_name": "Start",
+      "match": "token"
+    },
+    {
+      "espn_id": "987",
+      "espn_name": "Lillestrom",
+      "gfr_api_football_id": 321,
+      "gfr_team_name": "Lillestrom",
+      "match": "exact"
+    },
+    {
+      "espn_id": "10080",
+      "espn_name": "Rubio \u00d1\u00fa",
+      "gfr_api_football_id": 1185,
+      "gfr_team_name": "Rubio NU",
+      "match": "exact"
+    },
+    {
+      "espn_id": "22350",
+      "espn_name": "Kruger United",
+      "gfr_api_football_id": 24759,
+      "gfr_team_name": "Kruger United",
+      "match": "exact"
+    },
+    {
+      "espn_id": "21539",
+      "espn_name": "Fakel Voronezh",
+      "gfr_api_football_id": 1993,
+      "gfr_team_name": "Fakel",
+      "match": "token"
+    },
+    {
+      "espn_id": "20704",
+      "espn_name": "FC Rotor Volgograd",
+      "gfr_api_football_id": 2010,
+      "gfr_team_name": "Rotor Volgograd",
+      "match": "exact"
+    },
+    {
+      "espn_id": "15582",
+      "espn_name": "FC Ural Ekaterinburg",
+      "gfr_api_football_id": 1084,
+      "gfr_team_name": "Ural",
+      "match": "token"
+    },
+    {
+      "espn_id": "403",
+      "espn_name": "Alloa Athletic",
+      "gfr_api_football_id": 1391,
+      "gfr_team_name": "Alloa Athletic",
+      "match": "exact"
+    },
+    {
+      "espn_id": "406",
+      "espn_name": "Queen of the South",
+      "gfr_api_football_id": 1384,
+      "gfr_team_name": "Queen of the South",
+      "match": "exact"
+    },
+    {
+      "espn_id": "3052",
+      "espn_name": "Kalmar FF",
+      "gfr_api_football_id": 374,
+      "gfr_team_name": "Kalmar FF",
+      "match": "exact"
+    },
+    {
+      "espn_id": "22163",
+      "espn_name": "V\u00e4ster\u00e5s SK",
+      "gfr_api_football_id": 2241,
+      "gfr_team_name": "Vasteras SK FK",
+      "match": "exact"
+    },
+    {
+      "espn_id": "131552",
+      "espn_name": "\u00d6rgryte IS",
+      "gfr_api_football_id": 2166,
+      "gfr_team_name": "Orgryte IS",
+      "match": "exact"
+    },
+    {
+      "espn_id": "132335",
+      "espn_name": "Amed SFK",
+      "gfr_api_football_id": 3579,
+      "gfr_team_name": "Amed",
+      "match": "token"
+    },
+    {
+      "espn_id": "132334",
+      "espn_name": "\u00c7orum FK",
+      "gfr_api_football_id": 6343,
+      "gfr_team_name": "\u00c7orum FK",
+      "match": "exact"
+    },
+    {
+      "espn_id": "21403",
+      "espn_name": "Albion FC",
+      "gfr_api_football_id": 2378,
+      "gfr_team_name": "Albion FC",
+      "match": "exact"
+    },
+    {
+      "espn_id": "131688",
+      "espn_name": "Central Espa\u00f1ol F\u00fatbol Club",
+      "gfr_api_football_id": 2368,
+      "gfr_team_name": "Central Espanol",
+      "match": "token"
+    },
+    {
+      "espn_id": "10000",
+      "espn_name": "Deportivo Maldonado",
+      "gfr_api_football_id": 2370,
+      "gfr_team_name": "Deportivo Maldonado",
+      "match": "exact"
+    },
+    {
+      "espn_id": "131578",
+      "espn_name": "Sporting JAX",
+      "gfr_api_football_id": 25959,
+      "gfr_team_name": "Sporting JAX",
+      "match": "exact"
+    },
+    {
+      "espn_id": "5268",
+      "espn_name": "Trujillanos",
+      "gfr_api_football_id": 2815,
+      "gfr_team_name": "Trujillanos FC",
+      "match": "exact"
+    }
+  ],
   "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
-      "espn_id": "131746",
-      "espn_name": "Al Diriyah",
-      "gfr_api_football_id": 2981,
-      "gfr_team_name": "Al Riyadh",
+      "espn_id": "131704",
+      "espn_name": "Chongqing Tonglianglong",
+      "gfr_api_football_id": 21262,
+      "gfr_team_name": "Chongqing Tongliang Long",
+      "country": "China",
+      "score": 0.979
+    },
+    {
+      "espn_id": "21964",
+      "espn_name": "Al Hazem",
+      "gfr_api_football_id": 2945,
+      "gfr_team_name": "Al-Hazm",
       "country": "Saudi Arabia",
-      "score": 0.842
+      "score": 0.933
     }
   ],
   "unmatched_leagues": [
@@ -77,12 +474,6 @@
       "gender": "men"
     },
     {
-      "espn_slug": "eng.5",
-      "espn_name": "English National League",
-      "country": "England",
-      "gender": "men"
-    },
-    {
       "espn_slug": "usa.ncaa.m.1",
       "espn_name": "NCAA Men's Soccer",
       "country": "USA",
@@ -143,12 +534,6 @@
       "gender": "men"
     },
     {
-      "espn_slug": "uru.2",
-      "espn_name": "Segunda Divisi\u00f3n de Uruguay",
-      "country": "Uruguay",
-      "gender": "men"
-    },
-    {
       "espn_slug": "bol.ply.rel",
       "espn_name": "Bolivian Liga Profesional Promotion/Relegation Playoffs",
       "country": "Bolivia",
@@ -180,23 +565,7 @@
       "country": "Argentina",
       "gender": "men",
       "espn_league_slug": "arg.1",
-      "best_score": 0.606
-    },
-    {
-      "espn_id": "21540",
-      "espn_name": "Austria Lustenau",
-      "country": "Austria",
-      "gender": "men",
-      "espn_league_slug": "aut.1",
-      "best_score": 0.714
-    },
-    {
-      "espn_id": "6051",
-      "espn_name": "Real Potos\u00ed",
-      "country": "Bolivia",
-      "gender": "men",
-      "espn_league_slug": "bol.1",
-      "best_score": 0.692
+      "best_score": 0.769
     },
     {
       "espn_id": "17333",
@@ -231,30 +600,6 @@
       "best_score": 0.571
     },
     {
-      "espn_id": "8110",
-      "espn_name": "Deportes Concepcion",
-      "country": "Chile",
-      "gender": "men",
-      "espn_league_slug": "chi.1",
-      "best_score": 0.629
-    },
-    {
-      "espn_id": "5362",
-      "espn_name": "Universidad de Concepci\u00f3n",
-      "country": "Chile",
-      "gender": "men",
-      "espn_league_slug": "chi.1",
-      "best_score": 0.718
-    },
-    {
-      "espn_id": "131704",
-      "espn_name": "Chongqing Tonglianglong",
-      "country": "China",
-      "gender": "men",
-      "espn_league_slug": "chn.1",
-      "best_score": 0.462
-    },
-    {
       "espn_id": "131705",
       "espn_name": "Liaoning Tieren",
       "country": "China",
@@ -269,78 +614,6 @@
       "gender": "men",
       "espn_league_slug": "chn.1",
       "best_score": 0.718
-    },
-    {
-      "espn_id": "6101",
-      "espn_name": "C\u00facuta Deportivo",
-      "country": "Colombia",
-      "gender": "men",
-      "espn_league_slug": "col.1",
-      "best_score": 0.6
-    },
-    {
-      "espn_id": "7445",
-      "espn_name": "Internacional de Bogot\u00e1",
-      "country": "Colombia",
-      "gender": "men",
-      "espn_league_slug": "col.1",
-      "best_score": 0.486
-    },
-    {
-      "espn_id": "10309",
-      "espn_name": "Jaguares de C\u00f3rdoba",
-      "country": "Colombia",
-      "gender": "men",
-      "espn_league_slug": "col.1",
-      "best_score": 0.645
-    },
-    {
-      "espn_id": "132447",
-      "espn_name": "Escorpiones Bel\u00e9n",
-      "country": "Costa Rica",
-      "gender": "men",
-      "espn_league_slug": "crc.1",
-      "best_score": 0.533
-    },
-    {
-      "espn_id": "3585",
-      "espn_name": "AC Horsens",
-      "country": "Denmark",
-      "gender": "men",
-      "espn_league_slug": "den.1",
-      "best_score": 0.5
-    },
-    {
-      "espn_id": "7860",
-      "espn_name": "Lyngby Boldklub",
-      "country": "Denmark",
-      "gender": "men",
-      "espn_league_slug": "den.1",
-      "best_score": 0.273
-    },
-    {
-      "espn_id": "11550",
-      "espn_name": "Odense Boldklub",
-      "country": "Denmark",
-      "gender": "men",
-      "espn_league_slug": "den.1",
-      "best_score": 0.385
-    },
-    {
-      "espn_id": "11124",
-      "espn_name": "Guayaquil City FC",
-      "country": "Ecuador",
-      "gender": "men",
-      "espn_league_slug": "ecu.1",
-      "best_score": 0.435
-    },
-    {
-      "espn_id": "131702",
-      "espn_name": "Leones",
-      "country": "Ecuador",
-      "gender": "men",
-      "espn_league_slug": "ecu.1",
-      "best_score": 0.5
     },
     {
       "espn_id": "280",
@@ -359,52 +632,12 @@
       "best_score": 0.69
     },
     {
-      "espn_id": "303",
-      "espn_name": "Rochdale",
-      "country": "England",
-      "gender": "men",
-      "espn_league_slug": "eng.4",
-      "best_score": 0.533
-    },
-    {
-      "espn_id": "315",
-      "espn_name": "York City",
-      "country": "England",
-      "gender": "men",
-      "espn_league_slug": "eng.4",
-      "best_score": 0.737
-    },
-    {
-      "espn_id": "11487",
-      "espn_name": "CD Sabadell",
-      "country": "Spain",
-      "gender": "men",
-      "espn_league_slug": "esp.2",
-      "best_score": 0.533
-    },
-    {
-      "espn_id": "7320",
-      "espn_name": "Eldense",
-      "country": "Spain",
-      "gender": "men",
-      "espn_league_slug": "esp.2",
-      "best_score": 0.5
-    },
-    {
       "espn_id": "131858",
       "espn_name": "RC Celta Fortuna",
       "country": "Spain",
       "gender": "men",
       "espn_league_slug": "esp.2",
       "best_score": 0.56
-    },
-    {
-      "espn_id": "245",
-      "espn_name": "Tenerife",
-      "country": "Spain",
-      "gender": "men",
-      "espn_league_slug": "esp.2",
-      "best_score": 0.429
     },
     {
       "espn_id": "21378",
@@ -423,30 +656,6 @@
       "best_score": 0.5
     },
     {
-      "espn_id": "7869",
-      "espn_name": "Boulogne",
-      "country": "France",
-      "gender": "men",
-      "espn_league_slug": "fra.2",
-      "best_score": 0.625
-    },
-    {
-      "espn_id": "3170",
-      "espn_name": "Dijon FCO",
-      "country": "France",
-      "gender": "men",
-      "espn_league_slug": "fra.2",
-      "best_score": 0.533
-    },
-    {
-      "espn_id": "272",
-      "espn_name": "Sochaux",
-      "country": "France",
-      "gender": "men",
-      "espn_league_slug": "fra.2",
-      "best_score": 0.429
-    },
-    {
       "espn_id": "131875",
       "espn_name": "Saint-Malo",
       "country": "France",
@@ -461,38 +670,6 @@
       "gender": "women",
       "espn_league_slug": "fra.w.1",
       "best_score": 0.444
-    },
-    {
-      "espn_id": "123",
-      "espn_name": "Energie Cottbus",
-      "country": "Germany",
-      "gender": "men",
-      "espn_league_slug": "ger.2",
-      "best_score": 0.348
-    },
-    {
-      "espn_id": "7013",
-      "espn_name": "VfL Osnabruck",
-      "country": "Germany",
-      "gender": "men",
-      "espn_league_slug": "ger.2",
-      "best_score": 0.444
-    },
-    {
-      "espn_id": "2575",
-      "espn_name": "Iraklis",
-      "country": "Greece",
-      "gender": "men",
-      "espn_league_slug": "gre.1",
-      "best_score": 0.545
-    },
-    {
-      "espn_id": "132429",
-      "espn_name": "Kalamata",
-      "country": "Greece",
-      "gender": "men",
-      "espn_league_slug": "gre.1",
-      "best_score": 0.4
     },
     {
       "espn_id": "132448",
@@ -583,70 +760,6 @@
       "best_score": 0.583
     },
     {
-      "espn_id": "7111",
-      "espn_name": "JEF United Ichihara-Chiba",
-      "country": "Japan",
-      "gender": "men",
-      "espn_league_slug": "jpn.1",
-      "best_score": 0.364
-    },
-    {
-      "espn_id": "131701",
-      "espn_name": "Mito Hollyhock",
-      "country": "Japan",
-      "gender": "men",
-      "espn_league_slug": "jpn.1",
-      "best_score": 0.345
-    },
-    {
-      "espn_id": "19001",
-      "espn_name": "V-Varen Nagasaki",
-      "country": "Japan",
-      "gender": "men",
-      "espn_league_slug": "jpn.1",
-      "best_score": 0.516
-    },
-    {
-      "espn_id": "21833",
-      "espn_name": "Abha",
-      "country": "Saudi Arabia",
-      "gender": "men",
-      "espn_league_slug": "ksa.1",
-      "best_score": 0.5
-    },
-    {
-      "espn_id": "21964",
-      "espn_name": "Al Hazem",
-      "country": "Saudi Arabia",
-      "gender": "men",
-      "espn_league_slug": "ksa.1",
-      "best_score": 0.667
-    },
-    {
-      "espn_id": "21446",
-      "espn_name": "Al-Faisaly",
-      "country": "Saudi Arabia",
-      "gender": "men",
-      "espn_league_slug": "ksa.1",
-      "best_score": 0.667
-    },
-    {
-      "espn_id": "130899",
-      "espn_name": "Neom SC",
-      "country": "Saudi Arabia",
-      "gender": "men",
-      "espn_league_slug": "ksa.1",
-      "best_score": 0.222
-    },
-    {
-      "espn_id": "226",
-      "espn_name": "Atlante",
-      "country": "Mexico",
-      "gender": "men",
-      "espn_league_slug": "mex.1",
-      "best_score": 0.667
-    },
-    {
       "espn_id": "131428",
       "espn_name": "De Graafschap",
       "country": "Netherlands",
@@ -655,44 +768,12 @@
       "best_score": 0.353
     },
     {
-      "espn_id": "3278",
-      "espn_name": "Aalesund",
-      "country": "Norway",
-      "gender": "men",
-      "espn_league_slug": "nor.1",
-      "best_score": 0.706
-    },
-    {
-      "espn_id": "6750",
-      "espn_name": "IK Start",
-      "country": "Norway",
-      "gender": "men",
-      "espn_league_slug": "nor.1",
-      "best_score": 0.526
-    },
-    {
-      "espn_id": "987",
-      "espn_name": "Lillestrom",
-      "country": "Norway",
-      "gender": "men",
-      "espn_league_slug": "nor.1",
-      "best_score": 0.533
-    },
-    {
-      "espn_id": "10080",
-      "espn_name": "Rubio \u00d1\u00fa",
-      "country": "Paraguay",
-      "gender": "men",
-      "espn_league_slug": "par.1",
-      "best_score": 0.417
-    },
-    {
       "espn_id": "17671",
       "espn_name": "Sportivo San Lorenzo",
       "country": "Paraguay",
       "gender": "men",
       "espn_league_slug": "par.1",
-      "best_score": 0.722
+      "best_score": 0.824
     },
     {
       "espn_id": "131654",
@@ -700,14 +781,6 @@
       "country": "Peru",
       "gender": "men",
       "espn_league_slug": "per.1",
-      "best_score": 0.632
-    },
-    {
-      "espn_id": "22350",
-      "espn_name": "Kruger United",
-      "country": "South Africa",
-      "gender": "men",
-      "espn_league_slug": "rsa.1",
       "best_score": 0.667
     },
     {
@@ -719,36 +792,12 @@
       "best_score": 0.316
     },
     {
-      "espn_id": "21539",
-      "espn_name": "Fakel Voronezh",
-      "country": "Russia",
-      "gender": "men",
-      "espn_league_slug": "rus.1",
-      "best_score": 0.444
-    },
-    {
-      "espn_id": "20704",
-      "espn_name": "FC Rotor Volgograd",
-      "country": "Russia",
-      "gender": "men",
-      "espn_league_slug": "rus.1.promotion.relegation",
-      "best_score": 0.476
-    },
-    {
-      "espn_id": "15582",
-      "espn_name": "FC Ural Ekaterinburg",
-      "country": "Russia",
-      "gender": "men",
-      "espn_league_slug": "rus.1.promotion.relegation",
-      "best_score": 0.56
-    },
-    {
       "espn_id": "253",
       "espn_name": "Inverness Caledonian Thistle",
       "country": "Scotland",
       "gender": "men",
       "espn_league_slug": "sco.2",
-      "best_score": 0.465
+      "best_score": 0.6
     },
     {
       "espn_id": "405",
@@ -756,55 +805,7 @@
       "country": "Scotland",
       "gender": "men",
       "espn_league_slug": "sco.2",
-      "best_score": 0.364
-    },
-    {
-      "espn_id": "403",
-      "espn_name": "Alloa Athletic",
-      "country": "Scotland",
-      "gender": "men",
-      "espn_league_slug": "sco.2.promotion.relegation",
-      "best_score": 0.588
-    },
-    {
-      "espn_id": "406",
-      "espn_name": "Queen of the South",
-      "country": "Scotland",
-      "gender": "men",
-      "espn_league_slug": "sco.2.promotion.relegation",
-      "best_score": 0.538
-    },
-    {
-      "espn_id": "3052",
-      "espn_name": "Kalmar FF",
-      "country": "Sweden",
-      "gender": "men",
-      "espn_league_slug": "swe.1",
-      "best_score": 0.706
-    },
-    {
-      "espn_id": "22163",
-      "espn_name": "V\u00e4ster\u00e5s SK",
-      "country": "Sweden",
-      "gender": "men",
-      "espn_league_slug": "swe.1",
-      "best_score": 0.615
-    },
-    {
-      "espn_id": "131552",
-      "espn_name": "\u00d6rgryte IS",
-      "country": "Sweden",
-      "gender": "men",
-      "espn_league_slug": "swe.1",
-      "best_score": 0.429
-    },
-    {
-      "espn_id": "132335",
-      "espn_name": "Amed SFK",
-      "country": "Turkiye",
-      "gender": "men",
-      "espn_league_slug": "tur.1",
-      "best_score": 0.353
+      "best_score": 0.381
     },
     {
       "espn_id": "19267",
@@ -812,39 +813,7 @@
       "country": "Turkiye",
       "gender": "men",
       "espn_league_slug": "tur.1",
-      "best_score": 0.308
-    },
-    {
-      "espn_id": "132334",
-      "espn_name": "\u00c7orum FK",
-      "country": "Turkiye",
-      "gender": "men",
-      "espn_league_slug": "tur.1",
-      "best_score": 0.375
-    },
-    {
-      "espn_id": "21403",
-      "espn_name": "Albion FC",
-      "country": "Uruguay",
-      "gender": "men",
-      "espn_league_slug": "uru.1",
-      "best_score": 0.615
-    },
-    {
-      "espn_id": "131688",
-      "espn_name": "Central Espa\u00f1ol F\u00fatbol Club",
-      "country": "Uruguay",
-      "gender": "men",
-      "espn_league_slug": "uru.1",
-      "best_score": 0.359
-    },
-    {
-      "espn_id": "10000",
-      "espn_name": "Deportivo Maldonado",
-      "country": "Uruguay",
-      "gender": "men",
-      "espn_league_slug": "uru.1",
-      "best_score": 0.444
+      "best_score": 0.667
     },
     {
       "espn_id": "131562",
@@ -871,28 +840,188 @@
       "best_score": 0.4
     },
     {
-      "espn_id": "131578",
-      "espn_name": "Sporting JAX",
-      "country": "USA",
-      "gender": "men",
-      "espn_league_slug": "usa.usl.1",
-      "best_score": 0.783
-    },
-    {
-      "espn_id": "5268",
-      "espn_name": "Trujillanos",
-      "country": "Venezuela",
-      "gender": "men",
-      "espn_league_slug": "ven.1",
-      "best_score": 0.56
-    },
-    {
       "espn_id": "10094",
       "espn_name": "UCV FC",
       "country": "Venezuela",
       "gender": "men",
       "espn_league_slug": "ven.1",
-      "best_score": 0.2
+      "best_score": 0.25
+    },
+    {
+      "espn_id": "13884",
+      "espn_name": "AFC Fylde",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.267
+    },
+    {
+      "espn_id": "10167",
+      "espn_name": "AFC Hornchurch",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.3
+    },
+    {
+      "espn_id": "632",
+      "espn_name": "Aldershot Town",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.286
+    },
+    {
+      "espn_id": "633",
+      "espn_name": "Altrincham",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.4
+    },
+    {
+      "espn_id": "2595",
+      "espn_name": "Boreham Wood",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.375
+    },
+    {
+      "espn_id": "3256",
+      "espn_name": "Boston United",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.333
+    },
+    {
+      "espn_id": "322",
+      "espn_name": "Carlisle United",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.4
+    },
+    {
+      "espn_id": "3897",
+      "espn_name": "Eastleigh",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.4
+    },
+    {
+      "espn_id": "312",
+      "espn_name": "FC Halifax Town",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.353
+    },
+    {
+      "espn_id": "282",
+      "espn_name": "Forest Green Rovers",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.414
+    },
+    {
+      "espn_id": "3138",
+      "espn_name": "Gateshead",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.375
+    },
+    {
+      "espn_id": "323",
+      "espn_name": "Hartlepool United",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.435
+    },
+    {
+      "espn_id": "319",
+      "espn_name": "Kidderminster Harriers",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.37
+    },
+    {
+      "espn_id": "313",
+      "espn_name": "Scunthorpe United",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.32
+    },
+    {
+      "espn_id": "13061",
+      "espn_name": "Solihull Moors",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.364
+    },
+    {
+      "espn_id": "310",
+      "espn_name": "Southend United",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.348
+    },
+    {
+      "espn_id": "3231",
+      "espn_name": "Sutton United",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.333
+    },
+    {
+      "espn_id": "645",
+      "espn_name": "Tamworth",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.333
+    },
+    {
+      "espn_id": "3887",
+      "espn_name": "Wealdstone",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.353
+    },
+    {
+      "espn_id": "290",
+      "espn_name": "Woking",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.375
+    },
+    {
+      "espn_id": "128663",
+      "espn_name": "Worthing",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.556
+    },
+    {
+      "espn_id": "284",
+      "espn_name": "Yeovil Town",
+      "country": "Italy",
+      "gender": "women",
+      "espn_league_slug": "eng.5",
+      "best_score": 0.375
     }
   ],
   "unmatched_nationals": [
@@ -934,92 +1063,20 @@
   ],
   "league_disagreements": [
     {
-      "espn_id": "5786",
-      "espn_name": "KV Kortrijk",
-      "espn_league_slug": "bel.1",
+      "espn_id": "7878",
+      "espn_name": "Dender",
+      "espn_league_slug": "bel.promotion.relegation",
       "expected_gfr_league": "Pro League",
       "actual_gfr_league": "Challenger Pro League",
-      "gfr_team_name": "Kortrijk"
+      "gfr_team_name": "Dender"
     },
     {
-      "espn_id": "22269",
-      "espn_name": "Lommel SK",
-      "espn_league_slug": "bel.1",
-      "expected_gfr_league": "Pro League",
-      "actual_gfr_league": "Challenger Pro League",
-      "gfr_team_name": "Lommel"
-    },
-    {
-      "espn_id": "13450",
-      "espn_name": "Waasland-Beveren",
-      "espn_league_slug": "bel.1",
-      "expected_gfr_league": "Pro League",
-      "actual_gfr_league": "Challenger Pro League",
-      "gfr_team_name": "SK Beveren"
-    },
-    {
-      "espn_id": "3458",
-      "espn_name": "Athletico-PR",
-      "espn_league_slug": "bra.1",
-      "expected_gfr_league": "Serie A",
-      "actual_gfr_league": "Serie B",
-      "gfr_team_name": "Athletico Paranaense"
-    },
-    {
-      "espn_id": "9318",
-      "espn_name": "Chapecoense",
-      "espn_league_slug": "bra.1",
-      "expected_gfr_league": "Serie A",
-      "actual_gfr_league": "Serie B",
-      "gfr_team_name": "Chapecoense"
-    },
-    {
-      "espn_id": "3456",
-      "espn_name": "Coritiba",
-      "espn_league_slug": "bra.1",
-      "expected_gfr_league": "Serie A",
-      "actual_gfr_league": "Serie B",
-      "gfr_team_name": "Coritiba"
-    },
-    {
-      "espn_id": "4936",
-      "espn_name": "Remo",
-      "espn_league_slug": "bra.1",
-      "expected_gfr_league": "Serie A",
-      "actual_gfr_league": "Serie B",
-      "gfr_team_name": "Remo"
-    },
-    {
-      "espn_id": "9969",
-      "espn_name": "Cear\u00e1",
-      "espn_league_slug": "bra.2",
-      "expected_gfr_league": "Serie B",
-      "actual_gfr_league": "Serie A",
-      "gfr_team_name": "Ceara"
-    },
-    {
-      "espn_id": "6272",
-      "espn_name": "Fortaleza",
-      "espn_league_slug": "bra.2",
-      "expected_gfr_league": "Serie B",
-      "actual_gfr_league": "Serie A",
-      "gfr_team_name": "Fortaleza"
-    },
-    {
-      "espn_id": "6270",
-      "espn_name": "Juventude",
-      "espn_league_slug": "bra.2",
-      "expected_gfr_league": "Serie B",
-      "actual_gfr_league": "Serie A",
-      "gfr_team_name": "Juventude"
-    },
-    {
-      "espn_id": "7635",
-      "espn_name": "Sport",
-      "espn_league_slug": "bra.2",
-      "expected_gfr_league": "Serie B",
-      "actual_gfr_league": "Serie A",
-      "gfr_team_name": "Sport Recife"
+      "espn_id": "7445",
+      "espn_name": "Internacional de Bogot\u00e1",
+      "espn_league_slug": "col.1",
+      "expected_gfr_league": "Primera A",
+      "actual_gfr_league": "Primera B",
+      "gfr_team_name": "Bogota FC"
     },
     {
       "espn_id": "7853",
@@ -1028,166 +1085,6 @@
       "expected_gfr_league": "Superliga",
       "actual_gfr_league": "Elitedivisionen",
       "gfr_team_name": "AGF"
-    },
-    {
-      "espn_id": "388",
-      "espn_name": "Coventry City",
-      "espn_league_slug": "eng.1",
-      "expected_gfr_league": "Premier League",
-      "actual_gfr_league": "Championship",
-      "gfr_team_name": "Coventry City"
-    },
-    {
-      "espn_id": "306",
-      "espn_name": "Hull City",
-      "espn_league_slug": "eng.1",
-      "expected_gfr_league": "Premier League",
-      "actual_gfr_league": "Championship",
-      "gfr_team_name": "Hull City"
-    },
-    {
-      "espn_id": "373",
-      "espn_name": "Ipswich Town",
-      "espn_league_slug": "eng.1",
-      "expected_gfr_league": "Premier League",
-      "actual_gfr_league": "Championship",
-      "gfr_team_name": "Ipswich Town"
-    },
-    {
-      "espn_id": "358",
-      "espn_name": "Bolton Wanderers",
-      "espn_league_slug": "eng.2",
-      "expected_gfr_league": "Championship",
-      "actual_gfr_league": "League One",
-      "gfr_team_name": "Bolton Wanderers"
-    },
-    {
-      "espn_id": "379",
-      "espn_name": "Burnley",
-      "espn_league_slug": "eng.2",
-      "expected_gfr_league": "Championship",
-      "actual_gfr_league": "Premier League",
-      "gfr_team_name": "Burnley"
-    },
-    {
-      "espn_id": "347",
-      "espn_name": "Cardiff City",
-      "espn_league_slug": "eng.2",
-      "expected_gfr_league": "Championship",
-      "actual_gfr_league": "League One",
-      "gfr_team_name": "Cardiff City"
-    },
-    {
-      "espn_id": "314",
-      "espn_name": "Lincoln City",
-      "espn_league_slug": "eng.2",
-      "expected_gfr_league": "Championship",
-      "actual_gfr_league": "League One",
-      "gfr_team_name": "Lincoln City"
-    },
-    {
-      "espn_id": "371",
-      "espn_name": "West Ham United",
-      "espn_league_slug": "eng.2",
-      "expected_gfr_league": "Championship",
-      "actual_gfr_league": "Premier League",
-      "gfr_team_name": "West Ham"
-    },
-    {
-      "espn_id": "380",
-      "espn_name": "Wolverhampton Wanderers",
-      "espn_league_slug": "eng.2",
-      "expected_gfr_league": "Championship",
-      "actual_gfr_league": "Premier League",
-      "gfr_team_name": "Wolves"
-    },
-    {
-      "espn_id": "3129",
-      "espn_name": "Bromley",
-      "espn_league_slug": "eng.3",
-      "expected_gfr_league": "League One",
-      "actual_gfr_league": "League Two",
-      "gfr_team_name": "Bromley"
-    },
-    {
-      "espn_id": "351",
-      "espn_name": "Cambridge United",
-      "espn_league_slug": "eng.3",
-      "expected_gfr_league": "League One",
-      "actual_gfr_league": "League Two",
-      "gfr_team_name": "Cambridge United"
-    },
-    {
-      "espn_id": "375",
-      "espn_name": "Leicester City",
-      "espn_league_slug": "eng.3",
-      "expected_gfr_league": "League One",
-      "actual_gfr_league": "Championship",
-      "gfr_team_name": "Leicester City"
-    },
-    {
-      "espn_id": "390",
-      "espn_name": "Milton Keynes Dons",
-      "espn_league_slug": "eng.3",
-      "expected_gfr_league": "League One",
-      "actual_gfr_league": "League Two",
-      "gfr_team_name": "MK Dons"
-    },
-    {
-      "espn_id": "340",
-      "espn_name": "Notts County",
-      "espn_league_slug": "eng.3",
-      "expected_gfr_league": "League One",
-      "actual_gfr_league": "League Two",
-      "gfr_team_name": "Notts County"
-    },
-    {
-      "espn_id": "311",
-      "espn_name": "Oxford United",
-      "espn_league_slug": "eng.3",
-      "expected_gfr_league": "League One",
-      "actual_gfr_league": "Championship",
-      "gfr_team_name": "Oxford United"
-    },
-    {
-      "espn_id": "399",
-      "espn_name": "Sheffield Wednesday",
-      "espn_league_slug": "eng.3",
-      "expected_gfr_league": "League One",
-      "actual_gfr_league": "Championship",
-      "gfr_team_name": "Sheffield Wednesday"
-    },
-    {
-      "espn_id": "324",
-      "espn_name": "Exeter City",
-      "espn_league_slug": "eng.4",
-      "expected_gfr_league": "League Two",
-      "actual_gfr_league": "League One",
-      "gfr_team_name": "Exeter City"
-    },
-    {
-      "espn_id": "353",
-      "espn_name": "Northampton Town",
-      "espn_league_slug": "eng.4",
-      "expected_gfr_league": "League Two",
-      "actual_gfr_league": "League One",
-      "gfr_team_name": "Northampton Town"
-    },
-    {
-      "espn_id": "348",
-      "espn_name": "Port Vale",
-      "espn_league_slug": "eng.4",
-      "expected_gfr_league": "League Two",
-      "actual_gfr_league": "League One",
-      "gfr_team_name": "Port Vale"
-    },
-    {
-      "espn_id": "402",
-      "espn_name": "Rotherham United",
-      "espn_league_slug": "eng.4",
-      "expected_gfr_league": "League Two",
-      "actual_gfr_league": "League One",
-      "gfr_team_name": "Rotherham United"
     },
     {
       "espn_id": "19968",
@@ -1214,260 +1111,68 @@
       "gfr_team_name": "Crystal Palace"
     },
     {
-      "espn_id": "90",
-      "espn_name": "Deportivo La Coru\u00f1a",
-      "espn_league_slug": "esp.1",
-      "expected_gfr_league": "LaLiga",
-      "actual_gfr_league": "LaLiga 2",
-      "gfr_team_name": "Deportivo La Coruna"
+      "espn_id": "22530",
+      "espn_name": "Bryne",
+      "espn_league_slug": "nor.1.promotion.relegation",
+      "expected_gfr_league": "Eliteserien",
+      "actual_gfr_league": "1. Division",
+      "gfr_team_name": "Bryne"
     },
     {
-      "espn_id": "99",
-      "espn_name": "M\u00e1laga",
-      "espn_league_slug": "esp.1",
-      "expected_gfr_league": "LaLiga",
-      "actual_gfr_league": "LaLiga 2",
-      "gfr_team_name": "Malaga"
+      "espn_id": "20704",
+      "espn_name": "FC Rotor Volgograd",
+      "espn_league_slug": "rus.1.promotion.relegation",
+      "expected_gfr_league": "Premier League",
+      "actual_gfr_league": "First League",
+      "gfr_team_name": "Rotor Volgograd"
     },
     {
-      "espn_id": "87",
-      "espn_name": "Racing Santander",
-      "espn_league_slug": "esp.1",
-      "expected_gfr_league": "LaLiga",
-      "actual_gfr_league": "LaLiga 2",
-      "gfr_team_name": "Racing Santander"
+      "espn_id": "15582",
+      "espn_name": "FC Ural Ekaterinburg",
+      "espn_league_slug": "rus.1.promotion.relegation",
+      "expected_gfr_league": "Premier League",
+      "actual_gfr_league": "First League",
+      "gfr_team_name": "Ural"
     },
     {
-      "espn_id": "9812",
-      "espn_name": "Girona",
-      "espn_league_slug": "esp.2",
-      "expected_gfr_league": "LaLiga 2",
-      "actual_gfr_league": "LaLiga",
-      "gfr_team_name": "Girona"
-    },
-    {
-      "espn_id": "84",
-      "espn_name": "Mallorca",
-      "espn_league_slug": "esp.2",
-      "expected_gfr_league": "LaLiga 2",
-      "actual_gfr_league": "LaLiga",
-      "gfr_team_name": "Mallorca"
-    },
-    {
-      "espn_id": "92",
-      "espn_name": "Real Oviedo",
-      "espn_league_slug": "esp.2",
-      "expected_gfr_league": "LaLiga 2",
-      "actual_gfr_league": "LaLiga",
-      "gfr_team_name": "Real Oviedo"
-    },
-    {
-      "espn_id": "2697",
-      "espn_name": "Le Mans",
-      "espn_league_slug": "fra.1",
-      "expected_gfr_league": "Ligue 1",
-      "actual_gfr_league": "Ligue 2",
-      "gfr_team_name": "Le Mans"
-    },
-    {
-      "espn_id": "170",
-      "espn_name": "Troyes",
-      "espn_league_slug": "fra.1",
-      "expected_gfr_league": "Ligue 1",
-      "actual_gfr_league": "Ligue 2",
-      "gfr_team_name": "Troyes"
-    },
-    {
-      "espn_id": "177",
-      "espn_name": "Metz",
-      "espn_league_slug": "fra.2",
-      "expected_gfr_league": "Ligue 2",
-      "actual_gfr_league": "Ligue 1",
-      "gfr_team_name": "Metz"
-    },
-    {
-      "espn_id": "165",
-      "espn_name": "Nantes",
-      "espn_league_slug": "fra.2",
-      "expected_gfr_league": "Ligue 2",
-      "actual_gfr_league": "Ligue 1",
-      "gfr_team_name": "Nantes"
-    },
-    {
-      "espn_id": "3307",
-      "espn_name": "SC Paderborn 07",
-      "espn_league_slug": "ger.1",
-      "expected_gfr_league": "Bundesliga",
-      "actual_gfr_league": "2. Bundesliga",
-      "gfr_team_name": "Paderborn"
-    },
-    {
-      "espn_id": "10388",
-      "espn_name": "SV Elversberg",
-      "espn_league_slug": "ger.1",
-      "expected_gfr_league": "Bundesliga",
-      "actual_gfr_league": "2. Bundesliga",
-      "gfr_team_name": "Elversberg"
-    },
-    {
-      "espn_id": "133",
-      "espn_name": "Schalke 04",
-      "espn_league_slug": "ger.1",
-      "expected_gfr_league": "Bundesliga",
-      "actual_gfr_league": "2. Bundesliga",
-      "gfr_team_name": "Schalke 04"
-    },
-    {
-      "espn_id": "6418",
-      "espn_name": "1. FC Heidenheim 1846",
-      "espn_league_slug": "ger.2",
-      "expected_gfr_league": "2. Bundesliga",
-      "actual_gfr_league": "Bundesliga",
-      "gfr_team_name": "Heidenheim"
-    },
-    {
-      "espn_id": "270",
-      "espn_name": "St. Pauli",
-      "espn_league_slug": "ger.2",
-      "expected_gfr_league": "2. Bundesliga",
-      "actual_gfr_league": "Bundesliga",
-      "gfr_team_name": "St. Pauli"
-    },
-    {
-      "espn_id": "138",
-      "espn_name": "VfL Wolfsburg",
-      "espn_league_slug": "ger.2",
-      "expected_gfr_league": "2. Bundesliga",
-      "actual_gfr_league": "Bundesliga",
-      "gfr_team_name": "Wolfsburg"
-    },
-    {
-      "espn_id": "4057",
-      "espn_name": "Frosinone",
-      "espn_league_slug": "ita.1",
-      "expected_gfr_league": "Serie A",
-      "actual_gfr_league": "Serie B",
-      "gfr_team_name": "Frosinone"
-    },
-    {
-      "espn_id": "4007",
-      "espn_name": "Monza",
-      "espn_league_slug": "ita.1",
-      "expected_gfr_league": "Serie A",
-      "actual_gfr_league": "Serie B",
-      "gfr_team_name": "Monza"
-    },
-    {
-      "espn_id": "17530",
-      "espn_name": "Venezia",
-      "espn_league_slug": "ita.1",
-      "expected_gfr_league": "Serie A",
-      "actual_gfr_league": "Serie B",
-      "gfr_team_name": "Venezia"
-    },
-    {
-      "espn_id": "4050",
-      "espn_name": "Cremonese",
-      "espn_league_slug": "ita.2",
-      "expected_gfr_league": "Serie B",
-      "actual_gfr_league": "Serie A",
-      "gfr_team_name": "Cremonese"
-    },
-    {
-      "espn_id": "119",
-      "espn_name": "Hellas Verona",
-      "espn_league_slug": "ita.2",
-      "expected_gfr_league": "Serie B",
-      "actual_gfr_league": "Serie A",
-      "gfr_team_name": "Hellas Verona"
-    },
-    {
-      "espn_id": "3956",
-      "espn_name": "Pisa",
-      "espn_league_slug": "ita.2",
-      "expected_gfr_league": "Serie B",
-      "actual_gfr_league": "Serie A",
-      "gfr_team_name": "Pisa"
-    },
-    {
-      "espn_id": "2726",
-      "espn_name": "ADO Den Haag",
-      "espn_league_slug": "ned.1",
-      "expected_gfr_league": "Eredivisie",
-      "actual_gfr_league": "Eerste Divisie",
-      "gfr_team_name": "ADO Den Haag"
-    },
-    {
-      "espn_id": "3736",
-      "espn_name": "SC Cambuur",
-      "espn_league_slug": "ned.1",
-      "expected_gfr_league": "Eredivisie",
-      "actual_gfr_league": "Eerste Divisie",
-      "gfr_team_name": "Cambuur"
-    },
-    {
-      "espn_id": "156",
-      "espn_name": "Willem II",
-      "espn_league_slug": "ned.1",
-      "expected_gfr_league": "Eredivisie",
-      "actual_gfr_league": "Eerste Divisie",
-      "gfr_team_name": "Willem II"
-    },
-    {
-      "espn_id": "2727",
-      "espn_name": "FC Volendam",
-      "espn_league_slug": "ned.2",
-      "expected_gfr_league": "Eerste Divisie",
-      "actual_gfr_league": "Eredivisie",
-      "gfr_team_name": "Volendam"
-    },
-    {
-      "espn_id": "3708",
-      "espn_name": "Heracles Almelo",
-      "espn_league_slug": "ned.2",
-      "expected_gfr_league": "Eerste Divisie",
-      "actual_gfr_league": "Eredivisie",
-      "gfr_team_name": "Heracles"
-    },
-    {
-      "espn_id": "141",
-      "espn_name": "NAC Breda",
-      "espn_league_slug": "ned.2",
-      "expected_gfr_league": "Eerste Divisie",
-      "actual_gfr_league": "Eredivisie",
-      "gfr_team_name": "NAC Breda"
-    },
-    {
-      "espn_id": "21607",
-      "espn_name": "Acad\u00e9mico de Viseu",
-      "espn_league_slug": "por.1",
-      "expected_gfr_league": "Liga Portugal",
-      "actual_gfr_league": "Liga Portugal 2",
-      "gfr_team_name": "Academico Viseu"
-    },
-    {
-      "espn_id": "552",
-      "espn_name": "Maritimo",
-      "espn_league_slug": "por.1",
-      "expected_gfr_league": "Liga Portugal",
-      "actual_gfr_league": "Liga Portugal 2",
-      "gfr_team_name": "Maritimo"
-    },
-    {
-      "espn_id": "267",
-      "espn_name": "St Johnstone",
-      "espn_league_slug": "sco.1",
-      "expected_gfr_league": "Premiership",
-      "actual_gfr_league": "Championship",
-      "gfr_team_name": "St. Johnstone"
-    },
-    {
-      "espn_id": "259",
-      "espn_name": "Livingston",
-      "espn_league_slug": "sco.2",
+      "espn_id": "2500",
+      "espn_name": "Airdrieonians",
+      "espn_league_slug": "sco.2.promotion.relegation",
       "expected_gfr_league": "Championship",
-      "actual_gfr_league": "Premiership",
-      "gfr_team_name": "Livingston"
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Airdrie United"
+    },
+    {
+      "espn_id": "403",
+      "espn_name": "Alloa Athletic",
+      "espn_league_slug": "sco.2.promotion.relegation",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Alloa Athletic"
+    },
+    {
+      "espn_id": "406",
+      "espn_name": "Queen of the South",
+      "espn_league_slug": "sco.2.promotion.relegation",
+      "expected_gfr_league": "Championship",
+      "actual_gfr_league": "League One",
+      "gfr_team_name": "Queen of the South"
+    },
+    {
+      "espn_id": "642",
+      "espn_name": "Barrow",
+      "espn_league_slug": "eng.5",
+      "expected_gfr_league": "Serie B Women",
+      "actual_gfr_league": "National League",
+      "gfr_team_name": "Barrow"
+    },
+    {
+      "espn_id": "19262",
+      "espn_name": "Harrogate Town",
+      "espn_league_slug": "eng.5",
+      "expected_gfr_league": "Serie B Women",
+      "actual_gfr_league": "National League",
+      "gfr_team_name": "Harrogate Town"
     }
   ],
   "team_collisions_rejected": [],
@@ -1496,7 +1201,7 @@
         "131790"
       ],
       "gfr_api_football_id": 25120,
-      "gfr_team_name": "San Carlos",
+      "gfr_team_name": null,
       "resolution": "persisted \u2014 needs an override to break the tie"
     }
   ],

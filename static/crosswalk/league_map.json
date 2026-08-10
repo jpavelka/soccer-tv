@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-06T09:23:10.483853+00:00",
-  "count": 60,
+  "generated_at": "2026-08-10T08:13:55.552397+00:00",
+  "count": 62,
   "leagues": [
     {
       "espn_slug": "arg.1",
@@ -77,6 +77,10 @@
     {
       "espn_slug": "eng.4",
       "gfr_api_football_id": 42
+    },
+    {
+      "espn_slug": "eng.5",
+      "gfr_api_football_id": null
     },
     {
       "espn_slug": "eng.w.1",
@@ -217,6 +221,10 @@
     {
       "espn_slug": "uru.1",
       "gfr_api_football_id": 270
+    },
+    {
+      "espn_slug": "uru.2",
+      "gfr_api_football_id": null
     },
     {
       "espn_slug": "usa.1",
