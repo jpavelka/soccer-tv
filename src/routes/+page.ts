@@ -9,7 +9,13 @@ const getDateGames = (dt: string) => {
 	// site-API shape; `adaptEvent` normalizes each one back to the header shape the
 	// rest of the app reads.
 	const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=${dt.replaceAll('-', '')}&limit=999&d=${(new Date()).toISOString()}`;
-	return fetch(url).then(res => res.json());
+	// Node's fetch (undici) sends no User-Agent by default; ESPN's Akamai bot
+	// protection blocks that and returns an HTML "Access Denied" page instead
+	// of JSON. Only bites during SSR (e.g. `npm run dev`'s first render) since
+	// this is otherwise a client-rendered SPA and browsers always send a UA.
+	// Oddly, a browser-style UA is *also* blocked (mismatched fingerprint vs.
+	// Node's TLS/HTTP2 stack) — a curl-style UA is what Akamai lets through.
+	return fetch(url, { headers: { 'User-Agent': 'curl/8.7.1' } }).then(res => res.json());
 }
 
 const dateNDaysFromNow = (n: number) => {
