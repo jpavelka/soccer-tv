@@ -7,7 +7,7 @@
     import { fetchBracket, layoutBracket, rowsForAnchor, type Bracket, type BracketTreeLayout } from "$lib/bracket";
     import { tick } from "svelte";
 
-    let { dayData, dt, hideIfNoLive = false, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, sortMode } = $props();
+    let { dayData, dt, hideIfNoLive = false, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, leagueAlt, sortMode } = $props();
 
     // Yesterday is fetched/bucketed like any other day, but only worth showing
     // once it's fully out of the display window while a game is still live (a
@@ -74,7 +74,7 @@
         const interestOn = $filterInterest;
         const interestMin = Number($minInterest);
         const selectedBcsts = $goodBcsts;
-        Promise.all([dayData, broadcasts, leagueOrder, teamRanks]).then(([d, bcstData, leagueRank, ranks]) => {
+        Promise.all([dayData, broadcasts, leagueOrder, teamRanks, leagueAlt]).then(([d, bcstData, leagueRank, ranks, lgAlt]) => {
             const wstGames = bcstData?.games ?? [];
             lstvGames = wstGames;
             teamRankMap = ranks ?? {};
@@ -111,7 +111,7 @@
                     const wstGame = findLstvGame(event, wstGames);
                     event.lstv_matched = !!wstGame;
                     event.topmatch = wstGame?.topmatch ?? false;
-                    const scored = interestScore(event, league, leagueIndex, leagueRank, ranks ?? {});
+                    const scored = interestScore(event, league, leagueIndex, leagueRank, ranks ?? {}, lgAlt ?? {});
                     event.interest = scored.total;
                     event.interestParts = scored.parts;
                     if (wstGame) {
@@ -869,7 +869,8 @@
     // partial credit when only one team is a standout. Replaces the old flat
     // topmatch bonus; tops out at TEAMSTRENGTH_MAX. (Carries the 10 points the
     // dropped top-table-clash bonus used to contribute — /all has no table rank.)
-    const TEAMSTRENGTH_MAX = 35;
+    // Weighted above the league base: who is playing matters more than where.
+    const TEAMSTRENGTH_MAX = 45;
     const STRENGTH_BLEND_ALPHA = 0.6;
     function teamStrengthBonus(event: any, ranks: Record<string, { strength: number }>): number {
         const s = (event.competitors ?? []).map((c: any) => ranks[String(c?.id)]?.strength ?? 0);
@@ -880,10 +881,10 @@
     // League base comes from a league's rank in ESPN's master prominence list
     // (slug -> rank, baked by the scraper into league_order.json). A fixed step
     // keeps a league worth the same day to day. The master list has ~244 leagues,
-    // so with step 1.0 only roughly the top 50 get a positive base; everything
+    // so with step 0.8 only roughly the top 50 get a positive base; everything
     // below floors to 0 and is differentiated by topmatch/competitiveness/etc.
-    const LEAGUE_TOP = 50;
-    const LEAGUE_STEP = 1.0;
+    const LEAGUE_TOP = 40;
+    const LEAGUE_STEP = 0.8;
     // Rank for leagues not found in the master list (e.g. map unavailable for one
     // slug): treat as long-tail so they floor to 0 rather than inheriting a small
     // per-day index.
@@ -894,11 +895,21 @@
     // competitiveness / stage. Per-slug exceptions pin the marquee women's
     // competitions to a fixed base above the cap. (Gender comes from ESPN's core
     // league endpoint, baked into league_order.json's `meta` by the scraper.)
-    const WOMEN_LEAGUE_CAP = 15;
+    const WOMEN_LEAGUE_CAP = 12;
     const WOMEN_LEAGUE_BASE: Record<string, number> = {
-        'fifa.wwc': 40,        // FIFA Women's World Cup
-        'uefa.wchampions': 25, // UEFA Women's Champions League
+        'fifa.wwc': 32,        // FIFA Women's World Cup
+        'uefa.wchampions': 20, // UEFA Women's Champions League
     };
+    // Alternate league base for men's club competitions, from GFR's league power
+    // ratings (composed into `leagueAlt` in +page.ts, cups included). The two bases
+    // are combined with max(), so a league keeps whatever standing ESPN gives it but
+    // can no longer be buried by ESPN's US/Anglo-centric ordering — Brazil Serie A,
+    // Belgium, Argentina and Japan all sit past ESPN rank 100 and score 0 today.
+    // GFR ratings run ~47-91: the floor sits just under the weakest league worth any
+    // base (England League Two, 68.5) and the scale spreads the rest over 0..LEAGUE_TOP
+    // (the top league, 90.9, lands at 37 — so the upper clamp is a guardrail only).
+    const GFR_RATING_FLOOR = 70;
+    const GFR_RATING_SCALE = 1.76;
     // Drive the gradient badge fill with a two-segment ramp: gray (≤40) → yellow
     // (70) → green (100+). --t1 fades cold→mid over 40–70, --t2 fades mid→hot
     // over 70–100; the CSS nests two color-mixes so the midpoint is yellow.
@@ -914,13 +925,24 @@
     // ranking-based competitiveness (how evenly matched), stage stakes, and ESPN
     // coverage prominence. (The livesoccertv topmatch flag no longer feeds the
     // score — it survives only as the ⭐ UI marker.) Weights are easy to tune.
-    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>, ranks: Record<string, { strength: number }>): { total: number; parts: { label: string; value: number; detail?: string }[] } {
+    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>, ranks: Record<string, { strength: number }>, leagueAlt: Record<string, { rating: number; name: string; weight: number; via?: string }>): { total: number; parts: { label: string; value: number; detail?: string }[] } {
         const hasMap = leagueRank && Object.keys(leagueRank).length > 0;
         // Fall back to the per-day index only if the whole map failed to load.
         const rank = hasMap ? (leagueRank[league.slug] ?? LEAGUE_MISSING_RANK) : leagueIndex;
         let leagueBase = Math.max(0, LEAGUE_TOP - rank * LEAGUE_STEP);
         if (league.gender === 'women') {
+            // Women's competitions keep the ESPN-order base plus the cap/pin rules:
+            // their GFR ratings live in a separate table on its own scale.
             leagueBase = WOMEN_LEAGUE_BASE[league.slug] ?? Math.min(leagueBase, WOMEN_LEAGUE_CAP);
+        } else {
+            // Alternate base from GFR's league ratings, taking whichever ordering
+            // rates the competition higher. Absent for continental and national-team
+            // competitions (no GFR league row), so those keep the ESPN base untouched.
+            const alt = leagueAlt[league.slug];
+            const altBase = alt
+                ? Math.max(0, Math.min(LEAGUE_TOP, (alt.rating - GFR_RATING_FLOOR) * GFR_RATING_SCALE)) * alt.weight
+                : 0;
+            leagueBase = Math.max(leagueBase, altBase);
         }
         const teamStrength = teamStrengthBonus(event, ranks);
         const competitive = competitiveness(event, ranks) * 15;
@@ -930,7 +952,7 @@
         const prominence = onWatch + national;
         // Per-component breakdown shown in the score modal; mirrors the sum below.
         const parts = [
-            { label: 'League / competition', value: leagueBase, detail: league.name },
+            { label: 'League / competition', value: leagueBase },
             { label: 'Team strength', value: teamStrength },
             { label: 'Competitiveness', value: competitive },
             { label: 'Stage', value: stage, detail: eventStage(event, league) ?? undefined },

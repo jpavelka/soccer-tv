@@ -42,6 +42,22 @@ const leagueIdOf = (uid: string | undefined): string | null => {
 // `adaptEvent` (the /all event -> header-shape adapter) lives in $lib/espnEvent
 // so the bracket can reuse it to open the same match modal.
 
+// --- alternate (GFR league rating) competition boost ------------------------
+// A domestic cup has no GFR league rating of its own, so it inherits its country's
+// top flight discounted by CUP_FALLOFF per position between the two in ESPN's
+// order (see `leagueAlt` below). Two slug classes must be kept out of that:
+// Same-country slugs that aren't competitive fixtures — preseason friendlies and
+// college soccer — which would otherwise land near a real domestic cup
+// (esp.joan_gamper 20.7, jpn.world_challenge 15.5, usa.ncaa.m.1 10.2).
+const ALT_BLOCK = new Set(['esp.joan_gamper', 'jpn.world_challenge', 'usa.ncaa.m.1', 'usa.ncaa.w.1']);
+// Pyramid tiers (eng.1, fra.2, eng.w.1) — mirrors build_crosswalk.py's `slug_tier`.
+// A second/third tier missing from league_map is a *league*, not a cup: it should
+// get a crosswalk override carrying its own real rating, not a guess derived from
+// the country's top flight. (mex.2 is even explicitly blocked in
+// crosswalk_overrides.json, which the falloff would silently override.)
+const TIER_SLUG = /^[a-z0-9]+(?:\.[wm])?\.\d+$/;
+const CUP_FALLOFF = 0.1;
+
 export const load: PageLoad = async ({ fetch }) => {
 	// Yesterday is bucketed and sent down too, but DayGames only renders it while
 	// it still has a live game (e.g. a late-night kickoff that ran past local
@@ -196,5 +212,57 @@ export const load: PageLoad = async ({ fetch }) => {
 		return out;
 	}).catch(() => ({}));
 
-	return { days, broadcasts, leagueOrder, teamRanks, yesterdayDt };
+	// Alternate competition boost input: GFR *league* power ratings keyed by ESPN
+	// slug, as { rating, name, weight, via? }. ESPN's prominence order (leagueOrder
+	// above) is US/Anglo-centric — Brazil, Belgium, Argentina and Japan all sit past
+	// rank 100 and score nothing — so DayGames takes the max of that and a base
+	// derived from these ratings. Men's clubs only: women's leagues live in a
+	// separate GFR table on its own scale, and continental/national-team slugs have
+	// no GFR league row at all, so both are simply absent here.
+	//
+	// Cups aren't in league_map (build_crosswalk.py skips anything ESPN flags a
+	// tournament — no single country to scope against), so a cup inherits its
+	// country's top flight at a weight that falls off 10 points per position between
+	// the two *within that country's slugs* in ESPN's order: eng.1(0) eng.fa(1)
+	// eng.league_cup(2) eng.2(3) eng.charity(4) … → 1.0 / 0.9 / 0.8 / — / 0.6.
+	// (Raw list-index distance can't work: ESPN interleaves countries, putting
+	// usa.open 25 slots and mex.campeon 189 slots from their top flight.)
+	const leagueAlt = Promise.all([
+		json('crosswalk/league_map.json', { leagues: [] }),
+		json('rankings/men_league.json', { rankings: [] }),
+		leagueOrderData,
+	]).then(([xw, menL, lo]) => {
+		const byApiId: Record<number, { rating: number; name: string }> = {};
+		for (const l of menL.rankings ?? []) {
+			if (l.api_football_id != null) byApiId[l.api_football_id] = { rating: l.rating, name: l.league_name };
+		}
+		const out: Record<string, { rating: number; name: string; weight: number; via?: string }> = {};
+		for (const m of xw.leagues ?? []) {
+			const l = byApiId[m.gfr_api_football_id];
+			if (l) out[m.espn_slug] = { rating: l.rating, name: l.name, weight: 1 };
+		}
+		// Group the ordered slug list by country trigram, men only. `meta` is keyed by
+		// ESPN's numeric league id, so index gender by slug first.
+		const genderOf: Record<string, string | undefined> = {};
+		for (const m of Object.values<any>(lo.meta ?? {})) genderOf[m.slug] = m.gender;
+		const byCountry: Record<string, string[]> = {};
+		for (const slug of lo.leagues ?? []) {
+			if (genderOf[slug] === 'women') continue;
+			(byCountry[slug.split('.')[0]] ??= []).push(slug);
+		}
+		for (const [tri, slugs] of Object.entries(byCountry)) {
+			const parentSlug = `${tri}.1`;
+			const parent = out[parentSlug];
+			const pi = slugs.indexOf(parentSlug);
+			if (!parent || pi < 0) continue;
+			slugs.forEach((slug, i) => {
+				if (out[slug] || ALT_BLOCK.has(slug) || TIER_SLUG.test(slug)) return;
+				const weight = 1 - CUP_FALLOFF * Math.abs(i - pi);
+				if (weight > 0) out[slug] = { rating: parent.rating, name: parent.name, weight, via: parentSlug };
+			});
+		}
+		return out;
+	}).catch(() => ({}));
+
+	return { days, broadcasts, leagueOrder, teamRanks, leagueAlt, yesterdayDt };
 };

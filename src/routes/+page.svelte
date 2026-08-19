@@ -107,6 +107,7 @@
                     broadcasts={data.broadcasts}
                     leagueOrder={data.leagueOrder}
                     teamRanks={data.teamRanks}
+                    leagueAlt={data.leagueAlt}
                     sortMode={$sortMode}
                 />
             {/key}

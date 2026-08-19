@@ -58,6 +58,10 @@ Key design points:
 
 The app composes both crosswalks at load time (`+page.ts`): club ranks from `team_map` + `{men,women}_team`, and national ranks from `national_map` + the FIFA `{men,women}_international` tables, keyed by ESPN team id. The two rank scales aren't comparable, so entries carry an `intl` flag.
 
+`+page.ts` also composes `league_map` + `men_league` into `leagueAlt` — an **alternate competition boost** for the interest score, keyed by ESPN slug. `DayGames` takes the max of this and the ESPN-prominence base, so a league can't be buried by ESPN's US/Anglo-centric ordering (Brazil, Belgium, Argentina and Japan all sit past ESPN rank 100 and would otherwise score 0). Men's clubs only — women's leagues are a separate GFR table on its own scale, and continental/national-team competitions have no GFR league row, so both are simply absent from `leagueAlt` and keep the ESPN base.
+
+Cups are never in `league_map` (`build_crosswalk.py` skips anything ESPN flags a tournament — no single country to scope against), so `leagueAlt` derives them: a cup inherits its country's top flight (`<trigram>.1`) at a weight falling off 10 points per position between the two **within that country's slugs** in `league_order.json` order — `eng.1`(1.0) `eng.fa`(0.9) `eng.league_cup`(0.8) `eng.2`(—) `eng.charity`(0.6). Raw list-index distance can't work: ESPN interleaves countries, putting `usa.open` 25 slots and `mex.campeon` 189 slots from their top flight. Two slug classes are held out — `ALT_BLOCK` (preseason friendlies, college soccer) and pyramid tiers matching `TIER_SLUG` (an unmapped 2nd/3rd tier is a *league*; it wants a crosswalk override carrying its own rating, not a guess derived from tier 1).
+
 Unlike the rankings, the crosswalk output (`static/crosswalk/` and `scraper/crosswalk_review.json`) **is committed** — it changes slowly and its diffs are meaningful (a renamed club breaking a match is worth seeing in review). `.github/workflows/build-crosswalk.yml` scrapes rankings (as input only), rebuilds the crosswalk daily, and commits it back to its branch when it actually changes.
 
 ### Component hierarchy
