@@ -33,7 +33,7 @@ const REGISTRY: BroadcasterDef[] = [
     // NBC / Telemundo.
     { canonical: 'NBC', aliases: ['NBC'] },
     { canonical: 'NBCSN', aliases: ['NBCSN', 'NBC Sports Network'] },
-    { canonical: 'USA', aliases: ['USA', 'USA Network'] },
+    { canonical: 'USA', aliases: ['USA', 'USA Network', 'USA Net'] },
     { canonical: 'Peacock', aliases: ['Peacock'] },
     { canonical: 'Telemundo', aliases: ['Telemundo', 'Telemundo Deportes En Vivo', 'Tele'] },
     { canonical: 'Universo', aliases: ['UNIVERSO', 'Universo'] },

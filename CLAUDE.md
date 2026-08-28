@@ -106,3 +106,16 @@ When adding new components, prefer Svelte 5 runes style.
 - `.github/workflows/scrape-broadcasts.yml` — runs every 8 hours; scrapes livesoccertv.com, builds, and deploys independently
 
 Both use `JamesIves/github-pages-deploy-action` to push the `build/` folder to the `gh-pages` branch. The `build/` directory is **not** committed to `main`.
+
+### Running the backend jobs locally
+
+`scraper/run-all.sh` runs the scheduled workflows' actual work against the working tree, skipping the CI-only parts (fetching prior state from `gh-pages`, deploying, committing). It uses `scraper/.venv` if present, else `python3`.
+
+```bash
+npm run backend             # rankings + broadcasts + build (mirrors scrape-broadcasts.yml)
+npm run backend:all         # everything, incl. leagues + crosswalk
+npm run backend:crosswalk   # one task; also :rankings :broadcasts :leagues
+scraper/run-all.sh crosswalk --rebuild   # flags forward to build_crosswalk.py
+```
+
+Tasks run in dependency order regardless of the order given (rankings feeds the crosswalk). Everything it writes is gitignored except `static/crosswalk/` and `scraper/crosswalk_review.json` — review those before staging.

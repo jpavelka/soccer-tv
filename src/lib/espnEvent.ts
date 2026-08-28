@@ -81,6 +81,9 @@ const adaptCompetitor = (c: any) => {
 		shootoutScore: c.shootoutScore,
 		winner: c.winner,
 		name: t.shortDisplayName ?? t.displayName ?? t.name,
+		// The unabbreviated name, kept alongside the short one so livesoccertv
+		// matching can try both ("Man City" vs "Manchester City").
+		fullName: t.displayName ?? t.name,
 		abbreviation: t.abbreviation,
 		logo: t.logo,
 		logoDark: darkLogo(t.logo),

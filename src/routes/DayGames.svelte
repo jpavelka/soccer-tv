@@ -32,19 +32,32 @@
         return al.includes(bl) || bl.includes(al);
     };
 
-    // Match by timestamp (within 10 min) + at least one team name overlap,
-    // falling back to date + both teams when no timestamp is available.
+    // ESPN's display name is often an abbreviation livesoccertv doesn't use
+    // ("Man City" vs "Manchester City", "C Palace" vs "Crystal Palace"), so each
+    // side is tried under both its short and full name.
+    const teamMatch = (competitor: any, wgTeams: string[]) =>
+        [competitor.name, competitor.fullName]
+            .filter(Boolean)
+            .some((n: string) => wgTeams.some((t: string) => nameMatch(n, t)));
+
+    // Match by timestamp + team name overlap, falling back to date + both teams
+    // when no timestamp is available. One team in common needs the kickoffs
+    // within 10 min; with both sides matching, a same-day collision is
+    // essentially impossible, so the window widens to absorb a delayed kickoff
+    // (ESPN pushes the event's date when a game starts late, livesoccertv keeps
+    // the scheduled time — e.g. Lille v PSG, ESPN 19:00Z vs lstv 18:45Z).
     const findLstvGame = (event: any, wstGames: any[]) => {
         const espnMs = new Date(event.date).getTime();
-        const espnTeams = event.competitors.map((c: any) => c.name);
+        const competitors = event.competitors ?? [];
         return wstGames.find((wg: any) => {
-            const oneTeamMatches = espnTeams.some((en: string) => wg.teams.some((t: string) => nameMatch(en, t)));
-            if (!oneTeamMatches) return false;
+            const matched = competitors.filter((c: any) => teamMatch(c, wg.teams)).length;
+            if (!matched) return false;
+            const bothMatch = matched >= competitors.length;
             if (wg.timestamp_ms != null) {
-                return Math.abs(espnMs - wg.timestamp_ms) < 10 * 60 * 1000;
+                const window = (bothMatch ? 30 : 10) * 60 * 1000;
+                return Math.abs(espnMs - wg.timestamp_ms) < window;
             }
-            return wg.date === event.date.slice(0, 10) &&
-                espnTeams.every((en: string) => wg.teams.some((t: string) => nameMatch(en, t)));
+            return wg.date === event.date.slice(0, 10) && bothMatch;
         });
     };
 

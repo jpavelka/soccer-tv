@@ -7,6 +7,12 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
+		"backend": "scraper/run-all.sh",
+		"backend:all": "scraper/run-all.sh all",
+		"backend:broadcasts": "scraper/run-all.sh broadcasts",
+		"backend:leagues": "scraper/run-all.sh leagues",
+		"backend:rankings": "scraper/run-all.sh rankings",
+		"backend:crosswalk": "scraper/run-all.sh crosswalk",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
