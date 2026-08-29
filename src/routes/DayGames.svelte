@@ -5,7 +5,7 @@
     import Modal from "./Modal.svelte";
     import { fetchStandings, type Standings } from "$lib/standings";
     import { fetchBracket, layoutBracket, rowsForAnchor, type Bracket, type BracketTreeLayout } from "$lib/bracket";
-    import { tick } from "svelte";
+    import { tick, untrack } from "svelte";
 
     let { dayData, dt, hideIfNoLive = false, goodStatuses, filterBroadcasts, broadcasts, leagueOrder, teamRanks, leagueAlt, sortMode } = $props();
 
@@ -23,22 +23,43 @@
     // normalized). Populated from the resolved map in the main effect below.
     let teamRankMap = $state<Record<string, { rank: number; intl: boolean; strength: number; points: number; url: string; grade?: string | null }>>({});
     const rankOf = (c: any) => teamRankMap[String(c?.id)] ?? null;
-    // Resolved livesoccertv games, stashed from the main effect so bracket games
-    // (which skip the day-list merge) can still pick up their supplemental TV.
-    let lstvGames = $state<any[]>([]);
-
-    const nameMatch = (a: string, b: string) => {
-        const al = a.toLowerCase(), bl = b.toLowerCase();
-        return al.includes(bl) || bl.includes(al);
+    // Prepared livesoccertv rows: team names lowercased once up front, and the
+    // rows bucketed by half-hour of kickoff. The match below runs over
+    // (events x rows) and both sides are big (~130 events/day, ~660 rows), so
+    // lowercasing inside the comparison and scanning every row for every event
+    // was costing real time.
+    type LstvRow = { i: number; wg: any; lc: string[] };
+    type LstvIndex = { buckets: Map<number, LstvRow[]>; noTs: LstvRow[] };
+    const BUCKET_MS = 30 * 60 * 1000;
+    const prepareLstv = (games: any[]): LstvIndex => {
+        const buckets = new Map<number, LstvRow[]>();
+        const noTs: LstvRow[] = [];
+        games.forEach((wg: any, i: number) => {
+            const row = { i, wg, lc: (wg.teams ?? []).map((t: string) => t.toLowerCase()) };
+            if (wg.timestamp_ms == null) {
+                noTs.push(row);
+                return;
+            }
+            const b = Math.floor(wg.timestamp_ms / BUCKET_MS);
+            let arr = buckets.get(b);
+            if (!arr) buckets.set(b, (arr = []));
+            arr.push(row);
+        });
+        return { buckets, noTs };
     };
+    // Prepared rows from the enrichment pass, stashed so bracket games (which
+    // skip the day-list merge) can still pick up their supplemental TV. Plain,
+    // not $state: it's only read from event handlers.
+    let lstvIndex: LstvIndex = { buckets: new Map(), noTs: [] };
+
+    const nameMatch = (a: string, b: string) => a.includes(b) || b.includes(a);
 
     // ESPN's display name is often an abbreviation livesoccertv doesn't use
     // ("Man City" vs "Manchester City", "C Palace" vs "Crystal Palace"), so each
-    // side is tried under both its short and full name.
-    const teamMatch = (competitor: any, wgTeams: string[]) =>
-        [competitor.name, competitor.fullName]
-            .filter(Boolean)
-            .some((n: string) => wgTeams.some((t: string) => nameMatch(n, t)));
+    // side is tried under both its short and full name — lowercased once here.
+    const lcNames = (event: any): string[][] =>
+        (event.competitors ?? []).map((c: any) =>
+            [c.name, c.fullName].filter(Boolean).map((n: string) => n.toLowerCase()));
 
     // Match by timestamp + team name overlap, falling back to date + both teams
     // when no timestamp is available. One team in common needs the kickoffs
@@ -46,19 +67,34 @@
     // essentially impossible, so the window widens to absorb a delayed kickoff
     // (ESPN pushes the event's date when a game starts late, livesoccertv keeps
     // the scheduled time — e.g. Lille v PSG, ESPN 19:00Z vs lstv 18:45Z).
-    const findLstvGame = (event: any, wstGames: any[]) => {
+    // Only the half-hour buckets overlapping that widest window can match on
+    // time, so those plus the timestamp-less rows are the only candidates; they
+    // are re-sorted into feed order so the row picked is the one a full scan
+    // would have found.
+    const findLstvGame = (event: any, idx: LstvIndex, names: string[][] = lcNames(event)) => {
         const espnMs = new Date(event.date).getTime();
-        const competitors = event.competitors ?? [];
-        return wstGames.find((wg: any) => {
-            const matched = competitors.filter((c: any) => teamMatch(c, wg.teams)).length;
-            if (!matched) return false;
-            const bothMatch = matched >= competitors.length;
-            if (wg.timestamp_ms != null) {
-                const window = (bothMatch ? 30 : 10) * 60 * 1000;
-                return Math.abs(espnMs - wg.timestamp_ms) < window;
+        const b = Math.floor(espnMs / BUCKET_MS);
+        const candidates = [
+            ...(idx.buckets.get(b - 1) ?? []),
+            ...(idx.buckets.get(b) ?? []),
+            ...(idx.buckets.get(b + 1) ?? []),
+            ...idx.noTs,
+        ];
+        if (candidates.length > 1) candidates.sort((x, y) => x.i - y.i);
+        for (const { wg, lc } of candidates) {
+            let matched = 0;
+            for (const side of names) {
+                if (side.some((n) => lc.some((t) => nameMatch(n, t)))) matched += 1;
             }
-            return wg.date === event.date.slice(0, 10) && bothMatch;
-        });
+            if (!matched) continue;
+            const bothMatch = matched >= names.length;
+            if (wg.timestamp_ms != null) {
+                if (Math.abs(espnMs - wg.timestamp_ms) < (bothMatch ? 30 : 10) * 60 * 1000) return wg;
+            } else if (wg.date === event.date.slice(0, 10) && bothMatch) {
+                return wg;
+            }
+        }
+        return undefined;
     };
 
     let leagueData = $state<any[]>([]);
@@ -80,99 +116,129 @@
             )
             .sort((a: any, b: any) => (b.event.interest ?? 0) - (a.event.interest ?? 0))
     );
+    // --- pass 1: enrichment -------------------------------------------------
+    // Everything here depends only on the fetched data, never on the user's
+    // filters: the league list and its order, each event's full broadcast lineup
+    // (ESPN + livesoccertv), its interest score, and the per-day broadcaster
+    // counts. This used to share one effect with the filtering below, so every
+    // flip of show-completed / filter-broadcasts / filter-interest re-ran the
+    // whole livesoccertv match and reassigned `leagueData` — which re-renders
+    // every row on the day. A filter change now only re-runs pass 2.
     $effect(() => {
-        // Read these synchronously so the effect tracks them as dependencies and
-        // re-runs when the slider moves — reads inside the async .then() below are
-        // not tracked by Svelte.
-        const interestOn = $filterInterest;
-        const interestMin = Number($minInterest);
-        const selectedBcsts = $goodBcsts;
         Promise.all([dayData, broadcasts, leagueOrder, teamRanks, leagueAlt]).then(([d, bcstData, leagueRank, ranks, lgAlt]) => {
-            const wstGames = bcstData?.games ?? [];
-            lstvGames = wstGames;
+            const idx = prepareLstv(bcstData?.games ?? []);
+            lstvIndex = idx;
             teamRankMap = ranks ?? {};
+            const hasLeagueMap = !!leagueRank && Object.keys(leagueRank).length > 0;
             // /all yields leagues in event order, so re-sort by ESPN's prominence
             // rank (the header endpoint used to return them pre-ordered). Falls back
             // to the as-received order if the rank map didn't load.
-            leagueData = [...d.sports[0].leagues];
-            if (leagueRank && Object.keys(leagueRank).length > 0) {
-                leagueData.sort((a: any, b: any) =>
+            const leagues = [...d.sports[0].leagues];
+            if (hasLeagueMap) {
+                leagues.sort((a: any, b: any) =>
                     (leagueRank[a.slug] ?? Infinity) - (leagueRank[b.slug] ?? Infinity));
             }
-            numToShow = 0;
             // Per-canonical-broadcaster game counts for this day, feeding the
             // picker's count badges. Written once at the end (idempotent re-run).
             const dayCounts: Record<string, number> = {};
-            for (const [leagueIndex, league] of leagueData.entries()) {
-                league.numToShow = 0;
+            for (const [leagueIndex, league] of leagues.entries()) {
                 for (const event of league.events) {
-                    event.bcstsToShow = [];
-                    event.show = false;
-                    // All canonical broadcasters for this event (ESPN + livesoccertv),
-                    // independent of the user's filter — drives the availability counts.
-                    const eventBcsts = new Set<string>();
-
+                    // Every canonical broadcaster for this event (ESPN first, then
+                    // livesoccertv), independent of the user's filter — drives both
+                    // the availability counts and pass 2's filtered list.
+                    const all: string[] = [];
                     // ESPN broadcasts (already canonical from +page.ts)
                     for (const bcst of event.broadcasts || []) {
-                        eventBcsts.add(bcst.name);
-                        if (!filterBroadcasts || selectedBcsts.includes(bcst.name)) {
-                            if (!event.bcstsToShow.includes(bcst.name)) event.bcstsToShow.push(bcst.name)
-                        }
+                        if (!all.includes(bcst.name)) all.push(bcst.name);
                     }
-
                     // Additional broadcasts from livesoccertv.com
-                    const wstGame = findLstvGame(event, wstGames);
+                    const wstGame = findLstvGame(event, idx);
                     event.lstv_matched = !!wstGame;
                     event.topmatch = wstGame?.topmatch ?? false;
-                    const scored = interestScore(event, league, leagueIndex, leagueRank, ranks ?? {}, lgAlt ?? {});
-                    event.interest = scored.total;
-                    event.interestParts = scored.parts;
                     if (wstGame) {
                         for (const raw of wstGame.broadcasts) {
                             const bcst = canonicalBcst(raw);
-                            eventBcsts.add(bcst);
-                            if (!event.bcstsToShow.includes(bcst)) {
-                                if (!filterBroadcasts || selectedBcsts.includes(bcst)) {
-                                    event.bcstsToShow.push(bcst);
-                                }
-                            }
+                            if (!all.includes(bcst)) all.push(bcst);
                         }
                     }
+                    event.allBcsts = all;
+                    const scored = interestScore(event, league, leagueIndex, leagueRank, hasLeagueMap, ranks ?? {}, lgAlt ?? {});
+                    event.interest = scored.total;
+                    event.interestParts = scored.parts;
 
                     // Count availability among still-watchable (upcoming/live) games.
                     if (event.status === 'pre' || event.status === 'in') {
-                        for (const name of eventBcsts) dayCounts[name] = (dayCounts[name] ?? 0) + 1;
+                        for (const name of all) dayCounts[name] = (dayCounts[name] ?? 0) + 1;
                     }
-
-                    event.bcstStr = event.bcstsToShow.join('/');
-                    // De-emphasize networks the user hasn't picked. When no
-                    // networks are selected, nothing is dimmed (all are "good").
-                    event.bcstParts = event.bcstsToShow.map((name: string) => ({
-                        name,
-                        good: selectedBcsts.length === 0 || selectedBcsts.includes(name),
-                    }));
-                    if (!filterBroadcasts || event.bcstsToShow.length > 0) {
-                        if (goodStatuses.includes(event.status)) {
-                            if (!interestOn || (event.interest ?? 0) >= interestMin) {
-                                numToShow += 1;
-                                league.numToShow += 1;
-                                event.show = true;
-                            }
-                        }
-                    }
+                }
+                if (!(dt + '-' + league.name in $accordionShow)) {
+                    $accordionShow[dt + '-' + league.name] = true;
                 }
             }
             bcstCountsByDay.update((m) => ({ ...m, [dt]: dayCounts }));
-            for (const ld of leagueData) {
-                if (!Object.keys($accordionShow).includes(dt + '-' + ld.name)) {
-                    $accordionShow[dt + '-' + ld.name] = true;
-                }
-            }
             if (hideIfNoLive) {
-                hideDay = !leagueData.some((lg: any) => lg.events.some((e: any) => e.status === 'in'));
+                hideDay = !leagues.some((lg: any) => lg.events.some((e: any) => e.status === 'in'));
             }
+            // Assigned last, in one go: this is what proxies the tree for the
+            // template, and pass 2 keys off it.
+            leagueData = leagues;
             loaded = true;
         })
+    })
+
+    // --- pass 2: filtering ---------------------------------------------------
+    // Filter-only, and cheap: no livesoccertv matching, no re-scoring, no
+    // rebuilding `leagueData` — just re-deriving what to show from pass 1's
+    // per-event data. `goodStatuses` / `filterBroadcasts` are read here
+    // synchronously (so the effect tracks them) rather than inside an async
+    // callback, where Svelte can't; that's what let +page.svelte drop the
+    // `{#key}` block it used to need to force a remount on those two toggles.
+    // The writes are wrapped in untrack() so reading the events back doesn't
+    // make this effect depend on its own output.
+    let lastSelected: string[] | null = null;
+    $effect(() => {
+        const interestOn = $filterInterest;
+        const interestMin = Number($minInterest);
+        const selectedBcsts = $goodBcsts;
+        const statuses = goodStatuses;
+        const filterOn = filterBroadcasts;
+        const leagues = leagueData;
+        const selectedChanged = lastSelected !== selectedBcsts;
+        lastSelected = selectedBcsts;
+        untrack(() => {
+            let total = 0;
+            for (const league of leagues) {
+                let shown = 0;
+                for (const event of league.events) {
+                    const all: string[] = event.allBcsts ?? [];
+                    const toShow = filterOn ? all.filter((b: string) => selectedBcsts.includes(b)) : all;
+                    const str = toShow.join('/');
+                    // Only write when the lineup actually changed: every assignment
+                    // on a $state proxy invalidates the rows that read it, and an
+                    // interest-slider drag doesn't touch broadcasts at all.
+                    if (selectedChanged || event.bcstStr !== str) {
+                        event.bcstsToShow = toShow;
+                        event.bcstStr = str;
+                        // De-emphasize networks the user hasn't picked. When no
+                        // networks are selected, nothing is dimmed (all are "good").
+                        event.bcstParts = toShow.map((name: string) => ({
+                            name,
+                            good: selectedBcsts.length === 0 || selectedBcsts.includes(name),
+                        }));
+                    }
+                    const show = (!filterOn || toShow.length > 0)
+                        && statuses.includes(event.status)
+                        && (!interestOn || (event.interest ?? 0) >= interestMin);
+                    event.show = show;
+                    if (show) {
+                        shown += 1;
+                        total += 1;
+                    }
+                }
+                league.numToShow = shown;
+            }
+            numToShow = total;
+        });
     })
     const narrowWidth = 550;
     let narrowScreen = $state(false);
@@ -380,7 +446,7 @@
         const ev = m.event;
         const names: string[] = [];
         for (const b of ev.broadcasts || []) if (!names.includes(b.name)) names.push(b.name);
-        const lstv = findLstvGame(ev, lstvGames);
+        const lstv = findLstvGame(ev, lstvIndex);
         if (lstv) {
             for (const raw of lstv.broadcasts) {
                 const c = canonicalBcst(raw);
@@ -938,8 +1004,7 @@
     // ranking-based competitiveness (how evenly matched), stage stakes, and ESPN
     // coverage prominence. (The livesoccertv topmatch flag no longer feeds the
     // score — it survives only as the ⭐ UI marker.) Weights are easy to tune.
-    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>, ranks: Record<string, { strength: number }>, leagueAlt: Record<string, { rating: number; name: string; weight: number; via?: string }>): { total: number; parts: { label: string; value: number; detail?: string }[] } {
-        const hasMap = leagueRank && Object.keys(leagueRank).length > 0;
+    function interestScore(event: any, league: any, leagueIndex: number, leagueRank: Record<string, number>, hasMap: boolean, ranks: Record<string, { strength: number }>, leagueAlt: Record<string, { rating: number; name: string; weight: number; via?: string }>): { total: number; parts: { label: string; value: number; detail?: string }[] } {
         // Fall back to the per-day index only if the whole map failed to load.
         const rank = hasMap ? (leagueRank[league.slug] ?? LEAGUE_MISSING_RANK) : leagueIndex;
         let leagueBase = Math.max(0, LEAGUE_TOP - rank * LEAGUE_STEP);
@@ -984,13 +1049,13 @@
                 <span class={`teamRank${r0?.intl ? ' teamRankIntl' : ''}`} title={r0 ? (r0.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r0 ? (r0.intl ? `${r0.rank}` : (r0.grade ?? '')) : ''}</span>
                 <span class={`teamName${event.status === 'post' && event.competitors[0].winner ? ' teamNameWin' : ''}`}>{event.competitors[0][narrowScreen ? 'abbreviation' : 'name']}</span>
             </span>
-            <img class=teamLogo alt="" src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
+            <img class=teamLogo alt="" width="30" height="30" loading="lazy" decoding="async" src={event.competitors[0][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
             <span class={`betweenTeams${event.status === 'in' ? ' betweenTeamsLive' : ''}`}>{
                 event.status === 'pre' ? (
                     'vs'
                 ) : `${event.competitors[0].score}-${event.competitors[1].score}`
             }</span>
-            <img class=teamLogo alt="" src={event.competitors[1].logo}/>
+            <img class=teamLogo alt="" width="30" height="30" loading="lazy" decoding="async" src={event.competitors[1][`logo${mode === 'dark' ? 'Dark' : ''}`]}/>
             <span class={`teamGroup teamGroup1${narrowScreen ? ' teamGroupNarrow' : ''}`}>
                 <span class={`teamName${event.status === 'post' && event.competitors[1].winner ? ' teamNameWin' : ''}`}>{event.competitors[1][narrowScreen ? 'abbreviation' : 'name']}</span>
                 <span class={`teamRank${r1?.intl ? ' teamRankIntl' : ''}`} title={r1 ? (r1.intl ? 'FIFA national rank' : 'GFR club grade') : ''}>{r1 ? (r1.intl ? `${r1.rank}` : (r1.grade ?? '')) : ''}</span>
@@ -1061,7 +1126,7 @@
         {#if numToShow > 0}
             {#if sortMode === 'time' || sortMode === 'interest'}
                 {@const list = sortMode === 'interest' ? flatEventsByInterest : flatEvents}
-                {#each list as { event, league }, i}
+                {#each list as { event, league }, i (event.id)}
                     <div class="timeGameGroup">
                         {#if i === 0 || list[i - 1].league.name !== league.name}
                             <div class="leagueName" class:narrowLeague={narrowScreen}><span>{league.name}</span>{@render standingsBtn(league)}</div>
