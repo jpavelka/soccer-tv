@@ -1,9 +1,24 @@
 {
-  "generated_at": "2026-08-24T07:39:00.840184+00:00",
+  "generated_at": "2026-09-03T11:35:45.210919+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [],
+  "new_nationals": [
+    {
+      "espn_id": "22404",
+      "espn_name": "Indonesia",
+      "gfr_api_football_id": 17887,
+      "gfr_team_name": "Indonesia",
+      "gender": "women"
+    },
+    {
+      "espn_id": "18891",
+      "espn_name": "Jordan",
+      "gfr_api_football_id": 16933,
+      "gfr_team_name": "Jordan",
+      "gender": "women"
+    }
+  ],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
