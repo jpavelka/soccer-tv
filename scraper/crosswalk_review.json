@@ -1,52 +1,9 @@
 {
-  "generated_at": "2026-09-21T13:12:46.004947+00:00",
+  "generated_at": "2026-09-24T12:06:04.374500+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [
-    {
-      "espn_id": "20916",
-      "espn_name": "Botswana",
-      "gfr_api_football_id": 16925,
-      "gfr_team_name": "Botswana",
-      "gender": "women"
-    },
-    {
-      "espn_id": "131762",
-      "espn_name": "Fiji",
-      "gfr_api_football_id": 19418,
-      "gfr_team_name": "Fiji",
-      "gender": "women"
-    },
-    {
-      "espn_id": "133877",
-      "espn_name": "Namibia",
-      "gfr_api_football_id": 16939,
-      "gfr_team_name": "Namibia",
-      "gender": "women"
-    },
-    {
-      "espn_id": "131784",
-      "espn_name": "New Caledonia",
-      "gfr_api_football_id": 22603,
-      "gfr_team_name": "New Caledonia",
-      "gender": "women"
-    },
-    {
-      "espn_id": "133876",
-      "espn_name": "Solomon Islands",
-      "gfr_api_football_id": 19934,
-      "gfr_team_name": "Solomon Islands",
-      "gender": "women"
-    },
-    {
-      "espn_id": "133875",
-      "espn_name": "Vanuatu",
-      "gfr_api_football_id": 19937,
-      "gfr_team_name": "Vanuatu",
-      "gender": "women"
-    }
-  ],
+  "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
