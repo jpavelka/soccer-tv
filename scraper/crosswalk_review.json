@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-24T12:06:04.374500+00:00",
+  "generated_at": "2026-09-28T14:21:40.587526+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -483,6 +483,14 @@
       "gender": "men",
       "espn_league_slug": "hon.1",
       "best_score": 0.333
+    },
+    {
+      "espn_id": "8896",
+      "espn_name": "Churchill Brothers",
+      "country": "India",
+      "gender": "men",
+      "espn_league_slug": "ind.1",
+      "best_score": 0.485
     },
     {
       "espn_id": "22069",
