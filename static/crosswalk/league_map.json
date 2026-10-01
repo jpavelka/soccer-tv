@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-28T14:21:40.587526+00:00",
-  "count": 62,
+  "generated_at": "2026-10-01T13:46:38.193802+00:00",
+  "count": 63,
   "leagues": [
     {
       "espn_slug": "arg.1",
@@ -149,6 +149,10 @@
     {
       "espn_slug": "mex.1",
       "gfr_api_football_id": 262
+    },
+    {
+      "espn_slug": "mex.w.1",
+      "gfr_api_football_id": 673
     },
     {
       "espn_slug": "ned.1",
