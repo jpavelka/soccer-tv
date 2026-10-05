@@ -1,153 +1,9 @@
 {
-  "generated_at": "2026-10-01T13:46:38.193802+00:00",
+  "generated_at": "2026-10-05T15:10:27.856153+00:00",
   "mode": "incremental",
-  "new_leagues": [
-    {
-      "espn_slug": "mex.w.1",
-      "espn_name": "Mexican Liga BBVA MX Femenil",
-      "country": "Mexico",
-      "gender": "women",
-      "gfr_league_name": "Liga MX Femenil",
-      "match": "token"
-    }
-  ],
-  "new_teams": [
-    {
-      "espn_id": "22415",
-      "espn_name": "Am\u00e9rica",
-      "gfr_api_football_id": 14868,
-      "gfr_team_name": "Club America",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133990",
-      "espn_name": "Atlas",
-      "gfr_api_football_id": 14873,
-      "gfr_team_name": "Atlas",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133992",
-      "espn_name": "Atl\u00e9tico de San Luis",
-      "gfr_api_football_id": 14874,
-      "gfr_team_name": "Atletico San Luis",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133982",
-      "espn_name": "Cruz Azul",
-      "gfr_api_football_id": 14875,
-      "gfr_team_name": "Cruz Azul",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133984",
-      "espn_name": "FC Ju\u00e1rez",
-      "gfr_api_football_id": 14869,
-      "gfr_team_name": "Juarez",
-      "match": "exact"
-    },
-    {
-      "espn_id": "22416",
-      "espn_name": "Guadalajara",
-      "gfr_api_football_id": 14876,
-      "gfr_team_name": "Guadalajara",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133986",
-      "espn_name": "Le\u00f3n",
-      "gfr_api_football_id": 14877,
-      "gfr_team_name": "Leon",
-      "match": "exact"
-    },
-    {
-      "espn_id": "21537",
-      "espn_name": "Monterrey",
-      "gfr_api_football_id": 14879,
-      "gfr_team_name": "Monterrey",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133983",
-      "espn_name": "Necaxa",
-      "gfr_api_football_id": 14880,
-      "gfr_team_name": "Necaxa",
-      "match": "exact"
-    },
-    {
-      "espn_id": "22414",
-      "espn_name": "Pachuca",
-      "gfr_api_football_id": 14881,
-      "gfr_team_name": "Pachuca",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133991",
-      "espn_name": "Puebla",
-      "gfr_api_football_id": 14882,
-      "gfr_team_name": "Puebla",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133981",
-      "espn_name": "Pumas UNAM",
-      "gfr_api_football_id": 14870,
-      "gfr_team_name": "Pumas",
-      "match": "token"
-    },
-    {
-      "espn_id": "133987",
-      "espn_name": "Quer\u00e9taro",
-      "gfr_api_football_id": 14871,
-      "gfr_team_name": "Queretaro",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133985",
-      "espn_name": "Santos",
-      "gfr_api_football_id": 14883,
-      "gfr_team_name": "Santos Laguna",
-      "match": "token"
-    },
-    {
-      "espn_id": "22413",
-      "espn_name": "Tigres UANL",
-      "gfr_api_football_id": 14884,
-      "gfr_team_name": "Tigres",
-      "match": "token"
-    },
-    {
-      "espn_id": "22417",
-      "espn_name": "Tijuana",
-      "gfr_api_football_id": 14872,
-      "gfr_team_name": "Tijuana",
-      "match": "exact"
-    },
-    {
-      "espn_id": "133988",
-      "espn_name": "Toluca",
-      "gfr_api_football_id": 14885,
-      "gfr_team_name": "Toluca",
-      "match": "exact"
-    }
-  ],
-  "new_nationals": [
-    {
-      "espn_id": "20917",
-      "espn_name": "Ethiopia",
-      "gfr_api_football_id": 16928,
-      "gfr_team_name": "Ethiopia",
-      "gender": "women"
-    },
-    {
-      "espn_id": "22061",
-      "espn_name": "Seychelles",
-      "gfr_api_football_id": 19933,
-      "gfr_team_name": "Seychelles",
-      "gender": "women"
-    }
-  ],
+  "new_leagues": [],
+  "new_teams": [],
+  "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
@@ -709,6 +565,14 @@
       "best_score": 0.583
     },
     {
+      "espn_id": "133989",
+      "espn_name": "Atlante",
+      "country": "Mexico",
+      "gender": "women",
+      "espn_league_slug": "mex.w.1",
+      "best_score": 0.667
+    },
+    {
       "espn_id": "131428",
       "espn_name": "De Graafschap",
       "country": "Netherlands",
@@ -795,14 +659,6 @@
       "gender": "men",
       "espn_league_slug": "ven.1",
       "best_score": 0.25
-    },
-    {
-      "espn_id": "133989",
-      "espn_name": "Atlante",
-      "country": "Mexico",
-      "gender": "women",
-      "espn_league_slug": "mex.w.1",
-      "best_score": 0.667
     }
   ],
   "unmatched_nationals": [
@@ -840,6 +696,16 @@
       "espn_id": "10596",
       "espn_name": "St. Martin",
       "gender": "men"
+    },
+    {
+      "espn_id": "131554",
+      "espn_name": "TBD Away",
+      "gender": "women"
+    },
+    {
+      "espn_id": "131556",
+      "espn_name": "TBD Home",
+      "gender": "women"
     },
     {
       "espn_id": "133858",
