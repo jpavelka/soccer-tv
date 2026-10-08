@@ -1,9 +1,24 @@
 {
-  "generated_at": "2026-10-05T15:10:27.856153+00:00",
+  "generated_at": "2026-10-08T13:53:46.975761+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [],
+  "new_nationals": [
+    {
+      "espn_id": "22036",
+      "espn_name": "Malaysia",
+      "gfr_api_football_id": 18268,
+      "gfr_team_name": "Malaysia",
+      "gender": "women"
+    },
+    {
+      "espn_id": "21932",
+      "espn_name": "Saudi Arabia",
+      "gfr_api_football_id": 20453,
+      "gfr_team_name": "Saudi Arabia",
+      "gender": "women"
+    }
+  ],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
