@@ -1,24 +1,9 @@
 {
-  "generated_at": "2026-10-12T15:56:35.866125+00:00",
+  "generated_at": "2026-10-15T11:57:21.013398+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [
-    {
-      "espn_id": "22034",
-      "espn_name": "Lebanon",
-      "gfr_api_football_id": 16935,
-      "gfr_team_name": "Lebanon",
-      "gender": "women"
-    },
-    {
-      "espn_id": "131759",
-      "espn_name": "Palestine",
-      "gfr_api_football_id": 17891,
-      "gfr_team_name": "Palestine",
-      "gender": "women"
-    }
-  ],
+  "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
