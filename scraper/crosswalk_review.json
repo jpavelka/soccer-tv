@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T11:57:21.013398+00:00",
+  "generated_at": "2026-10-19T13:49:24.817631+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -148,6 +148,12 @@
       "espn_slug": "slv.1",
       "espn_name": "Salvadoran Primera Division",
       "country": "El Salvador",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "ind.2",
+      "espn_name": "Indian I-League",
+      "country": "India",
       "gender": "men"
     },
     {
