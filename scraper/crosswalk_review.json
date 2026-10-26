@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-19T13:49:24.817631+00:00",
+  "generated_at": "2026-10-26T13:27:32.028606+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -657,14 +657,6 @@
       "gender": "men",
       "espn_league_slug": "usa.usl.1",
       "best_score": 0.4
-    },
-    {
-      "espn_id": "10094",
-      "espn_name": "UCV FC",
-      "country": "Venezuela",
-      "gender": "men",
-      "espn_league_slug": "ven.1",
-      "best_score": 0.25
     }
   ],
   "unmatched_nationals": [
