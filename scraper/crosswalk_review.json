@@ -1,9 +1,17 @@
 {
-  "generated_at": "2026-10-26T13:27:32.028606+00:00",
+  "generated_at": "2026-11-02T16:28:25.048496+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [],
+  "new_nationals": [
+    {
+      "espn_id": "22405",
+      "espn_name": "Singapore",
+      "gfr_api_football_id": 17893,
+      "gfr_team_name": "Singapore",
+      "gender": "women"
+    }
+  ],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
@@ -53,12 +61,6 @@
       "espn_name": "English Women's Super League Promotion/Relegation Playoff",
       "country": "England",
       "gender": "women"
-    },
-    {
-      "espn_slug": "usa.usl.l1",
-      "espn_name": "USL League One",
-      "country": "USA",
-      "gender": "men"
     },
     {
       "espn_slug": "can.w.nsl",
@@ -152,7 +154,7 @@
     },
     {
       "espn_slug": "ind.2",
-      "espn_name": "Indian I-League",
+      "espn_name": "Indian Football League",
       "country": "India",
       "gender": "men"
     },
