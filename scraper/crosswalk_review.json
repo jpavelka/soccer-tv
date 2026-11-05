@@ -1,14 +1,28 @@
 {
-  "generated_at": "2026-11-02T16:28:25.048496+00:00",
+  "generated_at": "2026-11-05T14:52:52.326794+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
   "new_nationals": [
     {
-      "espn_id": "22405",
-      "espn_name": "Singapore",
-      "gfr_api_football_id": 17893,
-      "gfr_team_name": "Singapore",
+      "espn_id": "134155",
+      "espn_name": "Central African Republic",
+      "gfr_api_football_id": 22412,
+      "gfr_team_name": "Central African Republic",
+      "gender": "women"
+    },
+    {
+      "espn_id": "131499",
+      "espn_name": "Chad",
+      "gfr_api_football_id": null,
+      "gfr_team_name": "Chad",
+      "gender": "women"
+    },
+    {
+      "espn_id": "134158",
+      "espn_name": "Congo",
+      "gfr_api_football_id": 19415,
+      "gfr_team_name": "Congo",
       "gender": "women"
     }
   ],
@@ -710,6 +724,11 @@
     {
       "espn_id": "133858",
       "espn_name": "San Marino",
+      "gender": "women"
+    },
+    {
+      "espn_id": "134157",
+      "espn_name": "Sao Tome E Principe",
       "gender": "women"
     }
   ],
