@@ -1,28 +1,14 @@
 {
-  "generated_at": "2026-11-05T14:52:52.326794+00:00",
+  "generated_at": "2026-11-09T16:46:02.866107+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
   "new_nationals": [
     {
-      "espn_id": "134155",
-      "espn_name": "Central African Republic",
-      "gfr_api_football_id": 22412,
-      "gfr_team_name": "Central African Republic",
-      "gender": "women"
-    },
-    {
-      "espn_id": "131499",
-      "espn_name": "Chad",
+      "espn_id": "134156",
+      "espn_name": "Gabon",
       "gfr_api_football_id": null,
-      "gfr_team_name": "Chad",
-      "gender": "women"
-    },
-    {
-      "espn_id": "134158",
-      "espn_name": "Congo",
-      "gfr_api_football_id": 19415,
-      "gfr_team_name": "Congo",
+      "gfr_team_name": "Gabon",
       "gender": "women"
     }
   ],
@@ -47,9 +33,9 @@
   ],
   "unmatched_leagues": [
     {
-      "espn_slug": "eng.charity",
-      "espn_name": "English FA Community Shield",
-      "country": "England",
+      "espn_slug": "ita.super_cup",
+      "espn_name": "Italian Supercoppa",
+      "country": "Italy",
       "gender": "men"
     },
     {
@@ -59,15 +45,15 @@
       "gender": "men"
     },
     {
-      "espn_slug": "ita.super_cup",
-      "espn_name": "Italian Supercoppa",
-      "country": "Italy",
-      "gender": "men"
-    },
-    {
       "espn_slug": "ger.super_cup",
       "espn_name": "German Supercup",
       "country": "Germany",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "eng.charity",
+      "espn_name": "English FA Community Shield",
+      "country": "England",
       "gender": "men"
     },
     {
@@ -796,14 +782,6 @@
       "expected_gfr_league": "WSL",
       "actual_gfr_league": "WSL 2",
       "gfr_team_name": "Crystal Palace"
-    },
-    {
-      "espn_id": "22530",
-      "espn_name": "Bryne",
-      "espn_league_slug": "nor.1.promotion.relegation",
-      "expected_gfr_league": "Eliteserien",
-      "actual_gfr_league": "1. Division",
-      "gfr_team_name": "Bryne"
     },
     {
       "espn_id": "20704",
