@@ -1,17 +1,9 @@
 {
-  "generated_at": "2026-11-09T16:46:02.866107+00:00",
+  "generated_at": "2026-11-12T15:31:16.548883+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [
-    {
-      "espn_id": "134156",
-      "espn_name": "Gabon",
-      "gfr_api_football_id": null,
-      "gfr_team_name": "Gabon",
-      "gender": "women"
-    }
-  ],
+  "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
@@ -698,6 +690,11 @@
       "gender": "men"
     },
     {
+      "espn_id": "133858",
+      "espn_name": "San Marino",
+      "gender": "women"
+    },
+    {
       "espn_id": "131554",
       "espn_name": "TBD Away",
       "gender": "women"
@@ -705,11 +702,6 @@
     {
       "espn_id": "131556",
       "espn_name": "TBD Home",
-      "gender": "women"
-    },
-    {
-      "espn_id": "133858",
-      "espn_name": "San Marino",
       "gender": "women"
     },
     {
