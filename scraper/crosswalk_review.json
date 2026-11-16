@@ -1,9 +1,24 @@
 {
-  "generated_at": "2026-11-12T15:31:16.548883+00:00",
+  "generated_at": "2026-11-16T16:18:05.735597+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [],
+  "new_nationals": [
+    {
+      "espn_id": "22403",
+      "espn_name": "Hong Kong",
+      "gfr_api_football_id": 17896,
+      "gfr_team_name": "Hong Kong",
+      "gender": "women"
+    },
+    {
+      "espn_id": "131763",
+      "espn_name": "MYANMAR",
+      "gfr_api_football_id": 14462,
+      "gfr_team_name": "Myanmar",
+      "gender": "women"
+    }
+  ],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
@@ -93,6 +108,18 @@
     {
       "espn_slug": "arg.2",
       "espn_name": "Argentine Nacional B",
+      "country": "Argentina",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "arg.supercopa",
+      "espn_name": "Argentine Supercopa",
+      "country": "Argentina",
+      "gender": "men"
+    },
+    {
+      "espn_slug": "arg.supercopa.internacional",
+      "espn_name": "Argentine Supercopa Internacional",
       "country": "Argentina",
       "gender": "men"
     },
@@ -702,6 +729,11 @@
     {
       "espn_id": "131556",
       "espn_name": "TBD Home",
+      "gender": "women"
+    },
+    {
+      "espn_id": "19965",
+      "espn_name": "Catalunya Women",
       "gender": "women"
     },
     {
