@@ -1,24 +1,9 @@
 {
-  "generated_at": "2026-11-16T16:18:05.735597+00:00",
+  "generated_at": "2026-11-19T15:58:47.459436+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [
-    {
-      "espn_id": "22403",
-      "espn_name": "Hong Kong",
-      "gfr_api_football_id": 17896,
-      "gfr_team_name": "Hong Kong",
-      "gender": "women"
-    },
-    {
-      "espn_id": "131763",
-      "espn_name": "MYANMAR",
-      "gfr_api_football_id": 14462,
-      "gfr_team_name": "Myanmar",
-      "gender": "women"
-    }
-  ],
+  "new_nationals": [],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
@@ -608,6 +593,14 @@
       "best_score": 0.353
     },
     {
+      "espn_id": "602",
+      "espn_name": "Odds BK",
+      "country": "Norway",
+      "gender": "men",
+      "espn_league_slug": "nor.1.promotion.relegation",
+      "best_score": 0.444
+    },
+    {
       "espn_id": "17671",
       "espn_name": "Sportivo San Lorenzo",
       "country": "Paraguay",
@@ -646,6 +639,22 @@
       "gender": "men",
       "espn_league_slug": "sco.2",
       "best_score": 0.381
+    },
+    {
+      "espn_id": "6545",
+      "espn_name": "Varbergs BoIS FC",
+      "country": "Sweden",
+      "gender": "men",
+      "espn_league_slug": "swe.1.promotion.relegation",
+      "best_score": 0.476
+    },
+    {
+      "espn_id": "5043",
+      "espn_name": "\u00d6stersunds FK",
+      "country": "Sweden",
+      "gender": "men",
+      "espn_league_slug": "swe.1.promotion.relegation",
+      "best_score": 0.667
     },
     {
       "espn_id": "19267",
@@ -717,23 +726,23 @@
       "gender": "men"
     },
     {
+      "espn_id": "131554",
+      "espn_name": "TBD Away",
+      "gender": "men"
+    },
+    {
+      "espn_id": "131556",
+      "espn_name": "TBD Home",
+      "gender": "men"
+    },
+    {
       "espn_id": "133858",
       "espn_name": "San Marino",
       "gender": "women"
     },
     {
-      "espn_id": "131554",
-      "espn_name": "TBD Away",
-      "gender": "women"
-    },
-    {
-      "espn_id": "131556",
-      "espn_name": "TBD Home",
-      "gender": "women"
-    },
-    {
       "espn_id": "19965",
-      "espn_name": "Catalunya Women",
+      "espn_name": "Catalunya",
       "gender": "women"
     },
     {
@@ -806,6 +815,14 @@
       "expected_gfr_league": "WSL",
       "actual_gfr_league": "WSL 2",
       "gfr_team_name": "Crystal Palace"
+    },
+    {
+      "espn_id": "22530",
+      "espn_name": "Bryne",
+      "espn_league_slug": "nor.1.promotion.relegation",
+      "expected_gfr_league": "Eliteserien",
+      "actual_gfr_league": "1. Division",
+      "gfr_team_name": "Bryne"
     },
     {
       "espn_id": "20704",
