@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-19T15:58:47.459436+00:00",
+  "generated_at": "2026-11-23T18:39:44.620896+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -53,6 +53,12 @@
       "espn_name": "English Women's Super League Promotion/Relegation Playoff",
       "country": "England",
       "gender": "women"
+    },
+    {
+      "espn_slug": "usa.usl.l1",
+      "espn_name": "USL League One",
+      "country": "USA",
+      "gender": "men"
     },
     {
       "espn_slug": "can.w.nsl",
@@ -215,22 +221,6 @@
       "gender": "men",
       "espn_league_slug": "bra.2",
       "best_score": 0.571
-    },
-    {
-      "espn_id": "131554",
-      "espn_name": "TBD Away",
-      "country": "Brazil",
-      "gender": "men",
-      "espn_league_slug": "bra.2",
-      "best_score": 0.462
-    },
-    {
-      "espn_id": "131556",
-      "espn_name": "TBD Home",
-      "country": "Brazil",
-      "gender": "men",
-      "espn_league_slug": "bra.2",
-      "best_score": 0.353
     },
     {
       "espn_id": "131705",
@@ -599,6 +589,14 @@
       "gender": "men",
       "espn_league_slug": "nor.1.promotion.relegation",
       "best_score": 0.444
+    },
+    {
+      "espn_id": "2554",
+      "espn_name": "Stabaek",
+      "country": "Norway",
+      "gender": "men",
+      "espn_league_slug": "nor.1.promotion.relegation",
+      "best_score": 0.5
     },
     {
       "espn_id": "17671",
