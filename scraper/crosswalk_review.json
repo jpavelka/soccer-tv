@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T18:39:44.620896+00:00",
+  "generated_at": "2026-11-24T16:49:43.000200+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
@@ -24,12 +24,6 @@
     }
   ],
   "unmatched_leagues": [
-    {
-      "espn_slug": "ita.super_cup",
-      "espn_name": "Italian Supercoppa",
-      "country": "Italy",
-      "gender": "men"
-    },
     {
       "espn_slug": "fra.super_cup",
       "espn_name": "French Trophee des Champions",
@@ -99,18 +93,6 @@
     {
       "espn_slug": "arg.2",
       "espn_name": "Argentine Nacional B",
-      "country": "Argentina",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "arg.supercopa",
-      "espn_name": "Argentine Supercopa",
-      "country": "Argentina",
-      "gender": "men"
-    },
-    {
-      "espn_slug": "arg.supercopa.internacional",
-      "espn_name": "Argentine Supercopa Internacional",
       "country": "Argentina",
       "gender": "men"
     },
@@ -613,6 +595,22 @@
       "gender": "men",
       "espn_league_slug": "per.1",
       "best_score": 0.667
+    },
+    {
+      "espn_id": "131554",
+      "espn_name": "TBD Away",
+      "country": "Peru",
+      "gender": "men",
+      "espn_league_slug": "per.1",
+      "best_score": 0.455
+    },
+    {
+      "espn_id": "131556",
+      "espn_name": "TBD Home",
+      "country": "Peru",
+      "gender": "men",
+      "espn_league_slug": "per.1",
+      "best_score": 0.364
     },
     {
       "espn_id": "21990",
