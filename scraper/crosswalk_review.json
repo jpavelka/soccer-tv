@@ -1,9 +1,17 @@
 {
-  "generated_at": "2026-11-24T16:49:43.000200+00:00",
+  "generated_at": "2026-11-26T17:13:56.465697+00:00",
   "mode": "incremental",
   "new_leagues": [],
   "new_teams": [],
-  "new_nationals": [],
+  "new_nationals": [
+    {
+      "espn_id": "21301",
+      "espn_name": "Tunisia",
+      "gfr_api_football_id": 14463,
+      "gfr_team_name": "Tunisia",
+      "gender": "women"
+    }
+  ],
   "fuzzy_leagues": [],
   "fuzzy_teams": [
     {
